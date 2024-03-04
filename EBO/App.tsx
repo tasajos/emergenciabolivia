@@ -5,6 +5,7 @@
  * @format
  */
 
+/**
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -114,5 +115,53 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+export default App;
+ 
+
+/**
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+const App = () => {
+  return (
+    <View style={styles.container}>
+      <Text>Welcome to React Native with TypeScript!</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+export default App;
+ */
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from './screens/HomeScreen'; // Asegúrate de que la ruta sea correcta
+import MenuInicio from './screens/MenuInicio'; // Asegúrate de que la ruta sea correcta
+
+const Stack = createNativeStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{ headerShown: false }} // Esto ocultará el header en todas las pantallas
+      >
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={MenuInicio} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default App;
