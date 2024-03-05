@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+
 
 
 const DetailsScreen = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
-
+    const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: 'La Paz', value: 'La Paz'},
+    {label: 'Cochabamba', value: 'Cochabamba'},
+    {label: 'Santa Cruz', value: 'Santa Cruz'},
+    {label: 'Beni', value: 'Beni'},
+    {label: 'Tarija', value: 'Tarija'},
+    {label: 'Oruro', value: 'Oruro'},
+    {label: 'Potosi', value: 'Potosi'},
+    // Agrega más ciudades aquí
+]);
     const clearSearch = () => {
       setSearchQuery('');
     };
 
   return (
     <ScrollView style={styles.container}>
+
+<View style={styles.curveSection}>
+        {/* Puedes reemplazar esta View por una ImageBackground si tienes una imagen específica para usar */}
+        <Image source={require('../imagenes/top.png')} style={styles.curve} />
+      </View>
       <View style={styles.supportSection}>
         <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
         <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
@@ -44,6 +62,23 @@ const DetailsScreen = () => {
         </TouchableOpacity>
         {/* Repetir para cada categoría */}
       </View>
+      <View style={styles.dropdownSection}>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        placeholder="Selecciona una ciudad"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropDownContainer}
+        dropDownDirection="AUTO" // Ajusta la dirección del desplegable automáticamente
+        zIndex={3000} // Asegúrate de que el dropdown se muestre correctamente
+        listMode="SCROLLVIEW" // Cambia el modo de la lista para permitir el desplazamiento
+            />
+            </View>
+
       <View style={styles.infoSection}>
         <Text style={styles.infoTitle}>Información Útil</Text>
         <TouchableOpacity style={styles.infoButton}>
@@ -132,7 +167,8 @@ const styles = StyleSheet.create({
     borderColor: '#DDDDDD',
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
+    marginBottom: 1,
   },
   searchIcon: {
     width: 20,
@@ -146,7 +182,42 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  
+  curveSection: {
+    backgroundColor: '#fff',
+    height: 40, // Altura de la curva
+    overflow: 'hidden', // Esto es para asegurar que la imagen no desborde la parte curvada
+  },
+  curve: {
+    flex: 1,
+    width: '100%',
+    borderBottomLeftRadius: 50, // Esto crea la curvatura, ajusta según tu diseño
+    borderBottomRightRadius: 50, // Esto crea la curvatura, ajusta según tu diseño
+  },
+  dropdownSection: {
+    paddingHorizontal: 20,
+    marginTop: -10,
+    alignItems: 'center', // Centra el dropdown horizontalmente
+    zIndex: 1000, // Asegúrate de que el dropdown está sobre otros elementos
+    marginBottom: 30,
+  },
+  dropdown: {
+    borderColor: '#DDDDDD',
+    borderWidth: 1,
+    borderRadius: 30,
+    backgroundColor: '#FFFFFF',
+    width: '50%', // Ajusta el ancho a la mitad del tamaño actual
+    alignSelf: 'flex-start', // Alinea el dropdown en el centro de la sección
+    zIndex: 1000, // Asegúrate de que el dropdown se muestre correctamente
+  },
+  dropDownContainer: {
+    borderColor: '#DDDDDD',
+    borderWidth: 1,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    zIndex: 1000, // Eleva el zIndex aquí también si es necesario
+    width: '50%', // Ajusta el ancho si es necesario
+    alignSelf: 'flex-start', // Esto alineará el dropdown a la izquierda
+  },
   // ... otros estilos que necesites
 });
 
