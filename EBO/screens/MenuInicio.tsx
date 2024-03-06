@@ -24,6 +24,10 @@ const DetailsScreen = () => {
     };
 
   return (
+
+
+
+    
     <ScrollView style={styles.container}>
 
 <View style={styles.curveSection}>
@@ -79,20 +83,56 @@ const DetailsScreen = () => {
             />
             </View>
 
+            <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
+          <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
+          <Text>Bomberos Voluntarios</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity onPress={onAmbulanciasPress} style={styles.imageButton}>
+          <Image source={require('../imagenes/Group130.png')} style={styles.iconImage} />
+          <Text>Ambulancias</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+          <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
+          <Text>Hospitales</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.infoSection}>
         <Text style={styles.infoTitle}>Información Útil</Text>
-        <TouchableOpacity style={styles.infoButton}>
-          {/* ... */}
-        </TouchableOpacity>
+      {/* Tarjeta de Kits de Emergencia */}
+      <TouchableOpacity style={styles.kitCard}>
+       
+        <View style={styles.kitTextContainer}>
+          <Text style={styles.kitTitle}>Kits de Emergencia</Text>
+          <Text style={styles.kitSubtitle}>Conoce las herramientas e insumos necesarios para un evento adverso</Text>
+        </View>
+        <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
+      </TouchableOpacity>
+
         <Text style={styles.infoTitle}>Grupos de Información</Text>
-        <TouchableOpacity style={styles.groupButton}>
-          {/* ... */}
-        </TouchableOpacity>
+       
         {/* Repetir para cada grupo */}
       </View>
     </ScrollView>
   );
+
 };
+const onBomberosPress = () => {
+    // Acciones cuando se presiona Bomberos Voluntarios
+  };
+
+  const onAmbulanciasPress = () => {
+    // Acciones cuando se presiona Ambulancias
+  };
+
+  const onHospitalesPress = () => {
+    // Acciones cuando se presiona Hospitales
+  };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -131,10 +171,13 @@ const styles = StyleSheet.create({
   },
   // Repetir estilos para iconButton para cada categoría
   infoSection: {
-    padding: 20,
+    paddingTop: 0, // Reducir el relleno superior para disminuir el espacio vertical
+    paddingHorizontal: 20,
+    paddingBottom: 10, // Ajustar según sea necesario para el espacio debajo de los botones
   },
   infoTitle: {
     fontSize: 16,
+    paddingTop: 1,
     fontWeight: 'bold',
     color: '#424242',
     paddingBottom: 10,
@@ -198,7 +241,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
     alignItems: 'center', // Centra el dropdown horizontalmente
     zIndex: 1000, // Asegúrate de que el dropdown está sobre otros elementos
-    marginBottom: 30,
+    marginBottom: 10,
   },
   dropdown: {
     borderColor: '#DDDDDD',
@@ -217,8 +260,57 @@ const styles = StyleSheet.create({
     zIndex: 1000, // Eleva el zIndex aquí también si es necesario
     width: '50%', // Ajusta el ancho si es necesario
     alignSelf: 'flex-start', // Esto alineará el dropdown a la izquierda
+    
   },
-  // ... otros estilos que necesites
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginBottom: 5,
+    
+  },
+  imageButton: {
+    alignItems: 'center',
+    //justifyContent: 'center',
+    width: '30%',
+    
+    
+  },
+
+  iconImage: {
+    width: 80, // Ajusta según el tamaño de tus imágenes
+    height: 80, // Ajusta según el tamaño de tus imágenes
+    
+  },
+  kitCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8E8E8', // Cambia al color que prefieras para la tarjeta
+    borderRadius: 15,
+    padding: 10,
+    marginHorizontal: 30,
+    marginTop: 5, // Ajusta este valor según sea necesario
+    marginBottom: 5, // Ajusta este valor según sea necesario
+  },
+  kitIcon: {
+    width: 50, // Ajusta según tu diseño
+    height: 50, // Ajusta según tu diseño
+    marginRight: 10, // Añade un margen a la derecha del icono
+  },
+  kitTextContainer: {
+    flex: 1, // Esto asegura que el contenedor de texto ocupe el espacio restante
+  },
+  kitTitle: {
+    fontWeight: 'bold',
+    color: '#424242',
+    bottom: 10, // Ajusta el margen inferior del título
+    // Ajusta los demás estilos de texto como tamaño y color
+  },
+  kitSubtitle: {
+    color: 'gray', // Ajusta el color del texto según tu diseño
+
+},
+// ... otros estilos que necesites
 });
 
 export default DetailsScreen;
