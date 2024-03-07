@@ -148,6 +148,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen'; // Asegúrate de que la ruta sea correcta
 import MenuInicio from './screens/MenuInicio'; // Asegúrate de que la ruta sea correcta
 
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -159,7 +160,7 @@ const App = () => {
       >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={MenuInicio} />
-      </Stack.Navigator>
+              </Stack.Navigator>
     </NavigationContainer>
   );
 };

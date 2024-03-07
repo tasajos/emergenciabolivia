@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+const MenuInicio = () => {
 
-
-const DetailsScreen = () => {
-
-    const [searchQuery, setSearchQuery] = useState('');
-    const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     {label: 'La Paz', value: 'La Paz'},
@@ -101,6 +99,7 @@ const DetailsScreen = () => {
       </View>
 
       <View style={styles.infoSection}>
+        
         <Text style={styles.infoTitle}>Información Útil</Text>
       {/* Tarjeta de Kits de Emergencia */}
       <TouchableOpacity style={styles.kitCard}>
@@ -111,15 +110,44 @@ const DetailsScreen = () => {
         </View>
         <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
       </TouchableOpacity>
-
-        <Text style={styles.infoTitle}>Grupos de Información</Text>
-       
-        {/* Repetir para cada grupo */}
       </View>
+        <Text style={styles.infoTitle}>Grupos de Información</Text>
+
+
+              {/* Aquí inician tus nuevas tarjetas */}
+
+{/* ScrollView horizontal para las tarjetas */}
+<ScrollView
+ horizontal
+ showsHorizontalScrollIndicator={false}
+ style={styles.horizontalScrollView}
+ contentContainerStyle={styles.horizontalContentContainer}
+
+>
+  {/* Tarjeta #1 */}
+  <View style={styles.infoCard}>
+    {/* Contenido de la tarjeta #1 */}
+    <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
+    <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>
+  </View>
+
+  {/* Tarjeta #2 */}
+  <View style={styles.infoCard}>
+    {/* Contenido de la tarjeta #2 */}
+    <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
+    <Text style={styles.cardText}>Grupo de Información General - Whatsapp</Text>
+  </View>
+
+  {/* Puedes agregar más tarjetas aquí si es necesario */}
+</ScrollView>
+
+
     </ScrollView>
-  );
+    );
 
 };
+
+
 const onBomberosPress = () => {
     // Acciones cuando se presiona Bomberos Voluntarios
   };
@@ -180,7 +208,8 @@ const styles = StyleSheet.create({
     paddingTop: 1,
     fontWeight: 'bold',
     color: '#424242',
-    paddingBottom: 10,
+    paddingHorizontal: 20,
+    marginBottom: 5,
   },
   infoButton: {
     flexDirection: 'row',
@@ -288,7 +317,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8E8E8', // Cambia al color que prefieras para la tarjeta
     borderRadius: 15,
     padding: 10,
-    marginHorizontal: 30,
+    marginHorizontal: 35,
     marginTop: 5, // Ajusta este valor según sea necesario
     marginBottom: 5, // Ajusta este valor según sea necesario
   },
@@ -310,7 +339,85 @@ const styles = StyleSheet.create({
     color: 'gray', // Ajusta el color del texto según tu diseño
 
 },
+infoCard: {
+    // Ajusta estos estilos para que coincidan con los de tu diseño
+    backgroundColor: '#2E75F2', // o cualquier otro color de fondo que prefieras
+    flexDirection: 'row', // Coloca los elementos en línea horizontal
+    alignItems: 'center', // Alinea los elementos verticalmente
+    borderRadius: 10, // para el efecto de esquinas redondeadas
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    marginBottom: 10, // Ajusta este valor según sea necesario
+    marginHorizontal: 5, // para mantener un pequeño espacio entre las tarjetas
+    shadowColor: '#000', // Estos estilos son para añadir sombra a cada tarjeta como en la imagen
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  cardTitle: {
+    fontWeight: 'bold',
+    color: '#424242',
+    // Añade otros estilos de texto como tamaño y color que necesites
+  },
+
+  infoCardsContainer: {
+    flexDirection: 'row', // Coloca los elementos en línea horizontal
+    justifyContent: 'space-evenly', // Espacia los elementos uniformemente
+    alignItems: 'center', // Alinea los elementos verticalmente
+    marginBottom: 10, // Ajusta este valor según sea necesario
+  },
+    
+  cardIcon: {
+    width: 20, // Ajusta el ancho del icono de la tarjeta
+    height: 20, // Ajusta la altura del icono de la tarjeta
+    marginBottom: 2, // Espacio entre el icono y el texto
+  },
+  infoCardsContainers: {
+    flexDirection: 'row',
+    justifyContent: 'center', // Esto centrará las tarjetas en su contenedor
+    alignItems: 'center',
+    marginBottom: 20, // Esto agregará un margen inferior al contenedor de las tarjetas
+  },
+  
+  
+  cardSpacer: {
+    width: 1, // Espacio entre las tarjetas, ajustar según sea necesario
+  },
+  
+  horizontalScroll: {
+    // Agrega aquí los estilos para tu ScrollView horizontal
+    // Por ejemplo, puedes querer establecer un alto y quizás un margen:
+    height: 120, // Altura de la ScrollView horizontal
+    marginTop: 10, // Espacio superior de la ScrollView
+  },
+  horizontalScrollView: {
+    // No es necesario establecer un alto aquí si todas tus tarjetas tienen un alto fijo
+  },
+  
+  horizontalContentContainer: {
+    alignItems: 'center',
+  },
+
+  cardText: {
+    color: 'black', // color de texto
+    fontSize: 12, // tamaño del texto
+    textAlign: 'center', // si deseas que el texto esté centrado
+    fontWeight: 'bold', // si el texto es en negrita
+    // Agrega más estilos para el texto si es necesario
+  },
+
+  cardImage: {
+    width: 20, // Ancho de la imagen
+    height: 20, // Altura de la imagen
+    marginRight: 10, // Espacio a la derecha de la imagen
+  },
+  
 // ... otros estilos que necesites
 });
 
-export default DetailsScreen;
+export default MenuInicio;
