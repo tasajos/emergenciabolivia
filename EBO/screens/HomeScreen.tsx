@@ -1,8 +1,14 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import FloatingButtonBar from './FloatingButtonBar';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 // Define los tipos de tus rutas de navegación
+type NavigationType = StackNavigationProp<any>; // Reemplaza 'any' con tu tipo de navegación si tienes uno
+
+
+
 type RootStackParamList = {
     Home: undefined;
     Details: undefined;
