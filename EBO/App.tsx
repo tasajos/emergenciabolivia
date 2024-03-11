@@ -147,7 +147,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen'; // Asegúrate de que la ruta sea correcta
 import MenuInicio from './screens/MenuInicio'; // Asegúrate de que la ruta sea correcta
-
+import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pantalla RecInfo
 
 const Stack = createNativeStackNavigator();
 
@@ -160,6 +160,7 @@ const App = () => {
       >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Details" component={MenuInicio} />
+        <Stack.Screen name="RecInfo" component={RecInfo} />
               </Stack.Navigator>
     </NavigationContainer>
   );

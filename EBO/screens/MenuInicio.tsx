@@ -1,6 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState ,useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useNavigation } from '@react-navigation/native';
+import { NavigationProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import FloatingButtonBar from './FloatingButtonBar';
+
+
+
+type RootStackParamList  = {
+    Home: undefined;
+    RecInfo: undefined;
+    // Agrega todas tus rutas aquí...
+  };
+
+  type Props = {
+    navigation: StackNavigationProp<RootStackParamList>;
+  };
+
 
 const MenuInicio = () => {
 
@@ -21,11 +38,15 @@ const MenuInicio = () => {
       setSearchQuery('');
     };
 
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+   
+    const onBomberosPress = () => {
+        navigation.navigate('RecInfo');
+      };
+
   return (
 
-
-
-    
+    <View style={styles.outerContainer}>
     <ScrollView style={styles.container}>
 
 <View style={styles.curveSection}>
@@ -141,20 +162,24 @@ const MenuInicio = () => {
   {/* Puedes agregar más tarjetas aquí si es necesario */}
 </ScrollView>
 
-
+ {/* Barra de botones flotantes */}
+    {/* Barra de botones flotantes */}
     </ScrollView>
+    <FloatingButtonBar navigation={navigation} />
+     </View>
+    
     );
-
+ 
 };
 
 
-const onBomberosPress = () => {
-    // Acciones cuando se presiona Bomberos Voluntarios
-  };
 
-  const onAmbulanciasPress = () => {
+
+
+
+const onAmbulanciasPress = () => {
     // Acciones cuando se presiona Ambulancias
-  };
+};
 
   const onHospitalesPress = () => {
     // Acciones cuando se presiona Hospitales
@@ -167,12 +192,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white', // Ajustado al color de fondo de la imagen
   },
+  outerContainer: {
+    flex: 1,
+    backgroundColor: 'white', // o cualquier color de fondo que desees
+  },
   supportSection: {
     alignItems: 'center',
     marginTop: 20,
   },
   logo: {
-    height: 80, // Ajustar según el tamaño de tu logo
+    height: 40, // Ajustar según el tamaño de tu logo
     resizeMode: 'contain', // Para que la imagen del logo se ajuste sin deformarse
   },
   supportText: {
@@ -262,8 +291,8 @@ const styles = StyleSheet.create({
   curve: {
     flex: 1,
     width: '100%',
-    borderBottomLeftRadius: 50, // Esto crea la curvatura, ajusta según tu diseño
-    borderBottomRightRadius: 50, // Esto crea la curvatura, ajusta según tu diseño
+    borderBottomLeftRadius: 20, // Esto crea la curvatura, ajusta según tu diseño
+    borderBottomRightRadius: 20, // Esto crea la curvatura, ajusta según tu diseño
   },
   dropdownSection: {
     paddingHorizontal: 20,
