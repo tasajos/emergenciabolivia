@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState ,useCallback } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome'; // you'll need to install this package
@@ -18,7 +18,15 @@ type Props = {
   navigation: RecInfoScreenNavigationProp;
 };
 
+
+
+
 const RecInfo: React.FC<Props> = ({ navigation }) => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const clearSearch = () => {
+        setSearchQuery('');
+      };
     const items = [
         { name: 'Yunka Atoq Cochabamba', image: require('../imagenes/logos/yunka_atoq_log.png') },
         { name: 'Thasnuq Cochabamba', image: require('../imagenes/logos/thasnuq.jpg') },
@@ -37,15 +45,27 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
           </View>
           <View style={styles.searchContainer}>
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Buscar una unidad"
-                // ... other TextInput props
-            />
-            <TouchableOpacity style={styles.clearButton}>
-              <Icon name="times-circle" size={20} color="#000" />
+          <Image
+          source={require('../imagenes/lupa.png')} // Asegúrate de tener un icono de búsqueda
+          style={styles.searchIcon}
+        />
+
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Buscar una unidad"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#000"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+              <Image
+                source={require('../imagenes/cerrars.png')} // Asegúrate de tener esta imagen o ícono en tus recursos
+                style={styles.clearIcon}
+              />
             </TouchableOpacity>
-          </View>
+          )}
+        </View>
           <View style={styles.dropdownContainer}>
             {/* Implement dropdown here */}
           </View>
@@ -84,7 +104,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       // ... styles for your header
     },
     logo: {
-      width: 100,
+      resizeMode: 'contain',
       height: 40,
       // ... other logo styles
     },
@@ -94,20 +114,20 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
     },
     searchContainer: {
       flexDirection: 'row',
+      justifyContent: 'space-around',
+    padding: 20,
       // ... styles for the search container
     },
     searchInput: {
-      flex: 1,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
-      padding: 10,
-      // ... other styles for search input
-    },
+        flex: 1,
+        height: 40,
+        fontSize: 16,
+        color: 'black',
+        paddingHorizontal: 10,
+      },
     clearButton: {
-      marginLeft: 10,
-      // ... other styles for clear button
-    },
+        padding: 10,
+      },
     dropdownContainer: {
       // ... styles for dropdown container
     },
@@ -146,6 +166,17 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       borderRadius: 30,
       // ... other floating button styles
     },
+    clearIcon: {
+        width: 20,
+        height: 20,
+      },
+      searchIcon: {
+        width: 20,
+        height: 20,
+      },
+      
+
+
     // ... cualquier otro estilo que necesites
 });
 
