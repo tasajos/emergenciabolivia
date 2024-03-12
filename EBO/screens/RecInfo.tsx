@@ -78,13 +78,6 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             ))}
           </View>
         </ScrollView>
-        <View style={styles.footerContainer}>
-          {/* Floating buttons or other footer components */}
-          <TouchableOpacity style={styles.floatingButton}>
-            <Icon name="phone" size={20} color="#fff" />
-          </TouchableOpacity>
-          {/* Add more buttons as needed */}
-        </View>
       </View>
     );
   };
@@ -105,7 +98,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
     },
     logo: {
       resizeMode: 'contain',
-      height: 40,
+      height: 60,
       // ... other logo styles
     },
     supportText: {
@@ -113,17 +106,25 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       // ... other text styles
     },
     searchContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-    padding: 20,
-      // ... styles for the search container
-    },
+        flexDirection: 'row',
+        alignItems: 'center', // centra los ítems verticalmente
+        justifyContent: 'space-around',
+        padding: 10,
+        backgroundColor: '#fff', // o cualquier color de fondo que desees
+        borderWidth: 1, // opcional: si deseas un borde alrededor de todo el contenedor de búsqueda
+        borderColor: '#ccc', // opcional: el color de ese borde
+        borderRadius: 5, // opcional: bordes redondeados para el contenedor completo
+      },
     searchInput: {
         flex: 1,
         height: 40,
         fontSize: 16,
         color: 'black',
         paddingHorizontal: 10,
+        borderWidth: 1, // añade borde de 1px
+        borderColor: '#000', // el color del borde será negro
+        borderRadius: 25, // los bordes redondeados con radio de 5px
+        marginLeft: 10, // añade un pequeño margen a la izquierda si es necesario para separar del ícono
       },
     clearButton: {
         padding: 10,
@@ -173,6 +174,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       searchIcon: {
         width: 20,
         height: 20,
+        margin: 10, // asegúrate de que el ícono no esté pegado al borde
       },
       
 
