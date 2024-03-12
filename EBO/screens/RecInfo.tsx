@@ -1,7 +1,6 @@
 import React, { useState ,useCallback } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/FontAwesome'; // you'll need to install this package
 import FloatingButtonBar from './FloatingButtonBar';
 
 type RootStackParamList = {
@@ -135,22 +134,23 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       // ... styles for dropdown container
     },
     gridContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-around',
-      // ... styles for your grid container
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between', // Esto distribuirá los elementos de manera uniforme
+        alignItems: 'flex-start', // Alinea los elementos al inicio de su contenedor
+        paddingHorizontal: 20, // Agrega un padding horizontal para evitar que los elementos toquen los bordes
     },
     itemContainer: {
-      width: '40%', // Adjust the width as needed
-      padding: 10,
-      alignItems: 'center',
-      marginBottom: 20,
+      width: '30%', // Adjust the width as needed
+      aspectRatio: 1, // Esto asegurará que cada item sea cuadrado (ajusta según necesites)
+    marginBottom: 20, // Esto añade un margen abajo de cada elemento
+    padding: 10, // Esto es opcional, dependiendo de si quieres espacio dentro del contenedor
       // ... other item container styles
     },
     itemImage: {
-      width: 100,
-      height: 100,
-      // ... other image styles
+        width: '100%', // Esto hará que la imagen ocupe todo el ancho de su contenedor
+        height: '100%', // Esto hará que la imagen ocupe todo el alto de su contenedor
+        resizeMode: 'contain' // Esto asegurará que la imagen se escale correctamente dentro de su contenedor
     },
     itemText: {
       textAlign: 'center',
