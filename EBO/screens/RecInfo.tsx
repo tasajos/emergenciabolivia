@@ -2,6 +2,7 @@ import React, { useState ,useCallback } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome'; // you'll need to install this package
+import FloatingButtonBar from './FloatingButtonBar';
 
 type RootStackParamList = {
     Home: undefined;
@@ -78,6 +79,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             ))}
           </View>
         </ScrollView>
+        <FloatingButtonBar navigation={navigation} />
       </View>
     );
   };
