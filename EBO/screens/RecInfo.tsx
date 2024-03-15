@@ -27,11 +27,14 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         setSearchQuery('');
       };
     const items = [
-        { name: 'Yunka Atoq Cochabamba', image: require('../imagenes/logos/yunka_atoq_log.png') },
-        { name: 'Thasnuq Cochabamba', image: require('../imagenes/logos/thasnuq.jpg') },
+        { name: 'Yunka Atoq', image: require('../imagenes/logos/yunka_atoq_log.png') },
+        { name: 'Thasnuq', image: require('../imagenes/logos/thasnuq.jpg') },
         { name: 'Resistencia', image: require('../imagenes/logos/resistencia.jpeg') },
         { name: 'Cruz de Malta', image: require('../imagenes/logos/cruzdemalta.jpeg') },
+        { name: 'Bear', image: require('../imagenes/emblemabo.png') },
+        { name: 'Sar Bolivia', image: require('../imagenes/logos/logosar.png') },
         { name: 'Aeronauticos', image: require('../imagenes/logos/aeronauticosbv.jpg') },
+        { name: 'Fuego y Rescate', image: require('../imagenes/logos/fuego_rescate.png') },
         // ... add all your items here
       ];
 
@@ -162,7 +165,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
     },
     itemText: {
       textAlign: 'center',
-      marginTop: 5,
+      marginTop: 2,
       // ... other text styles
     },
     footerContainer: {
