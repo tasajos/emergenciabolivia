@@ -3,16 +3,14 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../App';
+
 
 // Define los tipos de tus rutas de navegación
 type NavigationType = StackNavigationProp<any>; // Reemplaza 'any' con tu tipo de navegación si tienes uno
 
 
 
-type RootStackParamList = {
-    Home: undefined;
-    Details: undefined;
-  };
   
   // Define el tipo de las props basado en la navegación y la ruta
   type HomeScreenProps = {
@@ -30,7 +28,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
       <Text style={styles.subtitle}>Uniendo a los Equipos de Primera Respuesta de Bolivia</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Details')} // Asegúrate de tener configurada la navegación
+        onPress={() => navigation.navigate('MenuInicio')}// Asegúrate de tener configurada la navegación
       >
         <Text style={styles.buttonText}>INGRESAR</Text>
       </TouchableOpacity>

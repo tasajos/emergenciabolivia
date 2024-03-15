@@ -7,6 +7,7 @@ type RootStackParamList = {
     Home: undefined;
     Details: undefined;
     RecInfo: undefined;
+    unidadesepr: { name: string }; 
   };
 
 type RecInfoScreenNavigationProp = StackNavigationProp<
@@ -18,11 +19,9 @@ type Props = {
   navigation: RecInfoScreenNavigationProp;
 };
 
-
-
-
 const RecInfo: React.FC<Props> = ({ navigation }) => {
     const [searchQuery, setSearchQuery] = useState('');
+   
 
     const clearSearch = () => {
         setSearchQuery('');
@@ -35,6 +34,10 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         { name: 'Aeronauticos', image: require('../imagenes/logos/aeronauticosbv.jpg') },
         // ... add all your items here
       ];
+
+      const handlePress = (itemName: string) => {
+        navigation.navigate('unidadesepr', { name: itemName });
+      };
 
     return (
         <View style={styles.container}>
@@ -71,11 +74,16 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
           </View>
           <View style={styles.gridContainer}>
             {items.map((item, index) => (
-              <View key={index} style={styles.itemContainer}>
-                <Image source={item.image} style={styles.itemImage} />
-                <Text style={styles.itemText}>{item.name}</Text>
-              </View>
-            ))}
+
+<TouchableOpacity
+              key={index}
+              style={styles.itemContainer}
+              onPress={() => handlePress(item.name)} // Usando la función handlePress aquí
+            >
+              <Image source={item.image} style={styles.itemImage} />
+              <Text style={styles.itemText}>{item.name}</Text>
+            </TouchableOpacity>
+          ))}
           </View>
         </ScrollView>
         <FloatingButtonBar navigation={navigation} />
