@@ -9,7 +9,9 @@ type RootStackParamList = {
     Home: undefined;
     Details: undefined;
     RecInfo: undefined;
-    unidadesepr: { name: string }; 
+    unidadesepr: { 
+      unidad: Unidad; // Asegúrate de que 'unidad' esté definido aquí y que Unidad es el tipo correcto
+    } | undefined;
   };
 
 type RecInfoScreenNavigationProp = StackNavigationProp<
@@ -77,9 +79,15 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         // ... add all your items here
       ];
 
-      const handlePress = (itemName: string) => {
-        navigation.navigate('unidadesepr', { name: itemName });
-      };
+
+
+      //const handlePress = (itemName: string) => {
+        //navigation.navigate('unidadesepr', { name: itemName });
+     // };
+
+     const handlePress = (unidad: Unidad) => {
+      navigation.navigate('unidadesepr', { unidad: unidad });
+    };
 
     return (
         <View style={styles.container}>
@@ -130,7 +138,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity
             key={index}
             style={styles.itemContainer}
-            onPress={() => handlePress(unidad.name)} // Utiliza unidad.name para acceder al nombre de la unidad
+            onPress={() => handlePress(unidad)} // Utiliza unidad.name para acceder al nombre de la unidad
           >
             {/* Comprueba que unidad.image y unidad.image.uri existen antes de intentar renderizar la imagen */}
             {unidad.image && unidad.image.uri ? (

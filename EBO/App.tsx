@@ -5,12 +5,16 @@ import HomeScreen from './screens/HomeScreen'; // Asegúrate de que la ruta sea 
 import MenuInicio from './screens/MenuInicio'; // Asegúrate de que la ruta sea correcta
 import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pantalla RecInfo
 import unidadesepr from './screens/unidadesepr';
+import { Unidad } from './screens/types';
+
 
 export type RootStackParamList = {
   Home: undefined;
   MenuInicio: undefined;
   RecInfo: undefined;
-  unidadesepr: { name: string; location: { latitude: number; longitude: number } } | undefined;
+  unidadesepr: {
+    unidad: Unidad;
+  } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
