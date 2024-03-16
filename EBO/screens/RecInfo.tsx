@@ -1,7 +1,9 @@
-import React, { useState ,useCallback } from 'react';
+import React, { useState ,useCallback,useEffect  } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
+import database from '@react-native-firebase/database';
+import firebase from '@react-native-firebase/app';
 
 type RootStackParamList = {
     Home: undefined;
@@ -19,9 +21,39 @@ type Props = {
   navigation: RecInfoScreenNavigationProp;
 };
 
+interface Unidad {
+  name: string;
+  image: { uri: string };
+}
+
+
+
 const RecInfo: React.FC<Props> = ({ navigation }) => {
-    const [searchQuery, setSearchQuery] = useState('');
-   
+  const [searchQuery, setSearchQuery] = useState('');
+  const [unidades, setUnidades] = useState<Unidad[]>([]);
+
+
+  useEffect(() => {
+    const ref = database().ref('/epr');
+    ref.once('value')
+      .then((snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          console.log('Datos recibidos:', data);
+          const unidadesArray = Object.keys(data).map((key) => ({
+            name: data[key].nombre,
+            image: { uri: data[key].imagen },
+            // Añade otros datos si es necesario
+          }));
+          setUnidades(unidadesArray);
+        } else {
+          console.log('No hay datos disponibles en esta ruta.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error al recuperar los datos:', error);
+      });
+  }, []);
 
     const clearSearch = () => {
         setSearchQuery('');
@@ -76,16 +108,32 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             {/* Implement dropdown here */}
           </View>
           <View style={styles.gridContainer}>
-            {items.map((item, index) => (
+          {unidades.map((unidad, index) => (
 
-<TouchableOpacity
-              key={index}
-              style={styles.itemContainer}
-              onPress={() => handlePress(item.name)} // Usando la función handlePress aquí
-            >
-              <Image source={item.image} style={styles.itemImage} />
-              <Text style={styles.itemText}>{item.name}</Text>
-            </TouchableOpacity>
+
+//<TouchableOpacity
+  //            key={index}
+    //          style={styles.itemContainer}
+      //        onPress={() => handlePress(item.name)} // Usando la función handlePress aquí
+        //    >
+          //    <Image source={item.image} style={styles.itemImage} />
+            //</View>  <Text style={styles.itemText}>{item.name}</Text>
+            //</TouchableOpacity>
+
+            <TouchableOpacity
+            key={index}
+            style={styles.itemContainer}
+            onPress={() => handlePress(unidad.name)} // Utiliza unidad.name para acceder al nombre de la unidad
+          >
+            {/* Comprueba que unidad.image y unidad.image.uri existen antes de intentar renderizar la imagen */}
+            {unidad.image && unidad.image.uri ? (
+              <Image source={{ uri: unidad.image.uri }} style={styles.itemImage} />
+            ) : (
+              <Image source={require('../imagenes/emblema.png')} style={styles.itemImage} />
+              // Coloca una imagen de reserva aquí si la unidad no tiene una imagen
+            )}
+            <Text style={styles.itemText}>{unidad.name}</Text>
+          </TouchableOpacity>
           ))}
           </View>
         </ScrollView>
