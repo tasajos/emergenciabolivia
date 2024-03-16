@@ -41,12 +41,15 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         const data = snapshot.val();
         if (data) {
           const unidadesFiltradas = Object.keys(data).filter((key) => {
-            const ciudad = data[key].ciudad || ''; // Asumiendo que tienes un campo 'ciudad' en tus datos
-            return ciudad.toLowerCase().includes(searchQuery.toLowerCase());
+            // Aquí comprobamos que el nombre O la ciudad contienen el texto de búsqueda
+            const nombre = data[key].nombre.toLowerCase();
+            const ciudad = (data[key].ciudad || '').toLowerCase();
+            const busqueda = searchQuery.toLowerCase();
+            return nombre.includes(busqueda) || ciudad.includes(busqueda);
           }).map((key) => ({
             name: data[key].nombre,
             image: { uri: data[key].imagen },
-            ciudad: data[key].ciudad, // Ya no nos da error porque 'ciudad' está en la interfaz
+            ciudad: data[key].ciudad,
           }));
   
           setUnidades(unidadesFiltradas);
@@ -57,7 +60,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       .catch((error) => {
         console.error('Error al recuperar los datos:', error);
       });
-  }, [searchQuery]);
+  }, [searchQuery]); // La dependencia [searchQuery] asegura que el efecto se ejecute de nuevo cuando cambie la búsqueda.
 
     const clearSearch = () => {
         setSearchQuery('');
@@ -94,7 +97,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
 
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar una unidad"
+            placeholder="Buscar por Nombre o Departamento"
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#000"
