@@ -7,6 +7,7 @@ import FloatingButtonBar from './FloatingButtonBar';
 import { Unidad } from './types';
 
 
+
 import facebookIcon from '../imagenes/redessociales/facebook.png';
 import webIcon from '../imagenes/redessociales/red-mundial.png';
 
@@ -16,6 +17,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'unidadesepr'>;
 
 const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
   const { unidad } = route.params ?? { unidad: { name: 'Nombre por defecto', image: { uri: 'ruta por defecto' } } };
+
+  
+  // Imprimir la URI de la imagen en la consola
+  console.log("URI de la imagen:", unidad.image.uri);
 
   const handleCallPress = () => {
     Linking.openURL('tel:70776212');
@@ -39,7 +44,8 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
             <Image source={{ uri: unidad.image.uri }} style={styles.logo} />
           ) : (
             // Cargar una imagen predeterminada si la URI no está disponible
-            <Image source={require('../imagenes/emblema.png')} style={styles.logo} />
+            <Image source={{ uri: unidad.image.uri + '?timestamp=' + new Date().getTime() }}
+            style={styles.logo} />
           )}
         </View>
         <MapView
@@ -74,16 +80,17 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'blue',
+    padding: 5,
+   backgroundColor: 'blue',
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 18,
     color: 'white',
   },
   logo: {
-    height: 100,
-    resizeMode: 'contain',
+    width: 60, // Tamaño fijo para la imagen
+    height: 60,
+    resizeMode: 'contain', // Ajustar la imagen dentro del contenedor
   },
   map: {
     height: 200,
