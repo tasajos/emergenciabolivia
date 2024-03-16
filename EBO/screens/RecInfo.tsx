@@ -24,6 +24,7 @@ type Props = {
 interface Unidad {
   name: string;
   image: { uri: string };
+  ciudad?: string;
 }
 
 
@@ -39,13 +40,16 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       .then((snapshot) => {
         const data = snapshot.val();
         if (data) {
-          console.log('Datos recibidos:', data);
-          const unidadesArray = Object.keys(data).map((key) => ({
+          const unidadesFiltradas = Object.keys(data).filter((key) => {
+            const ciudad = data[key].ciudad || ''; // Asumiendo que tienes un campo 'ciudad' en tus datos
+            return ciudad.toLowerCase().includes(searchQuery.toLowerCase());
+          }).map((key) => ({
             name: data[key].nombre,
             image: { uri: data[key].imagen },
-            // Añade otros datos si es necesario
+            ciudad: data[key].ciudad, // Ya no nos da error porque 'ciudad' está en la interfaz
           }));
-          setUnidades(unidadesArray);
+  
+          setUnidades(unidadesFiltradas);
         } else {
           console.log('No hay datos disponibles en esta ruta.');
         }
@@ -53,7 +57,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
       .catch((error) => {
         console.error('Error al recuperar los datos:', error);
       });
-  }, []);
+  }, [searchQuery]);
 
     const clearSearch = () => {
         setSearchQuery('');
