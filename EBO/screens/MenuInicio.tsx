@@ -106,6 +106,9 @@ const buscarUnidades = () => {
             <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
             <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
           </View>
+
+          {
+/*
           <View style={styles.searchSection}>
             <Image
               source={require('../imagenes/lupa.png')} // Asegúrate de tener un icono de búsqueda
@@ -129,11 +132,18 @@ const buscarUnidades = () => {
           </View>
           <View style={styles.categoryContainer}>
             {/* Icon Buttons */}
+         {/*   
+
             <TouchableOpacity style={styles.iconButton}>
-              {/* ... */}
+
             </TouchableOpacity>
-            {/* Repetir para cada categoría */}
+            {/* Repetir para cada categoría *
+          
+
           </View>
+ */}
+
+ {/*
           <View style={styles.dropdownSection}>
             <DropDownPicker
               open={open}
@@ -150,6 +160,10 @@ const buscarUnidades = () => {
               listMode="SCROLLVIEW" // Cambia el modo de la lista para permitir el desplazamiento
             />
           </View>
+
+*/}
+
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
               <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
@@ -204,6 +218,8 @@ const buscarUnidades = () => {
     
       return (
         <View style={styles.outerContainer}>
+
+          
           <FlatList
             data={unidadesFiltradas}
             keyExtractor={(item, index) => index.toString()}
@@ -246,14 +262,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logo: {
-    height: 40, // Ajustar según el tamaño de tu logo
+    height: 60, // Ajustar según el tamaño de tu logo
     resizeMode: 'contain', // Para que la imagen del logo se ajuste sin deformarse
   },
   supportText: {
     fontSize: 14,
     color: '#5C6979',
     marginTop: 8,
-    marginBottom: 20,
+    marginBottom: 60,
   },
   searchInput: {
     flex: 1,
@@ -270,12 +286,13 @@ const styles = StyleSheet.create({
   iconButton: {
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
   // Repetir estilos para iconButton para cada categoría
   infoSection: {
     paddingTop: 0, // Reducir el relleno superior para disminuir el espacio vertical
     paddingHorizontal: 20,
-    paddingBottom: 10, // Ajustar según sea necesario para el espacio debajo de los botones
+    paddingBottom: 20, // Ajustar según sea necesario para el espacio debajo de los botones
   },
   infoTitle: {
     fontSize: 16,
@@ -283,7 +300,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#424242',
     paddingHorizontal: 20,
-    marginBottom: 5,
+    marginBottom: 25,
   },
   infoButton: {
     flexDirection: 'row',
@@ -291,19 +308,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEEEEE', // Ajustar según el diseño
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   groupButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   infoIcon: {
     width: 24,
     height: 24,
     marginRight: 10,
+    marginBottom: 20,
   },
   searchSection: {
     flexDirection: 'row',
@@ -369,15 +387,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    marginBottom: 5,
+    marginBottom: 25,
     
   },
   imageButton: {
     alignItems: 'center',
     //justifyContent: 'center',
     width: '30%',
-    
-    
   },
 
   iconImage: {
