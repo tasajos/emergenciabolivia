@@ -191,7 +191,7 @@ const buscarUnidades = () => {
               <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.infoTitle}>Grupos de Información</Text>
+          <Text style={styles.infoTitle}>Ultimas Emergencias</Text>
           {/* ScrollView horizontal para las tarjetas */}
           <ScrollView
             horizontal
