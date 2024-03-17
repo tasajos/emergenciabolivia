@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   logo: {
-    width: 60, // Tamaño fijo para la imagen
-    height: 60,
+    width: 100, // Tamaño fijo para la imagen
+    height: 100,
     resizeMode: 'contain', // Ajustar la imagen dentro del contenedor
   },
   map: {

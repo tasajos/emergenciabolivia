@@ -1,23 +1,34 @@
-import React, { useState ,useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground } from 'react-native';
+import React, { useState ,useCallback ,useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground ,FlatList} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
+import database from '@react-native-firebase/database';
 
 
 
-type RootStackParamList  = {
-    Home: undefined;
-    RecInfo: undefined;
-    // Agrega todas tus rutas aquí...
-  };
+type RootStackParamList = {
+  Home: undefined;
+  RecInfo: undefined;
+  DetalleUnidad: { unidad: any };
+  unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
+};
 
-  type Props = {
-    navigation: StackNavigationProp<RootStackParamList>;
-  };
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList>;
+};
 
+type Unidad = {
+  name: string;
+  image: { uri: string };
+  ciudad?: string;
+  telefono: string;
+facebook: string;
+web: string;
+  // Puedes agregar más propiedades aquí si necesitas
+};
 
 const MenuInicio = () => {
 
@@ -34,145 +45,179 @@ const MenuInicio = () => {
     {label: 'Potosi', value: 'Potosi'},
     // Agrega más ciudades aquí
 ]);
+
+const [unidadesFiltradas, setUnidadesFiltradas] = useState<Unidad[]>([]);
+
+const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+
+useEffect(() => {
+  if (searchQuery.trim() !== '' && value) {
+    buscarUnidades();
+  }
+}, [searchQuery, value]);
+
+const buscarUnidades = () => {
+  const ref = database().ref('/epr');
+  ref.once('value')
+    .then((snapshot) => {
+      const data = snapshot.val();
+      const filtradas = Object.keys(data)
+        .filter((key) => {
+          const nombre = data[key].nombre.toLowerCase();
+          const ciudad = data[key].ciudad || '';
+          const busqueda = searchQuery.toLowerCase();
+          return nombre.includes(busqueda) && ciudad === value;
+        })
+        .map((key) => ({
+          name: data[key].nombre,
+          image: { uri: data[key].imagen || 'default_image_uri' }, // Asegúrate de tener una URI de imagen por defecto
+          telefono: data[key].telefono || '',
+          facebook: data[key].facebook || '',
+          web: data[key].web || ''
+        }));
+      setUnidadesFiltradas(filtradas);
+    })
+    .catch((error) => {
+      console.error('Error al recuperar los datos:', error);
+    });
+};
+
     const clearSearch = () => {
       setSearchQuery('');
     };
 
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  
+    const onUnidadPress = (unidad: any) => {
+      navigation.navigate('unidadesepr', { unidad });
+    };
+
    
     const onBomberosPress = () => {
         navigation.navigate('RecInfo');
       };
 
-  return (
-
-    <View style={styles.outerContainer}>
-    <ScrollView style={styles.container}>
-
-<View style={styles.curveSection}>
-        {/* Puedes reemplazar esta View por una ImageBackground si tienes una imagen específica para usar */}
-        <Image source={require('../imagenes/top.png')} style={styles.curve} />
-      </View>
-      <View style={styles.supportSection}>
-        <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-        <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
-      </View>
-      <View style={styles.searchSection}>
-        <Image
-          source={require('../imagenes/lupa.png')} // Asegúrate de tener un icono de búsqueda
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar una unidad"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor="#000"
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+      const renderHeader = () => (
+        <>
+          <View style={styles.curveSection}>
+            <Image source={require('../imagenes/top.png')} style={styles.curve} />
+          </View>
+          <View style={styles.supportSection}>
+            <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
+            <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
+          </View>
+          <View style={styles.searchSection}>
             <Image
-              source={require('../imagenes/cerrars.png')} // Asegúrate de tener un icono de cierre
-              style={styles.clearIcon}
+              source={require('../imagenes/lupa.png')} // Asegúrate de tener un icono de búsqueda
+              style={styles.searchIcon}
             />
-          </TouchableOpacity>
-        )}
-      </View>
-      <View style={styles.categoryContainer}>
-        {/* Icon Buttons */}
-        <TouchableOpacity style={styles.iconButton}>
-          {/* ... */}
-        </TouchableOpacity>
-        {/* Repetir para cada categoría */}
-      </View>
-      <View style={styles.dropdownSection}>
-      <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        placeholder="Selecciona una ciudad"
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropDownContainer}
-        dropDownDirection="AUTO" // Ajusta la dirección del desplegable automáticamente
-        zIndex={3000} // Asegúrate de que el dropdown se muestre correctamente
-        listMode="SCROLLVIEW" // Cambia el modo de la lista para permitir el desplazamiento
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Busca una unidad"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#000"
             />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
+                <Image
+                  source={require('../imagenes/cerrars.png')} // Asegúrate de tener un icono de cierre
+                  style={styles.clearIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.categoryContainer}>
+            {/* Icon Buttons */}
+            <TouchableOpacity style={styles.iconButton}>
+              {/* ... */}
+            </TouchableOpacity>
+            {/* Repetir para cada categoría */}
+          </View>
+          <View style={styles.dropdownSection}>
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              placeholder="Selecciona una ciudad"
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropDownContainer}
+              dropDownDirection="AUTO" // Ajusta la dirección del desplegable automáticamente
+              zIndex={3000} // Asegúrate de que el dropdown se muestre correctamente
+              listMode="SCROLLVIEW" // Cambia el modo de la lista para permitir el desplazamiento
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
+              <Text>Bomberos Voluntarios</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onAmbulanciasPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/Group130.png')} style={styles.iconImage} />
+              <Text>Ambulancias</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
+              <Text>Hospitales</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoTitle}>Información Útil</Text>
+            {/* Tarjeta de Kits de Emergencia */}
+            <TouchableOpacity style={styles.kitCard}>
+              <View style={styles.kitTextContainer}>
+                <Text style={styles.kitTitle}>Kits de Emergencia</Text>
+                <Text style={styles.kitSubtitle}>
+                  Conoce las herramientas e insumos necesarios para un evento adverso
+                </Text>
+              </View>
+              <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.infoTitle}>Grupos de Información</Text>
+          {/* ScrollView horizontal para las tarjetas */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.horizontalScrollView}
+            contentContainerStyle={styles.horizontalContentContainer}
+          >
+            {/* Tarjeta #1 */}
+            <View style={styles.infoCard}>
+              {/* Contenido de la tarjeta #1 */}
+              <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
+              <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>
             </View>
-
-            <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
-          <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
-          <Text>Bomberos Voluntarios</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={onAmbulanciasPress} style={styles.imageButton}>
-          <Image source={require('../imagenes/Group130.png')} style={styles.iconImage} />
-          <Text>Ambulancias</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
-          <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
-          <Text>Hospitales</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.infoSection}>
-        
-        <Text style={styles.infoTitle}>Información Útil</Text>
-      {/* Tarjeta de Kits de Emergencia */}
-      <TouchableOpacity style={styles.kitCard}>
-       
-        <View style={styles.kitTextContainer}>
-          <Text style={styles.kitTitle}>Kits de Emergencia</Text>
-          <Text style={styles.kitSubtitle}>Conoce las herramientas e insumos necesarios para un evento adverso</Text>
-        </View>
-        <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
-      </TouchableOpacity>
-      </View>
-        <Text style={styles.infoTitle}>Grupos de Información</Text>
-
-
-              {/* Aquí inician tus nuevas tarjetas */}
-
-{/* ScrollView horizontal para las tarjetas */}
-<ScrollView
- horizontal
- showsHorizontalScrollIndicator={false}
- style={styles.horizontalScrollView}
- contentContainerStyle={styles.horizontalContentContainer}
-
->
-  {/* Tarjeta #1 */}
-  <View style={styles.infoCard}>
-    {/* Contenido de la tarjeta #1 */}
-    <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
-    <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>
-  </View>
-
-  {/* Tarjeta #2 */}
-  <View style={styles.infoCard}>
-    {/* Contenido de la tarjeta #2 */}
-    <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
-    <Text style={styles.cardText}>Grupo de Información General - Whatsapp</Text>
-  </View>
-
-  {/* Puedes agregar más tarjetas aquí si es necesario */}
-</ScrollView>
-
- {/* Barra de botones flotantes */}
-    {/* Barra de botones flotantes */}
-    </ScrollView>
-    <FloatingButtonBar navigation={navigation} />
-     </View>
+            {/* Tarjeta #2 */}
+            <View style={styles.infoCard}>
+              {/* Contenido de la tarjeta #2 */}
+              <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
+              <Text style={styles.cardText}>Grupo de Información General - Whatsapp</Text>
+            </View>
+            {/* Puedes agregar más tarjetas aquí si es necesario */}
+          </ScrollView>
+        </>
+      );
     
-    );
- 
-};
-
-
+      return (
+        <View style={styles.outerContainer}>
+          <FlatList
+            data={unidadesFiltradas}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => onUnidadPress(item)}>
+                <Text>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+            ListHeaderComponent={renderHeader()}
+          />
+          <FloatingButtonBar navigation={navigation} />
+        </View>
+      );
+    };
 
 
 
