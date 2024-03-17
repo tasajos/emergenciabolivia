@@ -6,6 +6,7 @@ import MenuInicio from './screens/MenuInicio'; // Asegúrate de que la ruta sea 
 import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pantalla RecInfo
 import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
+import kitset from './screens/kitset';
 
 
 export type RootStackParamList = {
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   unidadesepr: {
     unidad: Unidad;
   } | undefined;
+  kitset: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,6 +32,7 @@ const App = () => {
         <Stack.Screen name="MenuInicio" component={MenuInicio} />
         <Stack.Screen name="RecInfo" component={RecInfo} />
         <Stack.Screen name="unidadesepr" component={unidadesepr} />
+        <Stack.Screen name="kitset" component={kitset} />
       </Stack.Navigator>
     </NavigationContainer>
   );

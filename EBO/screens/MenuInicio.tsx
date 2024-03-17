@@ -13,6 +13,7 @@ type RootStackParamList = {
   Home: undefined;
   RecInfo: undefined;
   DetalleUnidad: { unidad: any };
+  kitset: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
 };
 
@@ -107,62 +108,6 @@ const buscarUnidades = () => {
             <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
           </View>
 
-          {
-/*
-          <View style={styles.searchSection}>
-            <Image
-              source={require('../imagenes/lupa.png')} // Asegúrate de tener un icono de búsqueda
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Busca una unidad"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#000"
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={clearSearch} style={styles.clearButton}>
-                <Image
-                  source={require('../imagenes/cerrars.png')} // Asegúrate de tener un icono de cierre
-                  style={styles.clearIcon}
-                />
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.categoryContainer}>
-            {/* Icon Buttons */}
-         {/*   
-
-            <TouchableOpacity style={styles.iconButton}>
-
-            </TouchableOpacity>
-            {/* Repetir para cada categoría *
-          
-
-          </View>
- */}
-
- {/*
-          <View style={styles.dropdownSection}>
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              placeholder="Selecciona una ciudad"
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropDownContainer}
-              dropDownDirection="AUTO" // Ajusta la dirección del desplegable automáticamente
-              zIndex={3000} // Asegúrate de que el dropdown se muestre correctamente
-              listMode="SCROLLVIEW" // Cambia el modo de la lista para permitir el desplazamiento
-            />
-          </View>
-
-*/}
-
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
@@ -188,11 +133,17 @@ const buscarUnidades = () => {
             contentContainerStyle={styles.horizontalContentContainer}
           >
             {/* Tarjeta #1 */}
-            <View style={styles.infoCard}>
-              {/* Contenido de la tarjeta #1 */}
-              <Image source={require('../imagenes/kits3.png')}/>{/*style={styles.cardImage} */}
-             {/* <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>*/}
-            </View>
+
+            
+  <View style={styles.infoCard}>
+  <TouchableOpacity onPress={() => navigation.navigate('kitset')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/kits3.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
+
+
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
               {/* Contenido de la tarjeta #2 */}
