@@ -181,16 +181,29 @@ const buscarUnidades = () => {
           <View style={styles.infoSection}>
             <Text style={styles.infoTitle}>Información Útil</Text>
             {/* Tarjeta de Kits de Emergencia */}
-            <TouchableOpacity style={styles.kitCard}>
-              <View style={styles.kitTextContainer}>
-                <Text style={styles.kitTitle}>Kits de Emergencia</Text>
-                <Text style={styles.kitSubtitle}>
-                  Conoce las herramientas e insumos necesarios para un evento adverso
-                </Text>
-              </View>
-              <Image source={require('../imagenes/kit-medicos2.png')} style={styles.kitIcon} />
-            </TouchableOpacity>
+            <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.horizontalScrollView}
+            contentContainerStyle={styles.horizontalContentContainer}
+          >
+            {/* Tarjeta #1 */}
+            <View style={styles.infoCard}>
+              {/* Contenido de la tarjeta #1 */}
+              <Image source={require('../imagenes/kits3.png')}/>{/*style={styles.cardImage} */}
+             {/* <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>*/}
+            </View>
+            {/* Tarjeta #2 */}
+            <View style={styles.infoCard}>
+              {/* Contenido de la tarjeta #2 */}
+              <Image source={require('../imagenes/evtos3.png')}/>{/*style={styles.cardImage} */}
+            </View>
+             
+
+            {/* Puedes agregar más tarjetas aquí si es necesario */}
+          </ScrollView>
           </View>
+
           <Text style={styles.infoTitle}>Ultimas Emergencias</Text>
           {/* ScrollView horizontal para las tarjetas */}
           <ScrollView
@@ -202,15 +215,31 @@ const buscarUnidades = () => {
             {/* Tarjeta #1 */}
             <View style={styles.infoCard}>
               {/* Contenido de la tarjeta #1 */}
-              <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
-              <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>
+              <Image source={require('../imagenes/emergencias/am2.png')}/>{/*style={styles.cardImage} */}
+             {/* <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>*/}
             </View>
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
               {/* Contenido de la tarjeta #2 */}
-              <Image source={require('../imagenes/whatsapp24.png')} style={styles.cardImage} />
-              <Text style={styles.cardText}>Grupo de Información General - Whatsapp</Text>
+              <Image source={require('../imagenes/emergencias/if2.png')}/>{/*style={styles.cardImage} */}
             </View>
+              {/* Tarjeta #3 */}
+              <View style={styles.infoCard}>
+              <Image source={require('../imagenes/emergencias/ie2.png')}/>{/*style={styles.cardImage} */}
+              </View>
+               {/* Tarjeta #4 */}
+               <View style={styles.infoCard}>
+              <Image source={require('../imagenes/emergencias/ds2.png')}/>{/*style={styles.cardImage} */}
+              </View>
+              {/* Tarjeta #5 */}
+              <View style={styles.infoCard}>
+              <Image source={require('../imagenes/emergencias/ra2.png')}/>{/*style={styles.cardImage} */}
+              </View>
+              {/* Tarjeta #6 */}
+              <View style={styles.infoCard}>
+              <Image source={require('../imagenes/emergencias/rs2.png')}/>{/*style={styles.cardImage} */}
+              </View>
+
             {/* Puedes agregar más tarjetas aquí si es necesario */}
           </ScrollView>
         </>
@@ -295,7 +324,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // Ajustar según sea necesario para el espacio debajo de los botones
   },
   infoTitle: {
-    fontSize: 16,
+    fontSize: 18,
     paddingTop: 1,
     fontWeight: 'bold',
     color: '#424242',
@@ -431,7 +460,7 @@ const styles = StyleSheet.create({
 },
 infoCard: {
     // Ajusta estos estilos para que coincidan con los de tu diseño
-    backgroundColor: '#2E75F2', // o cualquier otro color de fondo que prefieras
+    //backgroundColor: 'white', // o cualquier otro color de fondo que prefieras
     flexDirection: 'row', // Coloca los elementos en línea horizontal
     alignItems: 'center', // Alinea los elementos verticalmente
     borderRadius: 10, // para el efecto de esquinas redondeadas
@@ -444,9 +473,9 @@ infoCard: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    //shadowOpacity: 0.25,
+    //shadowRadius: 3.84,
+    //elevation: 5,
   },
 
   cardTitle: {
