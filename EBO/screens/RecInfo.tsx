@@ -52,6 +52,11 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
             name: data[key].nombre,
             image: { uri: data[key].imagen },
             ciudad: data[key].ciudad,
+            telefono: data[key].telefono,
+            facebook: data[key].facebook,
+            web: data[key].web,
+
+
           }));
   
           setUnidades(unidadesFiltradas);

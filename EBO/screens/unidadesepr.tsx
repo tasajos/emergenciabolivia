@@ -16,22 +16,42 @@ type Props = NativeStackScreenProps<RootStackParamList, 'unidadesepr'>;
 
 
 const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
-  const { unidad } = route.params ?? { unidad: { name: 'Nombre por defecto', image: { uri: 'ruta por defecto' } } };
+  const { unidad } = route.params ?? { unidad: { 
+    name: 'Nombre por defecto', 
+    image: { uri: 'ruta por defecto' } ,
+    telefono: '70776212',
+    facebook: 'https://www.facebook.com/yunkabo',
+    web: 'https://www.yunkaatoq.org'
+  
+  } };
 
   
   // Imprimir la URI de la imagen en la consola
   console.log("URI de la imagen:", unidad.image.uri);
+  console.log("Datos de la unidad:", unidad);
 
   const handleCallPress = () => {
-    Linking.openURL('tel:70776212');
+    Linking.openURL(`tel:${unidad.telefono}`);
   };
 
   const handleFacebookPress = () => {
-    Linking.openURL('https://www.facebook.com/yunkabo');
+    if (unidad.facebook) {
+    Linking.openURL(unidad.facebook);
+  } else {
+    // Manejar el caso en que el enlace de Facebook no esté defini
+    console.log("El enlace de Facebook no está disponible");
+  }
+
   };
 
   const handleWebPress = () => {
-    Linking.openURL('https://www.yunkaatoq.org');
+
+    if (unidad.web) {
+    Linking.openURL(unidad.web);
+  } else {
+    // Manejar el caso en que el enlace web no esté definido
+    console.log("El enlace web no está disponible");
+  }
   };
 
   return (
