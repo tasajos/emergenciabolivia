@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import FloatingButtonBar from './FloatingButtonBar';
 import { Unidad } from './types';
+import { Alert } from 'react-native';
 
 
 
@@ -40,6 +41,7 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
   } else {
     // Manejar el caso en que el enlace de Facebook no esté defini
     console.log("El enlace de Facebook no está disponible");
+    Alert.alert('Enlace no disponible', 'Esta unidad no cuenta con facebook');
   }
 
   };
@@ -51,6 +53,7 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
   } else {
     // Manejar el caso en que el enlace web no esté definido
     console.log("El enlace web no está disponible");
+    Alert.alert('Enlace no disponible', 'El enlace web no está disponible para esta unidad.');
   }
   };
 
