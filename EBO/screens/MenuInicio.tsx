@@ -178,25 +178,44 @@ const buscarUnidades = () => {
   </View>
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
-              {/* Contenido de la tarjeta #2 */}
-              <Image source={require('../imagenes/emergencias/if2.png')}/>{/*style={styles.cardImage} */}
-            </View>
+  <TouchableOpacity onPress={() => navigation.navigate('Ifscreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/if2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
               {/* Tarjeta #3 */}
               <View style={styles.infoCard}>
-              <Image source={require('../imagenes/emergencias/ie2.png')}/>{/*style={styles.cardImage} */}
-              </View>
+  <TouchableOpacity onPress={() => navigation.navigate('Iescreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/ie2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
                {/* Tarjeta #4 */}
                <View style={styles.infoCard}>
-              <Image source={require('../imagenes/emergencias/ds2.png')}/>{/*style={styles.cardImage} */}
-              </View>
+  <TouchableOpacity onPress={() => navigation.navigate('Dscreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/ds2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
               {/* Tarjeta #5 */}
               <View style={styles.infoCard}>
-              <Image source={require('../imagenes/emergencias/ra2.png')}/>{/*style={styles.cardImage} */}
-              </View>
+  <TouchableOpacity onPress={() => navigation.navigate('Rascreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/ra2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
               {/* Tarjeta #6 */}
               <View style={styles.infoCard}>
-              <Image source={require('../imagenes/emergencias/rs2.png')}/>{/*style={styles.cardImage} */}
-              </View>
+  <TouchableOpacity onPress={() => navigation.navigate('Rscreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/rs2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
 
             {/* Puedes agregar más tarjetas aquí si es necesario */}
           </ScrollView>

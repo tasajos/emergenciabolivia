@@ -9,6 +9,11 @@ import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
 import eventoscreen from './screens/eventoscreen';
 import Amscreen from './screens/Amscreen';
+import Ifscreen from './screens/Ifscreen';
+import Iescreen from './screens/Iescreen';
+import Rascreen from './screens/Rascreen';
+import Rscreen from './screens/Rscreen';
+import Dscreen from './screens/Dscreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -20,6 +25,11 @@ export type RootStackParamList = {
   kitset: undefined;
   eventoscreen: undefined;
   Amscreen: undefined;
+  Ifscreen: undefined;
+  Iescreen: undefined;
+  Rascreen: undefined;
+  Rscreen: undefined;
+  Dscreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,6 +48,12 @@ const App = () => {
         <Stack.Screen name="kitset" component={kitset} />
         <Stack.Screen name="eventoscreen" component={eventoscreen} />
         <Stack.Screen name="Amscreen" component={Amscreen} />
+        <Stack.Screen name="Ifscreen" component={Ifscreen} />
+        <Stack.Screen name="Iescreen" component={Iescreen} />
+        <Stack.Screen name="Rascreen" component={Rascreen} />
+        <Stack.Screen name="Rscreen" component={Rscreen} />
+        <Stack.Screen name="Dscreen" component={Dscreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
