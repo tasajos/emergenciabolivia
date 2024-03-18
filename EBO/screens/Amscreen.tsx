@@ -10,10 +10,10 @@ import FloatingButtonBar from './FloatingButtonBar';
 type emeram = {
     key: string;
     imagen: string;
-    descripcion: string;
-    fecha: string;
-    nombre: string;
-    estado: string;
+    Descripcion: string;
+    Fecha: string;
+    Nombre: string;
+    Estado: string;
   };
 
   type RootStackParamList = {
@@ -24,20 +24,20 @@ type emeram = {
   const Amscreen = () => {
     const [evts, setEvts] = useState<emeram[]>([]);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  
-    useEffect(() => {
-      const ref = database().ref('/emergencias/');
-      ref.on('value', (snapshot) => {
-        const data = snapshot.val();
-        const evtsList = Object.keys(data).map(key => ({
-          key: key,
-          ...data[key]
-        }));
-        setEvts(evtsList);
-      });
-  
-      return () => ref.off(); // Desuscribirse del listener al desmontar el componente
-    }, []);
+
+  useEffect(() => {
+    const ref = database().ref('/emergencias');
+    ref.on('value', (snapshot) => {
+      const data = snapshot.val();
+      const evtsList = Object.keys(data).map(key => ({
+        key: key,
+        ...data[key]
+      }));
+      setEvts(evtsList);
+    });
+
+    return () => ref.off(); // Desuscribirse del listener al desmontar el componente
+  }, []);
   
     return (
       <SafeAreaView style={styles.container}>
