@@ -15,6 +15,7 @@ type RootStackParamList = {
   DetalleUnidad: { unidad: any };
   kitset: undefined;
   eventoscreen: undefined;
+  Amscreen: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
 };
 
@@ -167,11 +168,14 @@ const buscarUnidades = () => {
             contentContainerStyle={styles.horizontalContentContainer}
           >
             {/* Tarjeta #1 */}
-            <View style={styles.infoCard}>
-              {/* Contenido de la tarjeta #1 */}
-              <Image source={require('../imagenes/emergencias/am2.png')}/>{/*style={styles.cardImage} */}
-             {/* <Text style={styles.cardText}>Grupo de Coordinación de Emergencia - Cbba Whatsapp</Text>*/}
-            </View>
+    
+  <View style={styles.infoCard}>
+  <TouchableOpacity onPress={() => navigation.navigate('Amscreen')}>
+    {/* Contenido de la tarjeta */}
+    <Image source={require('../imagenes/emergencias/am2.png')}  />
+    {/* <Text style={styles.cardText}>Texto de la tarjeta si es necesario</Text> */}
+    </TouchableOpacity>
+  </View>
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
               {/* Contenido de la tarjeta #2 */}

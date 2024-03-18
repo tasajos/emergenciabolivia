@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import FloatingButtonBar from './FloatingButtonBar';
 
 
-// Define el tipo para tus kits de emergencia
+// Define el tipo para tus eventos
 type evto = {
     key: string;
     Imagen: string;

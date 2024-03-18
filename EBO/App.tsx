@@ -8,7 +8,7 @@ import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
 import eventoscreen from './screens/eventoscreen';
-
+import Amscreen from './screens/Amscreen';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -19,6 +19,7 @@ export type RootStackParamList = {
   } | undefined;
   kitset: undefined;
   eventoscreen: undefined;
+  Amscreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -36,6 +37,7 @@ const App = () => {
         <Stack.Screen name="unidadesepr" component={unidadesepr} />
         <Stack.Screen name="kitset" component={kitset} />
         <Stack.Screen name="eventoscreen" component={eventoscreen} />
+        <Stack.Screen name="Amscreen" component={Amscreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
