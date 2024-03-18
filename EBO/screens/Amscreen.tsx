@@ -105,13 +105,13 @@ type emeram = {
     },
     cardContainer: {
         flexDirection: 'row',
-        backgroundColor: '#61C7E8',
+        backgroundColor: '#B0B3B3',
         borderBottomWidth: 2,
         borderBottomColor: '#eee',
         padding: 2,
         alignItems: 'center',
-        marginBottom: 10, // Separación entre tarjetas
-        borderRadius: 30, // Bordes redondeados
+        marginBottom: 5, // Separación entre tarjetas
+        borderRadius: 20, // Bordes redondeados
         marginHorizontal: 10,
       },
       cardImage: {
