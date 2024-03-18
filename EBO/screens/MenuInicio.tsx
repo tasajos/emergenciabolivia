@@ -14,6 +14,7 @@ type RootStackParamList = {
   RecInfo: undefined;
   DetalleUnidad: { unidad: any };
   kitset: undefined;
+  eventoscreen: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
 };
 
@@ -133,8 +134,7 @@ const buscarUnidades = () => {
             contentContainerStyle={styles.horizontalContentContainer}
           >
             {/* Tarjeta #1 */}
-
-            
+    
   <View style={styles.infoCard}>
   <TouchableOpacity onPress={() => navigation.navigate('kitset')}>
     {/* Contenido de la tarjeta */}
@@ -146,8 +146,11 @@ const buscarUnidades = () => {
 
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
+            <TouchableOpacity onPress={() => navigation.navigate('eventoscreen')}>
               {/* Contenido de la tarjeta #2 */}
               <Image source={require('../imagenes/evtos3.png')}/>{/*style={styles.cardImage} */}
+              </TouchableOpacity>
+
             </View>
              
 

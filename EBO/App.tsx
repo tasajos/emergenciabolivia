@@ -7,6 +7,7 @@ import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pant
 import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
+import eventoscreen from './screens/eventoscreen';
 
 
 export type RootStackParamList = {
@@ -17,6 +18,7 @@ export type RootStackParamList = {
     unidad: Unidad;
   } | undefined;
   kitset: undefined;
+  eventoscreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +35,7 @@ const App = () => {
         <Stack.Screen name="RecInfo" component={RecInfo} />
         <Stack.Screen name="unidadesepr" component={unidadesepr} />
         <Stack.Screen name="kitset" component={kitset} />
+        <Stack.Screen name="eventoscreen" component={eventoscreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
