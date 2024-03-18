@@ -1,6 +1,6 @@
 // eventoscreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView ,Linking} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import database from '@react-native-firebase/database';
 import { useNavigation } from '@react-navigation/native';
@@ -15,6 +15,7 @@ type evto = {
     fecha: string;
     nombre: string;
     inscripcion: string;
+    link: string;
   };
 
 
@@ -50,22 +51,29 @@ const eventoscreen = () => {
           <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
         </View>
         <FlatList
-          data={evts}
-          keyExtractor={(item) => item.key}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.evtItem}>
-              <Image source={{ uri: item.Imagen }} style={styles.evtIcon} />
-              <Text style={styles.evtText}>{`Evento ${item.nombre}`}</Text>
-              <Text style={styles.evtText}>{`Fecha: ${item.fecha}`}</Text>
-              <Text style={styles.evtText}>{`Inscripcion: ${item.inscripcion}`}</Text>
-              <Text style={styles.evtText}>{`Descripcion: ${item.descripcion}`}</Text>
-            </TouchableOpacity>
-          )}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-        />
-        <FloatingButtonBar navigation={navigation} />
-      </SafeAreaView>
+        data={evts}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+            <View style={styles.cardContainer}>
+              <Image source={{ uri: item.imagen }} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>{item.nombre}</Text>
+                <Text style={styles.cardInfo}>{`Fecha: ${item.fecha}`}</Text>
+                <Text style={styles.cardInfo}>{`Inscripción: ${item.inscripcion}`}</Text>
+                <Text style={styles.cardInfo}>{item.descripcion}</Text>
+                {/* Agrega un toque de Texto para abrir el enlace */}
+                <Text style={styles.cardInfo}>{`Registro:`}</Text>
+                <Text 
+                  style={styles.linkStyle} 
+                  onPress={() => Linking.openURL(item.link)}>
+                  {item.link}
+                </Text>
+              </View>
+            </View>
+        )}
+      />
+      <FloatingButtonBar navigation={navigation} />
+    </SafeAreaView>
       
     );
   };
@@ -115,6 +123,43 @@ const eventoscreen = () => {
       resizeMode: 'contain', // Contiene la imagen dentro del espacio disponible sin deformarla
       marginTop: 20, // Ajusta el margen superior si es necesario
     },
+    cardContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#61C7E8',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        padding: 5,
+        alignItems: 'center',
+        marginBottom: 10, // Separación entre tarjetas
+        borderRadius: 40, // Bordes redondeados
+        marginHorizontal: 10,
+      },
+      cardImage: {
+        width: 80, // Ajusta según el tamaño de tus imágenes
+        height: 80, // Ajusta según el tamaño de tus imágenes
+        borderRadius: 20, // Ajusta para hacer la imagen redonda
+        marginRight: 40,
+        marginLeft: 10,
+      },
+      cardContent: {
+        flex: 1,
+      },
+      cardTitle: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: '#000',
+      },
+      cardInfo: {
+        fontSize: 14,
+        color: 'black',
+      },
+      linkStyle: {
+        color: '#0645AD', // Color típico de enlace
+        textDecorationLine: 'underline', // Subraya el texto para parecer un enlace
+        fontSize: 14,
+        marginTop: 5, // Espacio adicional si es necesario
+      },
+
     // ... Agrega más estilos según sea necesario
   });
   export default eventoscreen;
