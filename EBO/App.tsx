@@ -16,8 +16,8 @@ import Rscreen from './screens/Rscreen';
 import Dscreen from './screens/Dscreen';
 import ubicacionesbom from './screens/ubicacionesbom';
 import Contacto from './screens/Contacto';
-import Kitterremoto from './screens/kitterremoto';
-import Kitinundacion from './screens/kitinundacion';
+import Kitterremoto from './screens/Kitterremoto';
+import Kitinundacion from './screens/Kitinundacion';
 
 export type RootStackParamList = {
   Home: undefined;
