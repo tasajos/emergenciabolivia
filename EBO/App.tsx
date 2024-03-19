@@ -14,6 +14,7 @@ import Iescreen from './screens/Iescreen';
 import Rascreen from './screens/Rascreen';
 import Rscreen from './screens/Rscreen';
 import Dscreen from './screens/Dscreen';
+import ubicacionesbom from './screens/ubicacionesbom';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -30,6 +31,7 @@ export type RootStackParamList = {
   Rascreen: undefined;
   Rscreen: undefined;
   Dscreen: undefined;
+  ubicacionesbom: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -53,6 +55,7 @@ const App = () => {
         <Stack.Screen name="Rascreen" component={Rascreen} />
         <Stack.Screen name="Rscreen" component={Rscreen} />
         <Stack.Screen name="Dscreen" component={Dscreen} />
+        <Stack.Screen name="ubicacionesbom" component={ubicacionesbom} />
 
       </Stack.Navigator>
     </NavigationContainer>
