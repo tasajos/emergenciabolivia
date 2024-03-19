@@ -143,6 +143,13 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+
 });
 
 export default UnidadesEPR;

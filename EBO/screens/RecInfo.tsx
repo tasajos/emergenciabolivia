@@ -1,5 +1,5 @@
 import React, { useState ,useCallback,useEffect  } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity,ActivityIndicator  } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import database from '@react-native-firebase/database';
@@ -34,10 +34,12 @@ interface Unidad {
 const RecInfo: React.FC<Props> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [unidades, setUnidades] = useState<Unidad[]>([]);
+  const [loading, setLoading] = useState(true)
 
 
   useEffect(() => {
     const ref = database().ref('/epr');
+    setLoading(true);
     ref.once('value')
       .then((snapshot) => {
         const data = snapshot.val();
@@ -60,6 +62,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
           }));
   
           setUnidades(unidadesFiltradas);
+          setLoading(false);
         } else {
           console.log('No hay datos disponibles en esta ruta.');
         }
@@ -257,7 +260,11 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         height: 20,
         margin: 10, // asegúrate de que el ícono no esté pegado al borde
       },
-      
+      spinnerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
 
 
     // ... cualquier otro estilo que necesites

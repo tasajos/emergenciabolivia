@@ -25,6 +25,11 @@ const styles = StyleSheet.create({
     floatingBar: {
         flex: 2, // Ocupa el 10% restante de la pantalla
     },
+    spinnerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
 });
 
 export default ubicacionesbom;

@@ -1,6 +1,6 @@
 // Dscreen.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView ,Linking} from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView ,Linking,ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import database from '@react-native-firebase/database';
 import { useNavigation } from '@react-navigation/native';
@@ -24,9 +24,11 @@ type emeram = {
   const Dscreen = () => {
     const [evts, setEvts] = useState<emeram[]>([]);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const ref = database().ref('/desastres');
+    setLoading(true);
     ref.on('value', (snapshot) => {
       const data = snapshot.val();
       const evtsList = Object.keys(data).map(key => ({
@@ -34,11 +36,26 @@ type emeram = {
         ...data[key]
       }));
       setEvts(evtsList);
+      setLoading(false);
     });
 
     return () => ref.off(); // Desuscribirse del listener al desmontar el componente
+    setLoading(false);
+
+
   }, []);
   
+
+
+  if (loading) {
+    // Si está cargando, muestra el spinner
+    return (
+      <View style={styles.spinnerContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -139,7 +156,11 @@ type emeram = {
         fontSize: 14,
         marginTop: 5, // Espacio adicional si es necesario
       },
-
+      spinnerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
     // ... Agrega más estilos según sea necesario
   });
   export default Dscreen;
