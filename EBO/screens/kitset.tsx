@@ -21,6 +21,24 @@ const Kitset = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [loading, setLoading] = useState(true);
 
+  const handleSelectKit = (tipo: string) => {
+    console.log(`Seleccionaste: ${tipo}`); // Esto te dirá qué se está pasando a la función
+    // Puedes utilizar un switch o un objeto de mapeo para ir a pantallas diferentes
+    switch (tipo) {
+      case 'Terremoto':
+        navigation.navigate('Rscreen'); // Navegar a 
+        break;
+      case 'Inundacion':
+        navigation.navigate('Iescreen'); // Navegar a 
+        break;
+      // Agrega casos adicionales según los tipos de kits que tengas
+      default:
+        console.warn('Tipo de kit no reconocido');
+    }
+  };
+
+
+
   useEffect(() => {
     const ref = database().ref('/kitsemergencia');
     setLoading(true);
@@ -59,7 +77,10 @@ const Kitset = () => {
         data={kits}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.kitItem}>
+          <TouchableOpacity 
+            style={styles.kitItem}
+            onPress={() => handleSelectKit(item.Tipo)} // Manejar la selección aquí
+          >
             <Image source={{ uri: item.Imagen }} style={styles.kitIcon} />
             <Text style={styles.kitText}>{`Kit ${item.Tipo}`}</Text>
           </TouchableOpacity>
