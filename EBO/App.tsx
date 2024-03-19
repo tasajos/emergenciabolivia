@@ -16,6 +16,8 @@ import Rscreen from './screens/Rscreen';
 import Dscreen from './screens/Dscreen';
 import ubicacionesbom from './screens/ubicacionesbom';
 import Contacto from './screens/Contacto';
+import Kitterremoto from './screens/kitterremoto';
+import Kitinundacion from './screens/kitinundacion';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -34,6 +36,8 @@ export type RootStackParamList = {
   Dscreen: undefined;
   ubicacionesbom: undefined;
   Contacto: undefined;
+  Kitterremoto: undefined;
+  Kitinundacion: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -59,6 +63,8 @@ const App = () => {
         <Stack.Screen name="Dscreen" component={Dscreen} />
         <Stack.Screen name="ubicacionesbom" component={ubicacionesbom} />
         <Stack.Screen name="Contacto" component={Contacto} />
+        <Stack.Screen name="Kitterremoto" component={Kitterremoto} />
+        <Stack.Screen name="Kitinundacion" component={Kitinundacion} />
 
       </Stack.Navigator>
     </NavigationContainer>
