@@ -39,7 +39,7 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={openWhatsApp}>
         <Image source={require('../imagenes/whatsapp24.png')} style={styles.icon} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
         <Image source={require('../imagenes/add24.png')} style={styles.icon} />
       </TouchableOpacity>
     </View>
