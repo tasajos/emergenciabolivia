@@ -79,8 +79,8 @@ android {
         applicationId "chakuy.com.ebo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "3.1"
+        versionCode 4
+        versionName "4.1"
     }
     signingConfigs {
     release {
