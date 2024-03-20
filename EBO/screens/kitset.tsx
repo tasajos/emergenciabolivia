@@ -15,6 +15,8 @@ type Kit = {
 type RootStackParamList = {
     // ... otros parámetros de tus rutas
     Kitset: undefined; // Asegúrate de tener una ruta Kitset en tu StackNavigator
+    Kitterremoto: undefined; // Asegúrate de tener una ruta Kitset en tu StackNavigator
+    Kitinundacion: undefined; // Asegúrate de tener una ruta Kitset en tu StackNavigator
   };
 const Kitset = () => {
   const [kits, setKits] = useState<Kit[]>([]);
