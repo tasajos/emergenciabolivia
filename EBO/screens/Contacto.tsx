@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert,SafeAreaView,Text, Image} from 'react-native';
+import { View, TextInput, Button, StyleSheet, Alert, SafeAreaView, Text, Image } from 'react-native';
 import database from '@react-native-firebase/database';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 
 const Contacto = () => {
@@ -13,87 +14,78 @@ const Contacto = () => {
   });
 
   type RootStackParamList = {
-    // ... otros parámetros de tus rutas
-    Contacto: undefined; // Asegúrate de tener una ruta Eventos en tu StackNavigator
+    Contacto: undefined; // Añade otras rutas aquí según sea necesario
   };
+
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const handleChange = (name, value) => {
+
+  const handleChange = (name: string, value: string) => {
     setForm({ ...form, [name]: value });
   };
 
-
-  const isValidEmail = (email) => {
-    // A simple email validation regex
+  const isValidEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
   const handleSubmit = () => {
-    // Aquí podrías añadir validaciones a tu formulario
-
     if (!isValidEmail(form.email)) {
-        Alert.alert('Error', 'Por favor ingresa un correo electrónico válido.');
-        return;
-      }
-      
-    // Envía los datos a Firebase
-    database()
-      .ref('/contactos')
-      .push(form)
+      Alert.alert('Error', 'Por favor ingresa un correo electrónico válido.');
+      return;
+    }
+
+    const newRef = database().ref('/contactos').push();
+    newRef.set(form)
       .then(() => Alert.alert('Mensaje enviado', 'Tu mensaje ha sido enviado correctamente.'))
-      .catch((error) => {
+      .catch((error: Error) => {
         console.error(error);
         Alert.alert('Error', 'Hubo un problema al enviar tu mensaje.');
       });
   };
 
   return (
-
-<SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-          <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-          <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
-        </View>
-
-        <View style={styles.formContainer}>
-      <Text style={styles.instructions}>
-        Escribe tus comentarios o eventos de un suceso:
-      </Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
+        <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
+        <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
       </View>
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre"
-        value={form.nombre}
-        onChangeText={(text) => handleChange('nombre', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="E-mail"
-        value={form.email}
-        onChangeText={(text) => handleChange('email', text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Telefono"
-        keyboardType="phone-pad"
-        value={form.telefono}
-        onChangeText={(text) => handleChange('telefono', text)}
-      />
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Evento o Comentario"
-        value={form.comentario}
-        onChangeText={(text) => handleChange('comentario', text)}
-        multiline
-      />
-      <Button title="Enviar" onPress={handleSubmit} />
+
+      <View style={styles.formContainer}>
+        <Text style={styles.instructions}>
+          Escribe tus comentarios o eventos de un suceso:
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={form.nombre}
+          onChangeText={(text) => handleChange('nombre', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="E-mail"
+          value={form.email}
+          onChangeText={(text) => handleChange('email', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Telefono"
+          keyboardType="phone-pad"
+          value={form.telefono}
+          onChangeText={(text) => handleChange('telefono', text)}
+        />
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Evento o Comentario"
+          value={form.comentario}
+          onChangeText={(text) => handleChange('comentario', text)}
+          multiline
+        />
+        <Button title="Enviar" onPress={handleSubmit} />
+      </View>
       <FloatingButtonBar navigation={navigation} />
-    </View>
     </SafeAreaView>
   );
-
 };
 
 const styles = StyleSheet.create({
@@ -137,6 +129,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: 20, // Add padding if needed
+    marginBottom: 80, // Ajusta este valor según la altura de tu FloatingButtonBar
   },
   instructions: {
     fontSize: 16,
@@ -144,5 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Add some space before the inputs
   },
 });
+
+
 
 export default Contacto;
