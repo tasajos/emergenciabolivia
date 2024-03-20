@@ -132,7 +132,8 @@ const styles = StyleSheet.create({
   kitText: {
     marginTop: 8,
     fontSize: 16,
-    fontWeight: 'bold',
+    color: '#424242',
+    //fontWeight: 'bold',
   },
   row: {
     flex: 1,

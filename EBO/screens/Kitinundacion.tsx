@@ -162,7 +162,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'salmon',
   },
   kitText: {
-    fontSize: 18,
+    fontSize: 16,
+    color: '#424242',
   },
   logo: {
     height: 50,

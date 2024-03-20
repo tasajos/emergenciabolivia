@@ -1,8 +1,10 @@
+// Kitinundacion.tsx
 import React, { useState, useEffect } from 'react';
-import {  View,  Text,  StyleSheet,  Image,  FlatList,  TouchableOpacity,  SafeAreaView,  Alert} from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonBar from './FloatingButtonBar';
+
 type KitItem = {
   name: string;
   isEssential: boolean;
@@ -34,21 +36,14 @@ const Kitterremoto = () => {
     { name: 'Computadora', isEssential: false },
   ];
 
- // Estado para los ítems
- const [items, setItems] = useState<KitItem[]>(shuffleArray([...initialItems]));
+  const [items, setItems] = useState<KitItem[]>(shuffleArray([...initialItems]));
+  const [gameOver, setGameOver] = useState(false);
+  const [points, setPoints] = useState(0);
+  const [messageShown, setMessageShown] = useState(false);
 
-
- // Estado para el juego
- const [gameOver, setGameOver] = useState(false);
- const [points, setPoints] = useState(0);
- const [messageShown, setMessageShown] = useState(false);
-
-
-// Efecto para mezclar los ítems al inicio
-useEffect(() => {
-  setItems(shuffleArray([...initialItems]));
-}, []);
-
+  useEffect(() => {
+    setItems(shuffleArray([...initialItems]));
+  }, []);
 
   const handleSelectItem = (index: number) => {
     if (gameOver) {
@@ -69,18 +64,14 @@ useEffect(() => {
       }
     } else if (!currentItem.isEssential && currentItem.selected) {
       setGameOver(true);
-      Alert.alert(
-        'Juego terminado',
-        'Seleccionaste un elemento no esencial. Puntos finales: ' + points,
-        [{ text: 'Reiniciar Juego', onPress: handleRestartGame }]
-      );
+      Alert.alert('Juego terminado', 'Seleccionaste un elemento no esencial. Puntos finales: ' + points, [{ text: 'Reiniciar Juego', onPress: handleRestartGame }]);
     }
 
     setItems(newItems);
   };
 
   const handleRestartGame = () => {
-    setItems(initialItems.map(item => ({ ...item, selected: undefined })));
+    setItems(shuffleArray([...initialItems]));
     setGameOver(false);
     setPoints(0);
     setMessageShown(false);
@@ -94,10 +85,10 @@ useEffect(() => {
         <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
       </View>
       <Text style={styles.description}>
-        Selecciona los elementos que crees que son esenciales para un kit de terremoto.
+        Selecciona los elementos que crees que son esenciales para un kit de inundación.
       </Text>
       <Text style={styles.points}>Puntos: {points}</Text>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingBottom: 60 }}>
         <Image source={require('../imagenes/mochila.png')} style={styles.backpackIcon} />
         <FlatList
           data={items}
@@ -120,6 +111,7 @@ useEffect(() => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -167,7 +159,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'salmon',
   },
   kitText: {
-    fontSize: 18,
+    fontSize: 16,
+    color: '#424242',
   },
   logo: {
     height: 50,
@@ -180,5 +173,4 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-
 export default Kitterremoto;
