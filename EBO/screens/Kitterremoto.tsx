@@ -85,7 +85,7 @@ const Kitterremoto = () => {
         <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
       </View>
       <Text style={styles.description}>
-        Selecciona los elementos que crees que son esenciales para un kit de inundación.
+        Selecciona los elementos que crees que son esenciales para un kit de Terremoto.
       </Text>
       <Text style={styles.points}>Puntos: {points}</Text>
       <View style={{ flex: 1, paddingBottom: 60 }}>
