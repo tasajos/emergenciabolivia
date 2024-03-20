@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 20,
     marginBottom: 20,
+    color: '#424242',
   },
   backpackIcon: {
     width: 100,
