@@ -3,6 +3,9 @@ import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaVie
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
+import ImagePicker from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 type RootStackParamList = {
@@ -10,11 +13,11 @@ type RootStackParamList = {
   };
 
   const Uiadmineventos = () => {
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+    const navigation = useNavigation();
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [imagen, setImagen] = useState('');
-    const [fecha, setFecha] = useState('');
+    const [fecha, setFecha] = useState(new Date());
     const [link, setLink] = useState('');
     const [inscripcion, setInscripcion] = useState('');
   
@@ -22,70 +25,80 @@ type RootStackParamList = {
       // Aquí implementarías la lógica para enviar los datos a donde sea necesario
       alert('Evento registrado con éxito');
     };
+
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+    const pickImage = () => {
+        const options = {
+          mediaType: 'photo',
+          quality: 1,
+        };
+
+      
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+              console.log('ImagePicker Error: ', response.errorMessage);
+            } else if (response.assets && response.assets.length > 0) {
+              // Establece el estado de la imagen aquí con el primer activo (asset)
+              const source = { uri: response.assets[0].uri };
+              setImagen(source.uri);
+            }
+          });
+        };
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+      };
+    
+      const onDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || fecha;
+        setDatePickerVisibility(Platform.OS === 'ios');
+        setFecha(new Date(currentDate)); // Asegúrate de que sea un objeto Date
+    };
   
-    return (
-      <SafeAreaView style={styles.container}>
-       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          <View style={styles.header}>
-            <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-            <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-            <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
-          </View>
-          <Text style={styles.description}>
-            Registra Eventos
-          </Text>
-          <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre"
-              value={nombre}
-              onChangeText={setNombre}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Descripción"
-              value={descripcion}
-              onChangeText={setDescripcion}
-              multiline
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="URL de la Imagen"
-              value={imagen}
-              onChangeText={setImagen}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Fecha"
-              value={fecha}
-              onChangeText={setFecha}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Link del Evento"
-              value={link}
-              onChangeText={setLink}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Inscripción (Sí/No)"
-              value={inscripcion}
-              onChangeText={setInscripcion}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Enviar</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
-        <View style={styles.fixedButton}>
+      return (
+        <SafeAreaView style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            <View style={styles.header}>
+              <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
+              <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
+              <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+            </View>
+            <Text style={styles.description}>Registra Eventos</Text>
+            <View style={styles.form}>
+              <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
+              <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
+              <View style={styles.imagePickerContainer}>
+                <Text style={styles.imagePickerText}>Selecciona Imagen:</Text>
+                <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
+                  <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.datePickerContainer}>
+                <Text style={styles.datePickerText}>Selecciona Fecha:</Text>
+                <TouchableOpacity onPress={showDatePicker} style={styles.datePickerButton}>
+                  <Image source={require('../imagenes/calendario.png')} style={styles.datePickerIcon} />
+                </TouchableOpacity>
+              </View>
+              {fecha instanceof Date && (
+    <Text style={styles.selectedDateText}>Fecha seleccionada: {fecha.toLocaleDateString()}</Text>
+)}
+              {isDatePickerVisible && (
+                <DateTimePicker testID="dateTimePicker" value={fecha} mode="date" display="default" onChange={onDateChange} />
+              )}
+              <TextInput style={styles.input} placeholder="Link del Evento" value={link} onChangeText={setLink} />
+              <TextInput style={styles.input} placeholder="Inscripción (Sí/No)" value={inscripcion} onChangeText={setInscripcion} />
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Enviar</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
           <FloatingButtonAdmin navigation={navigation} />
-        </View>
-
-      </SafeAreaView>
-    );
-  };
-
+        </SafeAreaView>
+      );
+    };
 
 const styles = StyleSheet.create({
   container: {
@@ -191,6 +204,43 @@ const styles = StyleSheet.create({
     paddingVertical: 20, // agregar algo de espacio alrededor del botón
     alignItems: 'center',
     width: '100%',
+  },
+  imagePickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  imagePickerText: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  imagePickerButton: {
+    padding: 10,
+  },
+  imagePickerIcon: {
+    width: 30,
+    height: 30,
+  },
+  datePickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  datePickerText: {
+    fontSize: 16,
+    marginRight: 10,
+  },
+  datePickerButton: {
+    padding: 10,
+  },
+  datePickerIcon: {
+    width: 30,
+    height: 30,
+  },
+  selectedDateText: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 export default Uiadmineventos;
