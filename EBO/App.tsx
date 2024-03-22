@@ -19,6 +19,10 @@ import Contacto from './screens/Contacto';
 import Kitterremoto from './screens/Kitterremoto';
 import Kitinundacion from './screens/Kitinundacion';
 import Login from './screens/Login';
+import Uiadministrador from './screens/Uiadministrador';
+import Uiadmineventos from './screens/Uiadmineventos';
+import Uiadminepr from './screens/Uiadminepr';
+import Uiadminnotif from './screens/Uiadminnotif';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -40,6 +44,10 @@ export type RootStackParamList = {
   Kitterremoto: undefined;
   Kitinundacion: undefined;
   Login: undefined;
+  Uiadministrador: undefined;
+  Uiadmineventos: undefined;
+  Uiadminepr: undefined;
+  Uiadminnotif: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -68,6 +76,10 @@ const App = () => {
         <Stack.Screen name="Kitterremoto" component={Kitterremoto} />
         <Stack.Screen name="Kitinundacion" component={Kitinundacion} />
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Uiadministrador" component={Uiadministrador} />
+        <Stack.Screen name="Uiadmineventos" component={Uiadmineventos} />
+        <Stack.Screen name="Uiadminepr" component={Uiadminepr} />
+        <Stack.Screen name="Uiadminnotif" component={Uiadminnotif} />
 
       </Stack.Navigator>
     </NavigationContainer>

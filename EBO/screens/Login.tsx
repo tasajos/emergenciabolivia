@@ -28,7 +28,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
       let response = await auth().signInWithEmailAndPassword(email, password);
       if (response && response.user) {
         Alert.alert("Éxito", "Login Exitoso");
-        navigation.navigate('Dscreen'); // Navega a la pantalla principal
+        navigation.navigate('Uiadministrador'); // Navega a la pantalla principal
       }
     
     } catch (error: any) { // Agrega el type assertion aquí
