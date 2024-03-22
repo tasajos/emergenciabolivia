@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button ,ActivityIndicator} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
@@ -22,43 +22,53 @@ type RootStackParamList = {
     const [fecha, setFecha] = useState(new Date());
     const [link, setLink] = useState('');
     const [inscripcion, setInscripcion] = useState('');
+    const [key, setKey] = useState(0);
+    const [imageUploadMessage, setImageUploadMessage] = useState('');
+
+
+    const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
+const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de carga
   
-    const handleSubmit = async () => {
-        let imageUrl = ''; // Inicializa la URL de la imagen como una cadena vacía
-        if (imagen) {
-            // Subir imagen a Firebase Storage en la carpeta especificada
-            const uploadUri = imagen;
-            const filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-            const storageRef = firebase.storage().ref(`epr/eventos/${filename}`);
-      
-            try {
-              await storageRef.putFile(uploadUri);
-              imageUrl = await storageRef.getDownloadURL();
-            } catch (error) {
-              console.error('Error al subir imagen:', error);
-              alert('Error al subir la imagen');
-              return; // Sale de la función si ocurre un error al subir la imagen
-            }
-          }
-      
-          // Registrar evento en Firebase Realtime Database
-          try {
-            const newEventRef = database().ref('/eventos').push();
-            await newEventRef.set({
-              nombre,
-              descripcion,
-              fecha: fecha.toISOString(),
-              link,
-              inscripcion,
-              imagen: imageUrl, // URL de la imagen subida o cadena vacía si no se seleccionó una imagen
-            });
-      
-            alert('Evento registrado con éxito');
-          } catch (error) {
-            console.error('Error al registrar evento:', error);
-            alert('Error al registrar el evento');
-          }
-      };
+const handleSubmit = async () => {
+    setIsSubmitting(true);
+    let imageUrl = '';
+    if (imagen) {
+      const uploadUri = imagen;
+      const filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+      const storageRef = firebase.storage().ref(`epr/eventos/${filename}`);
+  
+      try {
+        await storageRef.putFile(uploadUri);
+        imageUrl = await storageRef.getDownloadURL();
+        setImageUploadMessage('Imagen Cargada');
+      } catch (error) {
+        console.error('Error al subir imagen:', error);
+        alert('Error al subir la imagen');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+  
+    try {
+      const newEventRef = database().ref('/eventos').push();
+      await newEventRef.set({
+        nombre,
+        descripcion,
+        fecha: fecha.toISOString(),
+        link,
+        inscripcion,
+        imagen: imageUrl,
+      });
+  
+      alert('Evento registrado con éxito');
+      resetForm(); // Llamar a la función para restablecer el formulario
+      setKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la actualización de la interfaz
+    } catch (error) {
+      console.error('Error al registrar evento:', error);
+      alert('Error al registrar el evento');
+    }
+    setIsSubmitting(false);
+  };
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -68,6 +78,8 @@ type RootStackParamList = {
           quality: 1,
         };
 
+  
+
       
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
@@ -75,12 +87,25 @@ type RootStackParamList = {
             } else if (response.errorCode) {
               console.log('ImagePicker Error: ', response.errorMessage);
             } else if (response.assets && response.assets.length > 0) {
-              // Establece el estado de la imagen aquí con el primer activo (asset)
               const source = { uri: response.assets[0].uri };
               setImagen(source.uri);
+              setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
+              setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
             }
           });
-        };
+    };
+
+        const resetForm = () => {
+            // Restablecer todos los estados a sus valores predeterminados
+            setNombre('');
+            setDescripcion('');
+            setImagen('');
+            setFecha(new Date());
+            setLink('');
+            setInscripcion('');
+            setImageButtonText('Selecciona Imagen'); // Restablecer el texto del botón de selección de imagen
+            setImageUploadMessage(''); // Limpiar el mensaje de carga de la imagen
+          };
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -93,7 +118,7 @@ type RootStackParamList = {
     };
   
       return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container} key={key}>
           <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <View style={styles.header}>
               <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
@@ -105,11 +130,12 @@ type RootStackParamList = {
               <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
               <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
               <View style={styles.imagePickerContainer}>
-                <Text style={styles.imagePickerText}>Selecciona Imagen:</Text>
-                <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
-                  <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
-                </TouchableOpacity>
-              </View>
+  <Text style={styles.imagePickerText}>{imageButtonText}</Text>
+  <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
+    <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
+  </TouchableOpacity>
+  <Text>{imageUploadMessage}</Text>
+</View>
               <View style={styles.datePickerContainer}>
                 <Text style={styles.datePickerText}>Selecciona Fecha:</Text>
                 <TouchableOpacity onPress={showDatePicker} style={styles.datePickerButton}>
@@ -124,9 +150,16 @@ type RootStackParamList = {
               )}
               <TextInput style={styles.input} placeholder="Link del Evento" value={link} onChangeText={setLink} />
               <TextInput style={styles.input} placeholder="Inscripción (Sí/No)" value={inscripcion} onChangeText={setInscripcion} />
-              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Enviar</Text>
-              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isSubmitting}>
+  {isSubmitting ? (
+    <ActivityIndicator size="small" color="#fff" />
+  ) : (
+    <Text style={styles.buttonText}>Enviar</Text>
+  )}
+</TouchableOpacity>
+
+
             </View>
           </ScrollView>
           <FloatingButtonAdmin navigation={navigation} />
