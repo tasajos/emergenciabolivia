@@ -6,6 +6,8 @@ import FloatingButtonAdmin from './FloatingButtonAdmin';
 import ImagePicker from 'react-native-image-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { firebase } from '@react-native-firebase/storage'; // Importar Firebase Storage
+import database from '@react-native-firebase/database'; // Importar Firebase Realtime Database
 
 
 type RootStackParamList = {
@@ -21,10 +23,42 @@ type RootStackParamList = {
     const [link, setLink] = useState('');
     const [inscripcion, setInscripcion] = useState('');
   
-    const handleSubmit = () => {
-      // Aquí implementarías la lógica para enviar los datos a donde sea necesario
-      alert('Evento registrado con éxito');
-    };
+    const handleSubmit = async () => {
+        let imageUrl = ''; // Inicializa la URL de la imagen como una cadena vacía
+        if (imagen) {
+            // Subir imagen a Firebase Storage en la carpeta especificada
+            const uploadUri = imagen;
+            const filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+            const storageRef = firebase.storage().ref(`epr/eventos/${filename}`);
+      
+            try {
+              await storageRef.putFile(uploadUri);
+              imageUrl = await storageRef.getDownloadURL();
+            } catch (error) {
+              console.error('Error al subir imagen:', error);
+              alert('Error al subir la imagen');
+              return; // Sale de la función si ocurre un error al subir la imagen
+            }
+          }
+      
+          // Registrar evento en Firebase Realtime Database
+          try {
+            const newEventRef = database().ref('/eventos').push();
+            await newEventRef.set({
+              nombre,
+              descripcion,
+              fecha: fecha.toISOString(),
+              link,
+              inscripcion,
+              imagen: imageUrl, // URL de la imagen subida o cadena vacía si no se seleccionó una imagen
+            });
+      
+            alert('Evento registrado con éxito');
+          } catch (error) {
+            console.error('Error al registrar evento:', error);
+            alert('Error al registrar el evento');
+          }
+      };
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
