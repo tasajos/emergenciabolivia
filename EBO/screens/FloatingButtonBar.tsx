@@ -42,6 +42,9 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
         <Image source={require('../imagenes/add24.png')} style={styles.icon} />
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Image source={require('../imagenes/acceso.png')} style={styles.icon} />
+      </TouchableOpacity>
     </View>
   );
 };
