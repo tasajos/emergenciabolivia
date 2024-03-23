@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button ,ActivityIndicator} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button ,ActivityIndicator,Alert} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
@@ -8,7 +8,10 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebase } from '@react-native-firebase/storage'; // Importar Firebase Storage
 import database from '@react-native-firebase/database'; // Importar Firebase Realtime Database
-
+import { MediaType } from 'react-native-image-picker';
+import { Platform } from 'react-native';
+import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { PhotoQuality } from 'react-native-image-picker';
 
 type RootStackParamList = {
     Uiadmineventos: undefined;
@@ -43,7 +46,7 @@ const handleSubmit = async () => {
         setImageUploadMessage('Imagen Cargada');
       } catch (error) {
         console.error('Error al subir imagen:', error);
-        alert('Error al subir la imagen');
+        Alert.alert('Error al subir la imagen');
         setIsSubmitting(false);
         return;
       }
@@ -60,12 +63,12 @@ const handleSubmit = async () => {
         imagen: imageUrl,
       });
   
-      alert('Evento registrado con éxito');
+      Alert.alert('Evento registrado con éxito');
       resetForm(); // Llamar a la función para restablecer el formulario
       setKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la actualización de la interfaz
     } catch (error) {
       console.error('Error al registrar evento:', error);
-      alert('Error al registrar el evento');
+      Alert.alert('Error al registrar el evento');
     }
     setIsSubmitting(false);
   };
@@ -73,22 +76,20 @@ const handleSubmit = async () => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const pickImage = () => {
-        const options = {
-          mediaType: 'photo',
-          quality: 1,
-        };
-
-  
-
+      const options = {
+        mediaType: 'photo',
+        quality: 1,
+      };
       
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
               console.log('User cancelled image picker');
             } else if (response.errorCode) {
               console.log('ImagePicker Error: ', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0) {
+            } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
               const source = { uri: response.assets[0].uri };
               setImagen(source.uri);
+            
               setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
               setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
             }
@@ -111,11 +112,11 @@ const handleSubmit = async () => {
         setDatePickerVisibility(true);
       };
     
-      const onDateChange = (event, selectedDate) => {
+      const onDateChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         const currentDate = selectedDate || fecha;
         setDatePickerVisibility(Platform.OS === 'ios');
-        setFecha(new Date(currentDate)); // Asegúrate de que sea un objeto Date
-    };
+        setFecha(new Date(currentDate));
+      };
   
       return (
         <SafeAreaView style={styles.container} key={key}>
