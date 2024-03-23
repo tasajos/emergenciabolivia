@@ -162,8 +162,9 @@ const handleSubmit = async () => {
 
 
             </View>
+            <FloatingButtonAdmin navigation={navigation} />
           </ScrollView>
-          <FloatingButtonAdmin navigation={navigation} />
+         
         </SafeAreaView>
       );
     };
