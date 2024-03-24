@@ -113,7 +113,7 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
 
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar por Nombre o Departamento"
+            placeholder="Buscar por Nombre o Ciudad"
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#000"
