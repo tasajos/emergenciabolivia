@@ -23,6 +23,24 @@ import Uiadministrador from './screens/Uiadministrador';
 import Uiadmineventos from './screens/Uiadmineventos';
 import Uiadminepr from './screens/Uiadminepr';
 import Uiadminnotif from './screens/Uiadminnotif';
+import firebase from '@react-native-firebase/app';
+
+
+// Configuración de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBOjSCE0nK8peMFZGQ5cLXRgKfBe_41dMk",
+  authDomain: "chakuy.com",
+  databaseURL: "https://fir-login2-c7a59-default-rtdb.firebaseio.com/",
+  projectId: "fir-login2-c7a59",
+  storageBucket: "fir-login2-c7a59.appspot.com",
+  messagingSenderId: "306570664024",
+  appId: "1:306570664024:android:3b7152b52a1dbc691a522d"
+};
+
+// Inicializa Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 export type RootStackParamList = {
   Home: undefined;

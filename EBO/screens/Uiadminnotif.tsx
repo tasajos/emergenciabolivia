@@ -3,11 +3,26 @@ import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
+import messaging from '@react-native-firebase/messaging';
 
 
 type RootStackParamList = {
     Uiadminnotif: undefined;
   };
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      const fcmToken = await messaging().getToken();
+      console.log('FCM Token:', fcmToken);
+    }
+  }
+
 
   const Uiadminnotif = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();

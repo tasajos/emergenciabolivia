@@ -6,6 +6,7 @@ import { NavigationProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import database from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
 
 
 
@@ -16,6 +17,11 @@ type RootStackParamList = {
   kitset: undefined;
   eventoscreen: undefined;
   Amscreen: undefined;
+  Ifscreen: undefined;
+  Iescreen: undefined;
+  Dscreen: undefined;
+  Rascreen: undefined;
+  Rscreen: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
 };
 
@@ -55,12 +61,19 @@ const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
 
 useEffect(() => {
+  const unsubscribe = messaging().onMessage(async remoteMessage => {
+    console.log('Mensaje FCM en primer plano:', remoteMessage);
+  });
+
+
   if (searchQuery.trim() !== '' && value) {
     buscarUnidades();
   }
 }, [searchQuery, value]);
 
 const buscarUnidades = () => {
+  
+
   const ref = database().ref('/epr');
   ref.once('value')
     .then((snapshot) => {

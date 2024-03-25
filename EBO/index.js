@@ -3,9 +3,12 @@
  */
 
 import {AppRegistry} from 'react-native';
-import firebase from '@react-native-firebase/app';
+//import firebase from '@react-native-firebase/app';
+//import { firebase } from '@react-native-firebase/app';
+import { initializeApp } from '@react-native-firebase/app';
 import App from './App';
 import {name as appName} from './app.json';
+import bgMessaging from './bgMessaging'; // Importa el manejador de mensajes en segundo plano
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -19,8 +22,11 @@ const firebaseConfig = {
   appId: "1:306570664024:android:3b7152b52a1dbc691a522d"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+//if (!firebase.apps.length) {
+  //firebase.initializeApp(firebaseConfig);
+
+  initializeApp(firebaseConfig);
+//}
 
 AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging); // Registra el manejador de mensajes en segundo plano
