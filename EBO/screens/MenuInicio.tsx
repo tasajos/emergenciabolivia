@@ -61,14 +61,20 @@ const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
 
 useEffect(() => {
-  const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('Mensaje FCM en primer plano:', remoteMessage);
+ const unsubscribe = messaging().onMessage(async remoteMessage => {
+  try {
+     console.log('Mensaje FCM en primer plano:', remoteMessage);
+      // Aquí tu lógica de manejo de mensajes
+    } catch (error) {
+    console.error('Error al manejar el mensaje en primer plano:', error);
+  }
   });
 
-
+  return unsubscribe;
   if (searchQuery.trim() !== '' && value) {
     buscarUnidades();
   }
+
 }, [searchQuery, value]);
 
 const buscarUnidades = () => {

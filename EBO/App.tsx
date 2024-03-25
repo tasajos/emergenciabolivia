@@ -7,14 +7,14 @@ import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pant
 import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
-import eventoscreen from './screens/eventoscreen';
+import Eventoscreen from './screens/Eventoscreen';
 import Amscreen from './screens/Amscreen';
 import Ifscreen from './screens/Ifscreen';
 import Iescreen from './screens/Iescreen';
 import Rascreen from './screens/Rascreen';
 import Rscreen from './screens/Rscreen';
 import Dscreen from './screens/Dscreen';
-import ubicacionesbom from './screens/ubicacionesbom';
+import Ubicacionesbom from './screens/Ubicacionesbom';
 import Contacto from './screens/Contacto';
 import Kitterremoto from './screens/Kitterremoto';
 import Kitinundacion from './screens/Kitinundacion';
@@ -50,14 +50,14 @@ export type RootStackParamList = {
     unidad: Unidad;
   } | undefined;
   kitset: undefined;
-  eventoscreen: undefined;
+  Eventoscreen: undefined;
   Amscreen: undefined;
   Ifscreen: undefined;
   Iescreen: undefined;
   Rascreen: undefined;
   Rscreen: undefined;
   Dscreen: undefined;
-  ubicacionesbom: undefined;
+  Ubicacionesbom: undefined;
   Contacto: undefined;
   Kitterremoto: undefined;
   Kitinundacion: undefined;
@@ -82,14 +82,14 @@ const App = () => {
         <Stack.Screen name="RecInfo" component={RecInfo} />
         <Stack.Screen name="unidadesepr" component={unidadesepr} />
         <Stack.Screen name="kitset" component={kitset} />
-        <Stack.Screen name="eventoscreen" component={eventoscreen} />
+        <Stack.Screen name="Eventoscreen" component={Eventoscreen} />
         <Stack.Screen name="Amscreen" component={Amscreen} />
         <Stack.Screen name="Ifscreen" component={Ifscreen} />
         <Stack.Screen name="Iescreen" component={Iescreen} />
         <Stack.Screen name="Rascreen" component={Rascreen} />
         <Stack.Screen name="Rscreen" component={Rscreen} />
         <Stack.Screen name="Dscreen" component={Dscreen} />
-        <Stack.Screen name="ubicacionesbom" component={ubicacionesbom} />
+        <Stack.Screen name="Ubicacionesbom" component={Ubicacionesbom} />
         <Stack.Screen name="Contacto" component={Contacto} />
         <Stack.Screen name="Kitterremoto" component={Kitterremoto} />
         <Stack.Screen name="Kitinundacion" component={Kitinundacion} />

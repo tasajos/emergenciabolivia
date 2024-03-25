@@ -25,7 +25,7 @@ type RootStackParamList = {
   };
 
 
-const eventoscreen = () => {
+const Eventoscreen = () => {
     const [evts, setEvts] = useState<evto[]>([]);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [loading, setLoading] = useState(true);
@@ -182,4 +182,4 @@ const eventoscreen = () => {
 
     // ... Agrega más estilos según sea necesario
   });
-  export default eventoscreen;
+  export default Eventoscreen;

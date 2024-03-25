@@ -25,7 +25,7 @@ const firebaseConfig = {
 //if (!firebase.apps.length) {
   //firebase.initializeApp(firebaseConfig);
 
-  initializeApp(firebaseConfig);
+ // initializeApp(firebaseConfig);
 //}
 
 AppRegistry.registerComponent(appName, () => App);

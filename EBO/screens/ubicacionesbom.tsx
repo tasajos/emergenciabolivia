@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import FloatingButtonBar from './FloatingButtonBar';
 
-const ubicacionesbom = ({ navigation }) => { // Asegúrate de pasar navigation como prop
+const Ubicacionesbom = ({ navigation }) => { // Asegúrate de pasar navigation como prop
     return (
         <View style={styles.container}>
             <WebView
@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
       },
 });
 
-export default ubicacionesbom;
+export default Ubicacionesbom;
