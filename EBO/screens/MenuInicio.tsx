@@ -166,7 +166,7 @@ const buscarUnidades = () => {
 
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
-            <TouchableOpacity onPress={() => navigation.navigate('eventoscreen')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Eventoscreen')}>
               {/* Contenido de la tarjeta #2 */}
               <Image source={require('../imagenes/evtos3.png')}/>{/*style={styles.cardImage} */}
               </TouchableOpacity>
