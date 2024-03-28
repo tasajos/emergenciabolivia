@@ -35,7 +35,7 @@ type RootStackParamList = {
         <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
       </View>
       <Text style={styles.description}>
-        Registra Notificaciones
+        Registra Alerta Emergencia
       </Text>
 
       <FloatingButtonAdmin navigation={navigation} />

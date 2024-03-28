@@ -9,6 +9,7 @@ type RootStackParamList = {
     Uiadmineventos: undefined; 
     Uiadminepr: undefined;
   Uiadminnotif: undefined;
+  Uiadminalerta: undefined;
 
 
   };
@@ -18,7 +19,7 @@ type RootStackParamList = {
 const data = [
     { id: '1', title: 'Eventos', description: 'Crear Eventos en la App',screen: 'Uiadmineventos' },
     { id: '2', title: 'Unidades ', description: 'Crear Unidades EPR',screen: 'Uiadminepr' },
-    { id: '3', title: 'Notificaciones', description: 'Enviar Notificaciones',screen: 'Uiadminnotif' },
+    { id: '3', title: 'Crear Alerta', description: 'Crear Alerta',screen: 'Uiadminalerta' },
     //{ id: '4', title: 'Card 4', description: 'Descripción de Card 4' },
   ];
 

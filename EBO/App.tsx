@@ -23,6 +23,7 @@ import Uiadministrador from './screens/Uiadministrador';
 import Uiadmineventos from './screens/Uiadmineventos';
 import Uiadminepr from './screens/Uiadminepr';
 import Uiadminnotif from './screens/Uiadminnotif';
+import Uiadminalerta from './screens/Uiadminalerta';
 import firebase from '@react-native-firebase/app';
 
 
@@ -66,6 +67,7 @@ export type RootStackParamList = {
   Uiadmineventos: undefined;
   Uiadminepr: undefined;
   Uiadminnotif: undefined;
+  Uiadminalerta: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -98,6 +100,7 @@ const App = () => {
         <Stack.Screen name="Uiadmineventos" component={Uiadmineventos} />
         <Stack.Screen name="Uiadminepr" component={Uiadminepr} />
         <Stack.Screen name="Uiadminnotif" component={Uiadminnotif} />
+        <Stack.Screen name="Uiadminalerta" component={Uiadminalerta} />
 
       </Stack.Navigator>
     </NavigationContainer>
