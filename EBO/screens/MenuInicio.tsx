@@ -15,7 +15,7 @@ type RootStackParamList = {
   RecInfo: undefined;
   DetalleUnidad: { unidad: any };
   kitset: undefined;
-  eventoscreen: undefined;
+  Eventoscreen: undefined;
   Amscreen: undefined;
   Ifscreen: undefined;
   Iescreen: undefined;
@@ -23,6 +23,7 @@ type RootStackParamList = {
   Rascreen: undefined;
   Rscreen: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
+  MapaHospitales: { hosp: any }; // Asegúrate de agregar esta línea
 };
 
 type Props = {
@@ -115,6 +116,10 @@ const buscarUnidades = () => {
     };
 
    
+    const onHospitalesPress =(hosp: any) => {
+      navigation.navigate('MapaHospitales', { hosp });// Acciones cuando se presiona Hospitales
+    };
+
     const onBomberosPress = () => {
         navigation.navigate('RecInfo');
       };
@@ -294,9 +299,6 @@ const onAmbulanciasPress = () => {
     // Acciones cuando se presiona Ambulancias
 };
 
-  const onHospitalesPress = () => {
-    // Acciones cuando se presiona Hospitales
-  };
 
 
 

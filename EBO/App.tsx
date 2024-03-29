@@ -24,6 +24,7 @@ import Uiadmineventos from './screens/Uiadmineventos';
 import Uiadminepr from './screens/Uiadminepr';
 import Uiadminnotif from './screens/Uiadminnotif';
 import Uiadminalerta from './screens/Uiadminalerta';
+import MapaHospitales from './screens/MapaHospitales';
 import firebase from '@react-native-firebase/app';
 
 
@@ -68,6 +69,7 @@ export type RootStackParamList = {
   Uiadminepr: undefined;
   Uiadminnotif: undefined;
   Uiadminalerta: undefined;
+  MapaHospitales: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -101,6 +103,7 @@ const App = () => {
         <Stack.Screen name="Uiadminepr" component={Uiadminepr} />
         <Stack.Screen name="Uiadminnotif" component={Uiadminnotif} />
         <Stack.Screen name="Uiadminalerta" component={Uiadminalerta} />
+        <Stack.Screen name="MapaHospitales" component={MapaHospitales} />
 
       </Stack.Navigator>
     </NavigationContainer>
