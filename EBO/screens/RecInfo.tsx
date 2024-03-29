@@ -102,8 +102,9 @@ const RecInfo: React.FC<Props> = ({ navigation }) => {
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
             {/* Example of logo and text in header */}
-            <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-            <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
+            <Text style={styles.supportText}>Con el Apoyo de</Text>
+            <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+            
           </View>
           <View style={styles.searchContainer}>
           <Image

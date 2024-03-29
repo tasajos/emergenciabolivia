@@ -81,8 +81,8 @@ const Kitterremoto = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-        <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-        <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+        <Text style={styles.headerText}>Con el Apoyo de</Text>
+        <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
       </View>
       <Text style={styles.description}>
         Selecciona los elementos que crees que son esenciales para un kit de Terremoto.

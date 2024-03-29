@@ -11,6 +11,7 @@ import FloatingButtonBar from './FloatingButtonBar';
 type evto = {
     key: string;
     Imagen: string;
+    imagen: string;
     descripcion: string;
     fecha: string;
     nombre: string;
@@ -62,8 +63,8 @@ const Eventoscreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-          <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-          <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+          <Text style={styles.headerText}>Con el Apoyo de</Text>
+        <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
         </View>
         <FlatList
         data={evts}

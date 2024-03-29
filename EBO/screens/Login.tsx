@@ -7,6 +7,17 @@ import auth from '@react-native-firebase/auth';
 
 // import { TextInput, Button } from 'react-native-paper';
 
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
+};
+
+type RootStackParamList = {
+  // ... other route parameters
+  Login: undefined;
+  Uiadministrador: undefined; // Add this if your screen navigates to a Uiadministrador route
+  // ... any other routes you navigate to
+};
+
 const Login: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -73,7 +84,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.version}>Login</Text>
-      <Image style={styles.logo} source={require('../imagenes/tsflo1.png')} />
+      <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
       <TextInput
         style={styles.input}
         onChangeText={setEmail}

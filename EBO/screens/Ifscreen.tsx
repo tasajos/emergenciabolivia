@@ -10,10 +10,12 @@ import FloatingButtonBar from './FloatingButtonBar';
 type emeram = {
     key: string;
     Imagen: string;
+    imagen: string;
     Descripcion: string;
     Fecha: string;
     Nombre: string;
     Estado: string;
+    link: string;
   };
 
   type RootStackParamList = {
@@ -57,8 +59,8 @@ type emeram = {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-          <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-          <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+          <Text style={styles.headerText}>Con el Apoyo de</Text>
+        <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
         </View>
         <FlatList
         data={evts}
