@@ -177,7 +177,7 @@ const buscarUnidades = () => {
           </View>
           </ScrollView>
           <View style={styles.infoSection}>
-            <Text style={styles.infoTitle}>Información Útil</Text>
+            <Text style={styles.infoTitle2}>Información Útil</Text>
             {/* Tarjeta de Kits de Emergencia */}
             <ScrollView
             horizontal
@@ -362,8 +362,8 @@ const styles = StyleSheet.create({
   },
   // Repetir estilos para iconButton para cada categoría
   infoSection: {
-    paddingTop: 0, // Reducir el relleno superior para disminuir el espacio vertical
-    paddingHorizontal: 20,
+    paddingTop: 10, // Reducir el relleno superior para disminuir el espacio vertical
+    paddingHorizontal: 5,
     paddingBottom: 20, // Ajustar según sea necesario para el espacio debajo de los botones
   },
   infoTitle: {
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     paddingTop: 1,
     fontWeight: 'bold',
     color: '#424242',
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     marginBottom: 25,
   },
 
