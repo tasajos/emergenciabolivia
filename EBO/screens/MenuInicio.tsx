@@ -125,12 +125,16 @@ const buscarUnidades = () => {
             <Image source={require('../imagenes/top.png')} style={styles.curve} />
           </View>
           <View style={styles.supportSection}>
-            <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-            <Text style={styles.supportText}>Con el Apoyo de Tunari sin Fuego</Text>
-          </View>
+  <Text style={styles.supportText}>Con el Apoyo de:</Text>
+  <View style={styles.logoContainer}>
+    <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+    
+    
+  </View>
+</View>
 
 
-
+<Text style={styles.infoTitle2}>Voluntarios</Text>
           <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -309,15 +313,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
+  logoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap', // Asegúrate de que los elementos se envuelvan si no caben en una sola fila
+    marginBottom: 20, // Asegúrate de que los elementos se envuelvan si no caben en una sola fila
+  },
   logo: {
     height: 60, // Ajustar según el tamaño de tu logo
+    resizeMode: 'contain', // Para que la imagen del logo se ajuste sin deformarse
+    marginHorizontal: 1, // Espacio reducido entre logos
+  },
+
+  logofv: {
+    height: 120, // Ajustar según el tamaño de tu logo
+    resizeMode: 'contain', // Para que la imagen del logo se ajuste sin deformarse
+  },
+  logofv2: {
+    height: 140, // Ajustar según el tamaño de tu logo
+    width: 120, // Ajustar según el tamaño de tu logo
     resizeMode: 'contain', // Para que la imagen del logo se ajuste sin deformarse
   },
   supportText: {
     fontSize: 14,
     color: '#5C6979',
     marginTop: 8,
-    marginBottom: 60,
+    marginBottom: 20,
   },
   searchInput: {
     flex: 1,
@@ -349,6 +371,15 @@ const styles = StyleSheet.create({
     color: '#424242',
     paddingHorizontal: 20,
     marginBottom: 25,
+  },
+
+  infoTitle2: {
+    fontSize: 18,
+    paddingTop: 1,
+    fontWeight: 'bold',
+    color: '#424242',
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   infoButton: {
     flexDirection: 'row',
