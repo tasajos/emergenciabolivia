@@ -130,6 +130,13 @@ const buscarUnidades = () => {
           </View>
 
 
+
+          <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.horizontalScroll}
+            >
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
               <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
@@ -143,7 +150,23 @@ const buscarUnidades = () => {
               <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
               <Text>Hospitales</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/educacion.png')} style={styles.iconImage} />
+              <Text>Educacion</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/ambientalistas.png')} style={styles.iconImage} />
+              <Text>Ambientalistas</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/animalistas.png')} style={styles.iconImage} />
+              <Text>Animalistas</Text>
+            </TouchableOpacity>
           </View>
+          </ScrollView>
           <View style={styles.infoSection}>
             <Text style={styles.infoTitle}>Información Útil</Text>
             {/* Tarjeta de Kits de Emergencia */}
@@ -410,15 +433,16 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    marginBottom: 25,
+    //justifyContent: 'space-between',
+   // paddingHorizontal: 10,
+   // marginBottom: 25,
     
   },
   imageButton: {
     alignItems: 'center',
     //justifyContent: 'center',
-    width: '30%',
+    width: 100,
+    marginHorizontal: 5,
   },
 
   iconImage: {
