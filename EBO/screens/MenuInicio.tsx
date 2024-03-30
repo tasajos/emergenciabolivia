@@ -1,8 +1,6 @@
 import React, { useState ,useCallback ,useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,ImageBackground ,FlatList} from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import database from '@react-native-firebase/database';
@@ -22,6 +20,7 @@ type RootStackParamList = {
   Dscreen: undefined;
   Rascreen: undefined;
   Rscreen: undefined;
+  Ambulanciasepr: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
   MapaHospitales: { hosp: any }; // Asegúrate de agregar esta línea
 };
@@ -124,6 +123,23 @@ const buscarUnidades = () => {
         navigation.navigate('RecInfo');
       };
 
+      const onEducacionPress = () => {
+        
+      };
+
+      const onAmbientalistasPress = () => {
+        
+      };
+
+      
+      const onAnimalistasPress = () => {
+        
+      };
+
+      const onAmbulanciasPress = () => {
+        navigation.navigate('Ambulanciasepr');// Acciones cuando se presiona Ambulancias
+    };
+
       const renderHeader = () => (
         <>
           <View style={styles.curveSection}>
@@ -160,17 +176,17 @@ const buscarUnidades = () => {
               <Text>Hospitales</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+            <TouchableOpacity onPress={onEducacionPress} style={styles.imageButton}>
               <Image source={require('../imagenes/educacion.png')} style={styles.iconImage} />
               <Text>Educacion</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+            <TouchableOpacity onPress={onAmbientalistasPress} style={styles.imageButton}>
               <Image source={require('../imagenes/ambientalistas.png')} style={styles.iconImage} />
               <Text>Ambientalistas</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+            <TouchableOpacity onPress={onAnimalistasPress} style={styles.imageButton}>
               <Image source={require('../imagenes/animalistas.png')} style={styles.iconImage} />
               <Text>Animalistas</Text>
             </TouchableOpacity>
@@ -295,9 +311,7 @@ const buscarUnidades = () => {
 
 
 
-const onAmbulanciasPress = () => {
-    // Acciones cuando se presiona Ambulancias
-};
+
 
 
 
