@@ -21,6 +21,7 @@ type RootStackParamList = {
   Rascreen: undefined;
   Rscreen: undefined;
   Ambulanciasepr: undefined;
+  Educacionepr: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
   MapaHospitales: { hosp: any }; // Asegúrate de agregar esta línea
 };
@@ -124,6 +125,7 @@ const buscarUnidades = () => {
       };
 
       const onEducacionPress = () => {
+        navigation.navigate('Educacionepr');
         
       };
 

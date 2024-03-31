@@ -27,6 +27,8 @@ import Uiadminalerta from './screens/Uiadminalerta';
 import MapaHospitales from './screens/MapaHospitales';
 import Ambulanciasepr from './screens/Ambulanciasepr';
 import Ambulancias2doepr from './screens/Ambulancias2doepr';
+import Educacionepr from './screens/Educacionepr';
+import Educacion2doepr from './screens/Educacion2doepr';
 import firebase from '@react-native-firebase/app';
 
 
@@ -78,6 +80,14 @@ export type RootStackParamList = {
   Ambulancias2doepr: {
     unidad: Unidad;
   } | undefined;
+  Educacionepr: {
+    unidad: Unidad;
+  } | undefined;
+  Educacion2doepr: {
+    unidad: Unidad;
+  } | undefined;
+
+
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -114,6 +124,8 @@ const App = () => {
         <Stack.Screen name="MapaHospitales" component={MapaHospitales} />
         <Stack.Screen name="Ambulanciasepr" component={Ambulanciasepr} />
         <Stack.Screen name="Ambulancias2doepr" component={Ambulancias2doepr} />
+        <Stack.Screen name="Educacionepr" component={Educacionepr} />
+        <Stack.Screen name="Educacion2doepr" component={Educacion2doepr} />
 
       </Stack.Navigator>
     </NavigationContainer>
