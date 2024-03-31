@@ -8,6 +8,7 @@ import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
 import Eventoscreen from './screens/Eventoscreen';
+import Eventosv2 from './screens/Eventosv2';
 import Amscreen from './screens/Amscreen';
 import Ifscreen from './screens/Ifscreen';
 import Iescreen from './screens/Iescreen';
@@ -61,6 +62,7 @@ export type RootStackParamList = {
   } | undefined;
   kitset: undefined;
   Eventoscreen: undefined;
+  Eventosv2: undefined;
   Amscreen: undefined;
   Ifscreen: undefined;
   Iescreen: undefined;
@@ -142,6 +144,7 @@ const App = () => {
         <Stack.Screen name="Ambientalistas2doepr" component={Ambientalistas2doepr} />
         <Stack.Screen name="Animalistasepr" component={Animalistasepr} />
         <Stack.Screen name="Animalistas2doepr" component={Animalistas2doepr} />
+        <Stack.Screen name="Eventosv2" component={Eventosv2} />
 
       </Stack.Navigator>
     </NavigationContainer>

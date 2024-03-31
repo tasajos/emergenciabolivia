@@ -14,6 +14,7 @@ type RootStackParamList = {
   DetalleUnidad: { unidad: any };
   kitset: undefined;
   Eventoscreen: undefined;
+  Eventosv2: undefined;
   Amscreen: undefined;
   Ifscreen: undefined;
   Iescreen: undefined;
@@ -224,7 +225,7 @@ const buscarUnidades = () => {
 
             {/* Tarjeta #2 */}
             <View style={styles.infoCard}>
-            <TouchableOpacity onPress={() => navigation.navigate('Eventoscreen')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Eventosv2')}>
               {/* Contenido de la tarjeta #2 */}
               <Image source={require('../imagenes/evtos3.png')}/>{/*style={styles.cardImage} */}
               </TouchableOpacity>
