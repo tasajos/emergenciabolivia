@@ -1,10 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
 import MapView from 'react-native-maps';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import FloatingButtonBar from './FloatingButtonBar';
-import { Unidad } from './types';
 import { Alert } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack'; // Cambiado de createNativeStackNavigator a createStackNavigator
 import { StackScreenProps } from '@react-navigation/stack';

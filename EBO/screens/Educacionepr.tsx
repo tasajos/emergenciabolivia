@@ -103,6 +103,12 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+              {loading && (
+        <View style={styles.spinnerContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
+      {!loading && (
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
             {/* Example of logo and text in header */}
@@ -156,6 +162,7 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
           ))}
           </View>
         </ScrollView>
+         )}
         <FloatingButtonBar navigation={navigation} />
       </View>
     );
