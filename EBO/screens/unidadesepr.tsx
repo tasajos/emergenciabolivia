@@ -1,18 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
 import MapView from 'react-native-maps';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import FloatingButtonBar from './FloatingButtonBar';
-import { Unidad } from './types';
 import { Alert } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack'; // Cambiado de createNativeStackNavigator a createStackNavigator
+import { StackScreenProps } from '@react-navigation/stack';
+import 'react-native-gesture-handler';
 
+const Stack = createStackNavigator<RootStackParamList>();
+type Props = StackScreenProps<RootStackParamList, 'unidadesepr'>; // Cambiado de NativeStackScreenProps a StackScreenProps
 
-
-import facebookIcon from '../imagenes/redessociales/facebook.png';
-import webIcon from '../imagenes/redessociales/red-mundial.png';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'unidadesepr'>;
 
 
 
@@ -84,12 +82,17 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
           <Text style={styles.emergencyCallText}>Llamada de Emergencia</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleFacebookPress}>
-            <Image source={facebookIcon} style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleWebPress}>
-            <Image source={webIcon} style={styles.icon} />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={handleFacebookPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/redessociales/facebook.png')} style={styles.iconImage} />
+              <Text>Visita Facebook</Text>
+            </TouchableOpacity>
+
+
+            <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
+              <Image source={require('../imagenes/redessociales/red-mundial.png')} style={styles.iconImage} />
+              <Text>Visita la Web</Text>
+            </TouchableOpacity>
+
         </View>
       </View>
       <FloatingButtonBar navigation={navigation} />
@@ -149,7 +152,18 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 
-
+  imageButton: {
+    alignItems: 'center',
+    //justifyContent: 'center',
+    width: 100,
+    marginHorizontal: 5,
+    
+  },
+  iconImage: {
+    width: 40, // Ajusta según el tamaño de tus imágenes
+    height: 40, // Ajusta según el tamaño de tus imágenes
+    
+  },
 });
 
 export default UnidadesEPR;
