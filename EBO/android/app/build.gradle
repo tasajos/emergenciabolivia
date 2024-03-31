@@ -80,7 +80,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 10
-        versionName "bravo 1.4"
+        versionName "Bravo 1.4"
     }
     signingConfigs {
     release {

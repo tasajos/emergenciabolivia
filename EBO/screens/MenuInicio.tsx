@@ -22,6 +22,7 @@ type RootStackParamList = {
   Rscreen: undefined;
   Ambulanciasepr: undefined;
   Ambientalistasepr: undefined;
+  Animalistasepr: undefined;
   Educacionepr: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
   MapaHospitales: { hosp: any }; // Asegúrate de agregar esta línea
@@ -45,6 +46,7 @@ const MenuInicio = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [appVersion, setAppVersion] = useState('');
+  const [versionName, setVersionName] = useState('');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -65,6 +67,13 @@ const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
 useEffect(() => {
   setAppVersion(DeviceInfo.getReadableVersion());
+  const getVersionName = async () => {
+    const version = await DeviceInfo.getVersion();
+    setVersionName(version);
+  };
+
+  getVersionName();
+
  const unsubscribe = messaging().onMessage(async remoteMessage => {
   try {
      console.log('Mensaje FCM en primer plano:', remoteMessage);
@@ -140,6 +149,8 @@ const buscarUnidades = () => {
 
       
       const onAnimalistasPress = () => {
+
+        navigation.navigate('Animalistasepr');
         
       };
 
@@ -152,7 +163,7 @@ const buscarUnidades = () => {
           <View style={styles.curveSection}>
             <Image source={require('../imagenes/top.png')} style={styles.curve} />
           </View>
-          <Text style={styles.versionText}>Versión: {appVersion}</Text>
+          <Text style={styles.versionText}>Versión: {versionName}</Text>
           <View style={styles.supportSection}>
   <Text style={styles.supportText}>Con el Apoyo de:</Text>
   <View style={styles.logoContainer}>

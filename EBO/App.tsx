@@ -30,7 +30,9 @@ import Ambulancias2doepr from './screens/Ambulancias2doepr';
 import Educacionepr from './screens/Educacionepr';
 import Educacion2doepr from './screens/Educacion2doepr';
 import Ambientalistasepr from './screens/Ambientalistasepr';
+import Animalistasepr from './screens/Animalistasepr';
 import Ambientalistas2doepr from './screens/Ambientalistas2doepr';
+import Animalistas2doepr from './screens/Animalistas2doepr';
 import firebase from '@react-native-firebase/app';
 
 
@@ -77,6 +79,7 @@ export type RootStackParamList = {
   Uiadminalerta: undefined;
   MapaHospitales: undefined;
   Ambientalistasepr: undefined;
+  Animalistasepr: undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -90,6 +93,9 @@ export type RootStackParamList = {
     unidad: Unidad;
   } | undefined;
   Ambientalistas2doepr: {
+    unidad: Unidad;
+  } | undefined;
+  Animalistas2doepr: {
     unidad: Unidad;
   } | undefined;
 
@@ -134,6 +140,8 @@ const App = () => {
         <Stack.Screen name="Educacion2doepr" component={Educacion2doepr} />
         <Stack.Screen name="Ambientalistasepr" component={Ambientalistasepr} />
         <Stack.Screen name="Ambientalistas2doepr" component={Ambientalistas2doepr} />
+        <Stack.Screen name="Animalistasepr" component={Animalistasepr} />
+        <Stack.Screen name="Animalistas2doepr" component={Animalistas2doepr} />
 
       </Stack.Navigator>
     </NavigationContainer>
