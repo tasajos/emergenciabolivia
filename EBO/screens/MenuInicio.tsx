@@ -49,16 +49,7 @@ const MenuInicio = () => {
   const [versionName, setVersionName] = useState('');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'La Paz', value: 'La Paz'},
-    {label: 'Cochabamba', value: 'Cochabamba'},
-    {label: 'Santa Cruz', value: 'Santa Cruz'},
-    {label: 'Beni', value: 'Beni'},
-    {label: 'Tarija', value: 'Tarija'},
-    {label: 'Oruro', value: 'Oruro'},
-    {label: 'Potosi', value: 'Potosi'},
-    // Agrega más ciudades aquí
-]);
+  
 
 const [unidadesFiltradas, setUnidadesFiltradas] = useState<Unidad[]>([]);
 
@@ -308,27 +299,27 @@ const buscarUnidades = () => {
         </>
       );
     
+     
       return (
-        <View style={styles.outerContainer}>
-
-          
-          <FlatList
-            data={unidadesFiltradas}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => onUnidadPress(item)}>
-                <Text>{item.name}</Text>
-              </TouchableOpacity>
-            )}
-            ListHeaderComponent={renderHeader()}
-          />
-          <FloatingButtonBar navigation={navigation} />
+        <View style={styles.container}>
+          <View style={styles.listContainer}>
+            <FlatList
+              data={unidadesFiltradas}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => onUnidadPress(item)}>
+                  <Text>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+              ListHeaderComponent={renderHeader}
+            />
+          </View>
+          <View style={styles.floatingBarContainer}>
+            <FloatingButtonBar navigation={navigation} />
+          </View>
         </View>
       );
     };
-
-
-
 
 
 
@@ -339,6 +330,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white', // Ajustado al color de fondo de la imagen
+  },
+  scrollView: {
+    flex: 1,
+  },
+  listContainer: {
+    flex: 0.9, // 80% del espacio
+  },
+  floatingBarContainer: {
+    flex: 0.1, // 20% del espacio
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   outerContainer: {
     flex: 1,
@@ -550,9 +552,9 @@ infoCard: {
     flexDirection: 'row', // Coloca los elementos en línea horizontal
     alignItems: 'center', // Alinea los elementos verticalmente
     borderRadius: 10, // para el efecto de esquinas redondeadas
-    paddingVertical: 5,
+    paddingVertical: 2,
     paddingHorizontal: 5,
-    marginBottom: 10, // Ajusta este valor según sea necesario
+    marginBottom: 5, // Ajusta este valor según sea necesario
     marginHorizontal: 5, // para mantener un pequeño espacio entre las tarjetas
     shadowColor: '#000', // Estos estilos son para añadir sombra a cada tarjeta como en la imagen
     shadowOffset: {
