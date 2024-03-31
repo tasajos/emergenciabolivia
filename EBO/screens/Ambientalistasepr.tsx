@@ -9,6 +9,7 @@ type RootStackParamList = {
     Home: undefined;
     Details: undefined;
     RecInfo: undefined;
+    Ambientalistasepr: undefined;
     Educacionepr: {
     unidad: Unidad;
 } | undefined;
@@ -16,11 +17,15 @@ Educacion2doepr: {
     unidad: Unidad;
 } | undefined;
 
+Ambientalistas2doepr: {
+    unidad: Unidad;
+} | undefined;
+
   };
 
 type RecInfoScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Educacionepr'
+  'Ambientalistasepr'
 >;
 
 type Props = {
@@ -35,7 +40,7 @@ interface Unidad {
 
 
 
-const Educacionepr: React.FC<Props> = ({ navigation }) => {
+const Ambientalistasepr: React.FC<Props> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [unidades, setUnidades] = useState<Unidad[]>([]);
   const [loading, setLoading] = useState(true)
@@ -44,7 +49,7 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
 
 
   useEffect(() => {
-    const ref = database().ref('/educacion');
+    const ref = database().ref('/ambientalistas');
     if (isFirstLoad) {
         setLoading(true);
       }
@@ -105,7 +110,7 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
      // };
 
      const handlePress = (unidad: Unidad) => {
-      navigation.navigate('Educacion2doepr', { unidad: unidad });
+      navigation.navigate('Ambientalistas2doepr', { unidad: unidad });
     };
 
     return (
@@ -281,4 +286,4 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
     // ... cualquier otro estilo que necesites
 });
 
-export default Educacionepr;
+export default Ambientalistasepr;

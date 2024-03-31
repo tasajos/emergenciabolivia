@@ -5,7 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import database from '@react-native-firebase/database';
 import messaging from '@react-native-firebase/messaging';
-
+import DeviceInfo from 'react-native-device-info';
 
 
 type RootStackParamList = {
@@ -21,6 +21,7 @@ type RootStackParamList = {
   Rascreen: undefined;
   Rscreen: undefined;
   Ambulanciasepr: undefined;
+  Ambientalistasepr: undefined;
   Educacionepr: undefined;
   unidadesepr: { unidad: any }; // Asegúrate de agregar esta línea
   MapaHospitales: { hosp: any }; // Asegúrate de agregar esta línea
@@ -43,6 +44,7 @@ web: string;
 const MenuInicio = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [appVersion, setAppVersion] = useState('');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -62,6 +64,7 @@ const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
 
 useEffect(() => {
+  setAppVersion(DeviceInfo.getReadableVersion());
  const unsubscribe = messaging().onMessage(async remoteMessage => {
   try {
      console.log('Mensaje FCM en primer plano:', remoteMessage);
@@ -131,6 +134,8 @@ const buscarUnidades = () => {
 
       const onAmbientalistasPress = () => {
         
+        navigation.navigate('Ambientalistasepr');
+
       };
 
       
@@ -147,6 +152,7 @@ const buscarUnidades = () => {
           <View style={styles.curveSection}>
             <Image source={require('../imagenes/top.png')} style={styles.curve} />
           </View>
+          <Text style={styles.versionText}>Versión: {appVersion}</Text>
           <View style={styles.supportSection}>
   <Text style={styles.supportText}>Con el Apoyo de:</Text>
   <View style={styles.logoContainer}>
@@ -603,6 +609,12 @@ infoCard: {
     width: 20, // Ancho de la imagen
     height: 20, // Altura de la imagen
     marginRight: 10, // Espacio a la derecha de la imagen
+  },
+  versionText: {
+    fontSize: 14,
+    color: '#5C6979',
+    marginTop: 20,
+    alignSelf: 'flex-start',
   },
   
 // ... otros estilos que necesites
