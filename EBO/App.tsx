@@ -34,6 +34,7 @@ import Ambientalistasepr from './screens/Ambientalistasepr';
 import Animalistasepr from './screens/Animalistasepr';
 import Ambientalistas2doepr from './screens/Ambientalistas2doepr';
 import Animalistas2doepr from './screens/Animalistas2doepr';
+import Homev2 from './screens/Homev2';
 import firebase from '@react-native-firebase/app';
 
 
@@ -55,6 +56,7 @@ if (!firebase.apps.length) {
 
 export type RootStackParamList = {
   Home: undefined;
+  Homev2: undefined;
   MenuInicio: undefined;
   RecInfo: undefined;
   unidadesepr: {
@@ -145,6 +147,7 @@ const App = () => {
         <Stack.Screen name="Animalistasepr" component={Animalistasepr} />
         <Stack.Screen name="Animalistas2doepr" component={Animalistas2doepr} />
         <Stack.Screen name="Eventosv2" component={Eventosv2} />
+        <Stack.Screen name="Homev2" component={Homev2} />
 
       </Stack.Navigator>
     </NavigationContainer>

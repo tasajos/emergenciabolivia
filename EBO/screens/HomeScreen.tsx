@@ -14,7 +14,7 @@ type NavigationType = StackNavigationProp<any>; // Reemplaza 'any' con tu tipo d
   
   // Define el tipo de las props basado en la navegación y la ruta
   type HomeScreenProps = {
-    navigation: NativeStackNavigationProp<RootStackParamList, 'Home'>;
+    navigation: NativeStackNavigationProp<RootStackParamList, 'Homev2'>;
   };
 
 const HomeScreen = ({ navigation }: HomeScreenProps) => {
@@ -28,7 +28,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
       <Text style={styles.subtitle}>Uniendo a los Equipos de Primera Respuesta de Bolivia</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('MenuInicio')}// Asegúrate de tener configurada la navegación
+        onPress={() => navigation.navigate('Homev2')}// Asegúrate de tener configurada la navegación
       >
         <Text style={styles.buttonText}>INGRESAR</Text>
       </TouchableOpacity>
