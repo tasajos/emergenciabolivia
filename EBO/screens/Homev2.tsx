@@ -387,6 +387,12 @@ const styles = StyleSheet.create({
     color: '#657786', // Color de texto gris para fechas y otros detalles
     fontSize: 12,
   },
+  volunteerCardDescription: {
+    color: '#657786', // Puedes usar el color que prefieras
+    marginTop: 4,
+    fontSize: 14,
+    // Ajusta estos estilos para que se adapten al diseño de tu aplicación
+  },
   // Add other styles as needed
 });
 
