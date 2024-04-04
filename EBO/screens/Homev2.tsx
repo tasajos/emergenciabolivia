@@ -15,16 +15,18 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
 
-const Card = ({ title, date, imageSource }) => {
+const Card = ({ title, date, imageSource, onPress }) => {
   return (
-    <View style={styles.cardContainer}>
-      <Image source={imageSource} style={styles.cardImage} />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{title}</Text>
-        <Text style={styles.cardDate}>{date}</Text>
-        {/* ...otros elementos que forman parte de tu Card... */}
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.cardContainer}>
+        <Image source={imageSource} style={styles.cardImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={styles.cardDate}>{date}</Text>
+          {/* ...otros elementos que forman parte de tu Card... */}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -120,7 +122,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
             <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
           </View>
 
-          <Text style={styles.infoTitle2}>Voluntarios</Text>
+          <Text style={styles.infoTitle2}>VOLUNTARIOS</Text>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             <View style={styles.buttonContainer}>
@@ -148,23 +150,34 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           {/* Sección de Información Útil */}
           <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
           <HorizontalCardList>
-  {informacionUtil.map(item => (
-    <Card
-      key={item.id}
-      title={item.nombre}
-      date={item.fecha}
-      imageSource={{ uri: item.imagen }} // Asegúrate de que item.imagen sea una cadena válida
-    />
-  ))}
-</HorizontalCardList>
+        {informacionUtil.map(item => (
+          <Card
+            key={item.id}
+            title={item.nombre}
+            date={item.fecha}
+            imageSource={{ uri: item.imagen }}
+            onPress={() => {
+              // Lógica para determinar qué pantalla abrir
+              if (item.nombre === 'Eventos') {
+                navigation.navigate('Eventosv2');
+              } else if (item.nombre === 'Kits') {
+                navigation.navigate('kitset');
+              }
+            }}
+          />
+        ))}
+      </HorizontalCardList>
 
           {/* Sección de Oportunidades de Voluntarios */}
-          <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIOS</Text>
+          <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIADO</Text>
           {/* Tarjetas de oportunidades aquí */}
 
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
           {/* Tarjetas de oportunidades aquí */}
+
+           {/* Mostrar el versionName */}
+           <Text style={styles.VersionText}>Version: {versionName}</Text>
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />
@@ -202,7 +215,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#424242',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 5,
   },
   horizontalScroll: {
     height: 120, // Ajuste la altura según sea necesario
@@ -277,6 +290,14 @@ const styles = StyleSheet.create({
   detailsButtonText: {
     color: '#1e90ff',
     // Ajusta estos estilos según tu diseño
+  },
+  VersionText: {
+    fontWeight: 'bold',
+    fontSize: 10,
+    color: '#424242',
+    marginVertical: 10,
+    marginLeft: 20,
+    // Estilos para los títulos de sección
   },
 
   // Add other styles as needed

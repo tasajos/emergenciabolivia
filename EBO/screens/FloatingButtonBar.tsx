@@ -30,7 +30,7 @@ const openWhatsApp = () => {
 const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate('MenuInicio')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Homev2')}>
         <Image source={require('../imagenes/hogar1.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Ubicacionesbom')}>
