@@ -15,19 +15,14 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
 
-const Card = ({ title, date, progress, imageSource }) => {
+const Card = ({ title, date, imageSource }) => {
   return (
     <View style={styles.cardContainer}>
       <Image source={imageSource} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{title}</Text>
         <Text style={styles.cardDate}>{date}</Text>
-        <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
-        </View>
-        <TouchableOpacity style={styles.detailsButton}>
-          <Text style={styles.detailsButtonText}>See Event Details →</Text>
-        </TouchableOpacity>
+        {/* ...otros elementos que forman parte de tu Card... */}
       </View>
     </View>
   );
@@ -48,18 +43,40 @@ const HorizontalCardList = ({ children }) => {
 const Homev2: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('');
+  const [informacionUtil, setInformacionUtil] = useState([]);
   const [versionName, setVersionName] = useState('');
 
   useEffect(() => {
+    const ref = database().ref('/informacionutil');
+    const listener = ref.on('value', snapshot => {
+      const fetchedData = [];
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        fetchedData.push({
+          nombre: data.nombre,
+          imagen: data.imagen,
+          fecha: data.fecha,
+          id: childSnapshot.key // Usar el ID para identificar cada elemento de manera única
+        });
+      });
+      setInformacionUtil(fetchedData);
+    });
+
     setAppVersion(DeviceInfo.getReadableVersion());
     const getVersionName = async () => {
       const version = await DeviceInfo.getVersion();
       setVersionName(version);
     };
     getVersionName();
+
     setTimeout(() => {
       setLoading(false);
     }, 2000);
+
+    // Desmontar el listener
+    return () => {
+      ref.off('value', listener);
+    };
   }, []);
 
   const onUnidadPress = (unidad: any) => {
@@ -92,67 +109,55 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {loading && (
+      {loading ? (
         <View style={styles.spinnerContainer}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
-      )}
-      {!loading && (
+      ) : (
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
             <Text style={styles.supportText}>Con el Apoyo de</Text>
             <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
           </View>
+
           <Text style={styles.infoTitle2}>Voluntarios</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.horizontalScroll}
-          >
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             <View style={styles.buttonContainer}>
               <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={onAmbulanciasPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/Group130.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={onEducacionPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/educacion.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={onAmbientalistasPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/ambientalistas.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={onAnimalistasPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/animalistas.png')} style={styles.iconImage} />
-                <Text></Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
- {/* Sección de Información Útil */}
- <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
-          {/* Tarjetas de información aquí */}
+
+          {/* Sección de Información Útil */}
+          <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
           <HorizontalCardList>
-          <Card
-            title="Nagawe’s Village Cleanup"
-            date="February, 14th 2023"
-            progress={90}
-            imageSource={require('../imagenes/instit2.png')}
-          />
-             <Card
-            title="Reunion de Voluntarios"
-            date="Abril, 14th 2024"
-            progress={90}
-            imageSource={require('../imagenes/evtos3.png')}
-          />
+  {informacionUtil.map(item => (
+    <Card
+      key={item.id}
+      title={item.nombre}
+      date={item.fecha}
+      imageSource={{ uri: item.imagen }} // Asegúrate de que item.imagen sea una cadena válida
+    />
+  ))}
 </HorizontalCardList>
+
           {/* Sección de Oportunidades de Voluntarios */}
           <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIOS</Text>
           {/* Tarjetas de oportunidades aquí */}
@@ -160,14 +165,12 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
           {/* Tarjetas de oportunidades aquí */}
-
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
