@@ -30,6 +30,19 @@ const Card = ({ title, date, imageSource, onPress }) => {
   );
 };
 
+const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.volunteerCardContainer}>
+      <Image source={imageSource} style={styles.volunteerCardImage} />
+      <View style={styles.volunteerCardContent}>
+        <Text style={styles.volunteerCardTitle}>{title}</Text>
+        <Text style={styles.volunteerCardDate}>{date}</Text>
+        <Text style={styles.volunteerCardDescription}>{description}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 const HorizontalCardList = ({ children }) => {
   return (
     <ScrollView
@@ -47,6 +60,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   const [appVersion, setAppVersion] = useState('');
   const [informacionUtil, setInformacionUtil] = useState([]);
   const [versionName, setVersionName] = useState('');
+  const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState([]);
 
   useEffect(() => {
     const ref = database().ref('/informacionutil');
@@ -64,6 +78,25 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       setInformacionUtil(fetchedData);
     });
 
+    const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
+    const oportunidadesListener = oportunidadesRef.on('value', snapshot => {
+      const fetchedOportunidades = [];
+      snapshot.forEach(childSnapshot => {
+        const data = childSnapshot.val();
+        fetchedOportunidades.push({
+          titulo: data.titulo,
+          fecha: data.fecha,
+          imagen: data.imagen,
+          descripcion: data.descripcion,
+          id: childSnapshot.key,
+        });
+      });
+      setOportunidadesVoluntariado(fetchedOportunidades);
+    });
+
+
+
+
     setAppVersion(DeviceInfo.getReadableVersion());
     const getVersionName = async () => {
       const version = await DeviceInfo.getVersion();
@@ -77,7 +110,9 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
 
     // Desmontar el listener
     return () => {
+      // Desmontar ambos listeners
       ref.off('value', listener);
+      oportunidadesRef.off('value', oportunidadesListener);
     };
   }, []);
 
@@ -171,10 +206,23 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           {/* Sección de Oportunidades de Voluntarios */}
           <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIADO</Text>
           {/* Tarjetas de oportunidades aquí */}
-
+          <View style={styles.volunteerOpportunitiesContainer}>
+  {oportunidadesVoluntariado.map(oportunidad => (
+    <VolunteerOpportunityCard
+      key={oportunidad.id}
+      title={oportunidad.titulo}
+      date={oportunidad.fecha}
+      description={oportunidad.descripcion} // Asegúrate de que este campo exista en tus datos
+      imageSource={{ uri: oportunidad.imagen }}
+      onPress={() => {
+        // Define aquí tu lógica para el manejo del toque en la tarjeta
+      }}
+    />
+  ))}
+</View>
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
-          {/* Tarjetas de oportunidades aquí */}
+          {/* Tarjetas de ultimas emergencias aquí */}
 
            {/* Mostrar el versionName */}
            <Text style={styles.VersionText}>Version: {versionName}</Text>
@@ -300,6 +348,45 @@ const styles = StyleSheet.create({
     // Estilos para los títulos de sección
   },
 
+  volunteerOpportunitiesContainer: {
+    paddingHorizontal: 20, // Puedes ajustar esto como necesites
+  },
+  volunteerCardContainer: {
+    backgroundColor: '#f5f8fa', // Color de fondo claro como Twitter
+    borderBottomWidth: 1,
+    borderBottomColor: '#e1e8ed', // Borde inferior sutil
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderRadius: 18, // Aumenta para más redondez
+    // Puedes también agregar sombra para elevar la tarjeta como en el diseño de Material
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  volunteerCardImage: {
+    width: 60, // Más pequeño para un estilo más sutil
+    height: 60,
+    borderRadius: 30, // Circular como los avatares de Twitter
+    marginRight: 10,
+  },
+  volunteerCardContent: {
+    flex: 1,
+  },
+  volunteerCardTitle: {
+    fontWeight: 'bold',
+    color: '#14171a', // Color de texto casi negro
+  },
+  volunteerCardDate: {
+    color: '#657786', // Color de texto gris para fechas y otros detalles
+    fontSize: 12,
+  },
   // Add other styles as needed
 });
 
