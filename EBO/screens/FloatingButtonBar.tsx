@@ -31,16 +31,16 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Homev2')}>
-        <Image source={require('../imagenes/hogar1.png')} style={styles.icon} />
+        <Image source={require('../imagenes/hogar32.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Ubicacionesbom')}>
-        <Image source={require('../imagenes/mapabo1.png')} style={styles.icon} />
+        <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={openWhatsApp}>
-        <Image source={require('../imagenes/whatsapp24.png')} style={styles.icon} />
+        <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
-        <Image source={require('../imagenes/add24.png')} style={styles.icon} />
+        <Image source={require('../imagenes/add32.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Image source={require('../imagenes/acceso.png')} style={styles.icon} />
