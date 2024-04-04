@@ -42,6 +42,23 @@ const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPre
     </TouchableOpacity>
   );
 };
+const EmergencyAlertCard = ({ title, date, city, description, onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
+      <View style={styles.emergencyCardIconContainer}>
+        <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
+      </View>
+      <View style={styles.emergencyCardContent}>
+        <Text style={styles.emergencyCardTitle}>{title}</Text>
+        <Text style={styles.emergencyCardCity}>{city}</Text>
+        <Text style={styles.emergencyCardDate}>{date}</Text>
+        <Text style={styles.emergencyCardDescription}>{description}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+
 
 const HorizontalCardList = ({ children }) => {
   return (
@@ -61,6 +78,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   const [informacionUtil, setInformacionUtil] = useState([]);
   const [versionName, setVersionName] = useState('');
   const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState([]);
+  const [emergencias, setEmergencias] = useState([]);
 
   useEffect(() => {
     const ref = database().ref('/informacionutil');
@@ -94,6 +112,22 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       setOportunidadesVoluntariado(fetchedOportunidades);
     });
 
+
+    const emergenciasRef = database().ref('/ultimasEmergencias');
+    const emergenciasListener = emergenciasRef.on('value', snapshot => {
+      const fetchedEmergencias = [];
+      snapshot.forEach(childSnapshot => {
+        const data = childSnapshot.val();
+        fetchedEmergencias.push({
+          Titulo: data.Titulo,
+          ciudad: data.ciudad,
+          fecha: data.fecha,
+          descripcion: data.descripcion,
+          id: childSnapshot.key,
+        });
+      });
+      setEmergencias(fetchedEmergencias);
+    });
 
 
 
@@ -223,6 +257,22 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
           {/* Tarjetas de ultimas emergencias aquí */}
+          <View style={styles.emergencyAlertsContainer}>
+  {emergencias.map((emergencia) => (
+    <EmergencyAlertCard
+      key={emergencia.id}
+      title={emergencia.Titulo}
+      city={emergencia.ciudad} // Asegúrate de que el campo 'ciudad' esté disponible en los datos
+      date={emergencia.fecha}
+      description={emergencia.descripcion}
+      onPress={() => {
+        // Acciones al presionar la tarjeta de emergencia
+      }}
+    />
+  ))}
+</View>
+
+
 
            {/* Mostrar el versionName */}
            <Text style={styles.VersionText}>Version: {versionName}</Text>
@@ -392,6 +442,48 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     // Ajusta estos estilos para que se adapten al diseño de tu aplicación
+  },
+  emergencyCardContainer: {
+    backgroundColor: '#fff4f4', // Un color de fondo claro similar al de las alertas de Facebook
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ffcccb', // Un borde suave
+    padding: 15,
+    marginBottom: 10, // Espacio entre tarjetas
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  emergencyCardIconContainer: {
+    marginRight: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emergencyCardIcon: {
+    width: 30,
+    height: 30,
+  },
+  emergencyCardContent: {
+    flex: 1,
+  },
+  emergencyCardTitle: {
+    fontWeight: 'bold',
+    color: '#d9534f', // Color rojo para llamar la atención
+    fontSize: 16,
+  },
+  emergencyCardDate: {
+    fontSize: 12,
+    color: '#666', // Un color gris para la fecha
+    marginBottom: 5,
+  },
+  emergencyCardDescription: {
+    fontSize: 14,
+    color: '#333', // Un color más oscuro para la descripción
+  },
+  emergencyCardCity: {
+    fontWeight: 'bold',
+    color: '#d9534f', // Puede ser el color de la alerta o el que mejor se ajuste a tu diseño
+    fontSize: 14,
+    marginBottom: 4, // Espacio debajo del nombre de la ciudad
   },
   // Add other styles as needed
 });
