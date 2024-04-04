@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
@@ -15,28 +15,71 @@ type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
 
+const Card = ({ title, date, progress, imageSource }) => {
+  return (
+    <View style={styles.cardContainer}>
+      <Image source={imageSource} style={styles.cardImage} />
+      <View style={styles.cardContent}>
+        <Text style={styles.cardTitle}>{title}</Text>
+        <Text style={styles.cardDate}>{date}</Text>
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBarFill, { width: `${progress}%` }]} />
+        </View>
+        <TouchableOpacity style={styles.detailsButton}>
+          <Text style={styles.detailsButtonText}>See Event Details →</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+
+
 const Homev2: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('');
   const [versionName, setVersionName] = useState('');
 
   useEffect(() => {
-
     setAppVersion(DeviceInfo.getReadableVersion());
     const getVersionName = async () => {
       const version = await DeviceInfo.getVersion();
       setVersionName(version);
     };
-    getVersionName();  
-    // Simula la carga de datos con un retraso de 2 segundos
+    getVersionName();
     setTimeout(() => {
-      setLoading(false); // Actualiza el estado para detener la carga
+      setLoading(false);
     }, 2000);
   }, []);
 
+  const onUnidadPress = (unidad: any) => {
+    navigation.navigate('unidadesepr', { unidad });
+  };
 
+  const onHospitalesPress = (hosp: any) => {
+    navigation.navigate('MapaHospitales', { hosp });
+  };
 
-  
+  const onBomberosPress = () => {
+    navigation.navigate('RecInfo');
+  };
+
+  const onEducacionPress = () => {
+    navigation.navigate('Educacionepr');
+  };
+
+  const onAmbientalistasPress = () => {
+    navigation.navigate('Ambientalistasepr');
+  };
+
+  const onAnimalistasPress = () => {
+    navigation.navigate('Animalistasepr');
+  };
+
+  const onAmbulanciasPress = () => {
+    navigation.navigate('Ambulanciasepr');
+  };
+
   return (
     <View style={styles.container}>
       {loading && (
@@ -50,6 +93,64 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.supportText}>Con el Apoyo de</Text>
             <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
           </View>
+          <Text style={styles.infoTitle2}>Voluntarios</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.horizontalScroll}
+          >
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onAmbulanciasPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/Group130.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onHospitalesPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/Group131.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onEducacionPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/educacion.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onAmbientalistasPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/ambientalistas.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onAnimalistasPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/animalistas.png')} style={styles.iconImage} />
+                <Text></Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+ {/* Sección de Información Útil */}
+ <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
+          {/* Tarjetas de información aquí */}
+          
+          <Card
+            title="Nagawe’s Village Cleanup"
+            date="February, 14th 2023"
+            progress={90}
+            imageSource={require('../imagenes/instit2.png')}
+          />
+             <Card
+            title="Reunion de Voluntarios"
+            date="Abril, 14th 2024"
+            progress={90}
+            imageSource={require('../imagenes/evtos3.png')}
+          />
+
+          {/* Sección de Oportunidades de Voluntarios */}
+          <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIOS</Text>
+          {/* Tarjetas de oportunidades aquí */}
+
+          {/* Sección de ULTIMAS EMERGENCIAS */}
+          <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
+          {/* Tarjetas de oportunidades aquí */}
+
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />
@@ -83,6 +184,88 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  infoTitle2: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#424242',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  horizontalScroll: {
+    height: 120, // Ajuste la altura según sea necesario
+    marginTop: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row', // Asegúrese de que los botones estén alineados horizontalmente
+    alignItems: 'center', // Alineación vertical de los botones
+  },
+  imageButton: {
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  iconImage: {
+    width: 80, // Ajuste según el tamaño de sus imágenes
+    height: 80,
+  },
+  sectionTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#424242',
+    marginVertical: 10,
+    marginLeft: 20,
+    // Estilos para los títulos de sección
+  },
+
+  cardContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginHorizontal: 20,
+    marginVertical: 10,
+    flexDirection: 'row',
+    elevation: 3, // Para Android - sombra ligera
+    shadowColor: '#000', // Para iOS - sombra ligera
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  cardImage: {
+    width: 100,
+    height: 100,
+    // Ajusta estos valores según tu diseño
+  },
+  cardContent: {
+    padding: 10,
+    justifyContent: 'space-around',
+  },
+  cardTitle: {
+    fontWeight: 'bold',
+    // Ajusta estos estilos según tu diseño
+  },
+  cardDate: {
+    color: 'gray',
+    // Ajusta estos estilos según tu diseño
+  },
+  progressBarBackground: {
+    backgroundColor: '#e0e0e0',
+    height: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#3b5998',
+    // Ajusta estos estilos según tu diseño
+  },
+  detailsButton: {
+    // Estilos para el botón de detalles
+  },
+  detailsButtonText: {
+    color: '#1e90ff',
+    // Ajusta estos estilos según tu diseño
+  },
+
   // Add other styles as needed
 });
 
