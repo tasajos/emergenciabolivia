@@ -33,7 +33,17 @@ const Card = ({ title, date, progress, imageSource }) => {
   );
 };
 
-
+const HorizontalCardList = ({ children }) => {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.horizontalCardList}
+    >
+      {children}
+    </ScrollView>
+  );
+};
 
 const Homev2: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -129,7 +139,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
  {/* Sección de Información Útil */}
  <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
           {/* Tarjetas de información aquí */}
-          
+          <HorizontalCardList>
           <Card
             title="Nagawe’s Village Cleanup"
             date="February, 14th 2023"
@@ -142,7 +152,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
             progress={90}
             imageSource={require('../imagenes/evtos3.png')}
           />
-
+</HorizontalCardList>
           {/* Sección de Oportunidades de Voluntarios */}
           <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIOS</Text>
           {/* Tarjetas de oportunidades aquí */}
