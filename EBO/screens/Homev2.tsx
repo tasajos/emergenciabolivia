@@ -9,53 +9,61 @@ import database from '@react-native-firebase/database';
 type RootStackParamList = {
   Homev2: undefined;
   MenuInicio: undefined;
+    RecInfo: undefined;
+    
+        
+  
 };
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
 
-const Card = ({ title, date, imageSource, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={styles.cardContainer}>
-        <Image source={imageSource} style={styles.cardImage} />
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle}>{title}</Text>
-          <Text style={styles.cardDate}>{date}</Text>
-          {/* ...otros elementos que forman parte de tu Card... */}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+
+
+
+
+const Card = ({ title, date, imageSource, onPress }: { title: string, date: string, imageSource: any, onPress: () => void }) => {
+    return (
+        <TouchableOpacity onPress={onPress}>
+            <View style={styles.cardContainer}>
+                <Image source={imageSource} style={styles.cardImage} />
+                <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>{title}</Text>
+                    <Text style={styles.cardDate}>{date}</Text>
+                    {/* ...otros elementos que forman parte de tu Card... */}
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
 };
 
-const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.volunteerCardContainer}>
-      <Image source={imageSource} style={styles.volunteerCardImage} />
-      <View style={styles.volunteerCardContent}>
-        <Text style={styles.volunteerCardTitle}>{title}</Text>
-        <Text style={styles.volunteerCardDate}>{date}</Text>
-        <Text style={styles.volunteerCardDescription}>{description}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPress }: { title: string, date: string, imageSource: any, description: string, onPress: () => void }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.volunteerCardContainer}>
+            <Image source={imageSource} style={styles.volunteerCardImage} />
+            <View style={styles.volunteerCardContent}>
+                <Text style={styles.volunteerCardTitle}>{title}</Text>
+                <Text style={styles.volunteerCardDate}>{date}</Text>
+                <Text style={styles.volunteerCardDescription}>{description}</Text>
+            </View>
+        </TouchableOpacity>
+    );
 };
-const EmergencyAlertCard = ({ title, date, city, description, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
-      <View style={styles.emergencyCardIconContainer}>
-        <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
-      </View>
-      <View style={styles.emergencyCardContent}>
-        <Text style={styles.emergencyCardTitle}>{title}</Text>
-        <Text style={styles.emergencyCardCity}>{city}</Text>
-        <Text style={styles.emergencyCardDate}>{date}</Text>
-        <Text style={styles.emergencyCardDescription}>{description}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+const EmergencyAlertCard = ({ title, date, city, description, onPress }: { title: string, date: string, city: string, description: string, onPress: () => void }) => {
+    return (
+        <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
+            <View style={styles.emergencyCardIconContainer}>
+                <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
+            </View>
+            <View style={styles.emergencyCardContent}>
+                <Text style={styles.emergencyCardTitle}>{title}</Text>
+                <Text style={styles.emergencyCardCity}>{city}</Text>
+                <Text style={styles.emergencyCardDate}>{date}</Text>
+                <Text style={styles.emergencyCardDescription}>{description}</Text>
+            </View>
+        </TouchableOpacity>
+    );
 };
 
 

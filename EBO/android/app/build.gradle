@@ -79,8 +79,8 @@ android {
         applicationId "chakuy.com.ebo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "Bravo 1.5"
+        versionCode 12
+        versionName "Charlie 1.1"
     }
     signingConfigs {
     release {
