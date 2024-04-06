@@ -29,4 +29,4 @@ const firebaseConfig = {
 //}
 
 AppRegistry.registerComponent(appName, () => App);
-AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging); // Registra el manejador de mensajes en segundo plano
+//AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging); // Registra el manejador de mensajes en segundo plano

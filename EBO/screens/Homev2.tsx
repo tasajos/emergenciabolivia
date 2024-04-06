@@ -50,7 +50,7 @@ const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPre
         </TouchableOpacity>
     );
 };
-const EmergencyAlertCard = ({ title, date, city, description, onPress }: { title: string, date: string, city: string, description: string, onPress: () => void }) => {
+const EmergencyAlertCard = ({ title, date, city, description,estado, onPress }: { title: string, date: string, city: string, description: string, estado: string,onPress: () => void }) => {
     return (
         <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
             <View style={styles.emergencyCardIconContainer}>
@@ -61,6 +61,7 @@ const EmergencyAlertCard = ({ title, date, city, description, onPress }: { title
                 <Text style={styles.emergencyCardCity}>{city}</Text>
                 <Text style={styles.emergencyCardDate}>{date}</Text>
                 <Text style={styles.emergencyCardDescription}>{description}</Text>
+                <Text style={styles.emergencyCardEstado}>Estado: {estado}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -131,6 +132,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           ciudad: data.ciudad,
           fecha: data.fecha,
           descripcion: data.descripcion,
+          estado: data.estado,
           id: childSnapshot.key,
         });
       });
@@ -273,6 +275,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       city={emergencia.ciudad} // Asegúrate de que el campo 'ciudad' esté disponible en los datos
       date={emergencia.fecha}
       description={emergencia.descripcion}
+      estado={emergencia.estado}
       onPress={() => {
         // Acciones al presionar la tarjeta de emergencia
       }}
@@ -485,6 +488,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   emergencyCardDescription: {
+    fontSize: 14,
+    color: '#333', // Un color más oscuro para la descripción
+  },
+  emergencyCardEstado: {
     fontSize: 14,
     color: '#333', // Un color más oscuro para la descripción
   },
