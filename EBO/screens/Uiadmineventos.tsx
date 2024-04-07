@@ -17,12 +17,13 @@ import { ImageLibraryOptions } from 'react-native-image-picker'; // Importar rea
 
 type RootStackParamList = {
     Uiadmineventos: undefined;
+    Uivereventos: undefined;
   };
 
   type Props = {
     navigation: NavigationProp<RootStackParamList>;
   };
-  
+
   const Uiadmineventos: React.FC<Props> = ({ navigation }) => {
    //const navigation = useNavigation();
     const [nombre, setNombre] = useState('');
@@ -139,7 +140,16 @@ const handleSubmit = async () => {
               <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
               
             </View>
-            <Text style={styles.description}>Registra Eventos</Text>
+            <Text style={styles.description}> Eventos</Text>
+
+            <TouchableOpacity 
+  style={styles.viewEventosButton}
+  onPress={() => navigation.navigate('Uivereventos')} // Agrega la navegación aquí
+>
+  <Text style={styles.viewEventosButtonText}>Ver Eventos</Text>
+</TouchableOpacity>
+
+
             <View style={styles.form}>
               <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
               <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
@@ -324,5 +334,21 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
+
+  viewEventosButton: {
+    backgroundColor: '#007bff',
+    padding: 4, // Reducir el padding para disminuir el tamaño
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 20,
+    marginHorizontal: '5%', // Centrar el botón en el contenedor
+    width: '40%', // Establecer el ancho al 10% del contenedor
+  },
+  viewEventosButtonText: {
+    color: 'white',
+    fontSize: 12, // Reducir el tamaño de la fuente
+    fontWeight: 'bold',
+  },
+
 });
 export default Uiadmineventos;

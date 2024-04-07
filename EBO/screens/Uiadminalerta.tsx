@@ -322,12 +322,12 @@ picker: {
 },
 viewEmergenciesButton: {
   backgroundColor: '#007bff',
-  padding: 5, // Reducir el padding para disminuir el tamaño
+  padding: 4, // Reducir el padding para disminuir el tamaño
   borderRadius: 5,
   alignItems: 'center',
   marginBottom: 20,
   marginHorizontal: '5%', // Centrar el botón en el contenedor
-  width: '30%', // Establecer el ancho al 10% del contenedor
+  width: '40%', // Establecer el ancho al 10% del contenedor
 },
 viewEmergenciesButtonText: {
   color: 'white',

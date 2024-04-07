@@ -11,13 +11,13 @@ import { ImageLibraryOptions } from 'react-native-image-picker';
 
 
 type RootStackParamList = {
-    Uiadminalerta: undefined;
-    UiEditarAlerta: { id: string }; // Asegúrate de que esta línea esté presente
+    Uiadmineventos: undefined;
+    UiEditarEvento: { id: string }; // Asegúrate de que esta línea esté presente
   };
 
   interface Alerta {
     key: string;
-    Titulo: string;
+    nombre: string;
     descripcion: string;
     ciudad: string;
     estado: string;
@@ -28,12 +28,12 @@ type RootStackParamList = {
   type NavigationType = StackNavigationProp<RootStackParamList>;
 
 
- const Uiveralertas: React.FC = () => {
+ const Uivereventos: React.FC = () => {
     const navigation = useNavigation<NavigationType>();
     const [alertas, setAlertas] = useState<Alerta[]>([]);
 
     useEffect(() => {
-        const alertasRef = database().ref('/ultimasEmergencias');
+        const alertasRef = database().ref('/eventos');
         const onValueChange = alertasRef.on('value', (snapshot) => {
           const data = snapshot.val();
           const alertasList = Object.keys(data).map((key) => ({
@@ -48,14 +48,14 @@ type RootStackParamList = {
     
       const renderItem = ({ item }: { item: Alerta }) => (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>{item.Titulo}</Text>
+          <Text style={styles.cardTitle}>{item.nombre}</Text>
           <Text>{item.ciudad}</Text>
           <Text>{item.descripcion}</Text>
           <Text>{item.estado}</Text>
           <Text>{item.fecha}</Text>
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => navigation.navigate('UiEditarAlerta', { id: item.key })}
+            onPress={() => navigation.navigate('UiEditarEvento', { id: item.key })}
           >
             <Text style={styles.editButtonText}>Editar</Text>
           </TouchableOpacity>
@@ -71,7 +71,7 @@ type RootStackParamList = {
               <Text style={styles.headerText}>Con el Apoyo de </Text>
               <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
             </View>
-            <Text style={styles.description}>Ver - Emergencia</Text>
+            <Text style={styles.description}>Ver - Eventos</Text>
             <FlatList
               data={alertas}
               renderItem={renderItem}
@@ -275,4 +275,4 @@ const styles = StyleSheet.create({
 
 
     });
-    export default Uiveralertas;
+    export default Uivereventos;
