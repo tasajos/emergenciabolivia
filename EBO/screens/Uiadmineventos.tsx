@@ -12,13 +12,19 @@ import { MediaType } from 'react-native-image-picker';
 import { Platform } from 'react-native';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { PhotoQuality } from 'react-native-image-picker';
+import { NavigationProp } from '@react-navigation/native';
+import { ImageLibraryOptions } from 'react-native-image-picker'; // Importar react-native-image-picker
 
 type RootStackParamList = {
     Uiadmineventos: undefined;
   };
 
-  const Uiadmineventos = () => {
-    const navigation = useNavigation();
+  type Props = {
+    navigation: NavigationProp<RootStackParamList>;
+  };
+  
+  const Uiadmineventos: React.FC<Props> = ({ navigation }) => {
+   //const navigation = useNavigation();
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [imagen, setImagen] = useState('');
@@ -27,6 +33,8 @@ type RootStackParamList = {
     const [inscripcion, setInscripcion] = useState('');
     const [key, setKey] = useState(0);
     const [imageUploadMessage, setImageUploadMessage] = useState('');
+
+   
 
 
     const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
@@ -81,19 +89,23 @@ const handleSubmit = async () => {
         quality: 1,
       };
       
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-              console.log('ImagePicker Error: ', response.errorMessage);
-            } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
-              const source = { uri: response.assets[0].uri };
-              setImagen(source.uri);
-            
-              setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
-              setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
-            }
-          });
+     
+
+        // ...
+
+        launchImageLibrary(options as ImageLibraryOptions, (response) => {
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.errorCode) {
+            console.log('ImagePicker Error: ', response.errorMessage);
+          } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
+            const source = { uri: response.assets[0].uri };
+            setImagen(source.uri);
+          
+            setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
+            setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
+          }
+        });
     };
 
         const resetForm = () => {
@@ -123,8 +135,9 @@ const handleSubmit = async () => {
           <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <View style={styles.header}>
               <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-              <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-              <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+              <Text style={styles.headerText}>Con el Apoyo de</Text>
+              <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+              
             </View>
             <Text style={styles.description}>Registra Eventos</Text>
             <View style={styles.form}>

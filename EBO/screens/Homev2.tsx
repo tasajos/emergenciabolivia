@@ -9,73 +9,92 @@ import database from '@react-native-firebase/database';
 type RootStackParamList = {
   Homev2: undefined;
   MenuInicio: undefined;
-    RecInfo: undefined;
-    
-        
-  
+  RecInfo: undefined;
+  unidadesepr: {} | undefined;
+  MapaHospitales: {} | undefined;
+  Educacionepr: undefined;
+  Ambientalistasepr: undefined;
+  Animalistasepr: undefined;
+  Ambulanciasepr: undefined;
+  Eventosv2: undefined;
+  kitset: undefined;
 };
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
 
+type InformacionUtil = {
+  nombre: string;
+  imagen: string;
+  fecha: string;
+  id: string | null;
+};
 
+type OportunidadVoluntariado = {
+  titulo: string;
+  fecha: string;
+  imagen: string;
+  descripcion: string;
+  id: string | null;
+};
 
-
+type Emergencia = {
+  Titulo: string;
+  ciudad: string;
+  fecha: string;
+  descripcion: string;
+  estado: string;
+  id: string | null;
+};
 
 const Card = ({ title, date, imageSource, onPress }: { title: string, date: string, imageSource: any, onPress: () => void }) => {
-    return (
-        <TouchableOpacity onPress={onPress}>
-            <View style={styles.cardContainer}>
-                <Image source={imageSource} style={styles.cardImage} />
-                <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{title}</Text>
-                    <Text style={styles.cardDate}>{date}</Text>
-                    {/* ...otros elementos que forman parte de tu Card... */}
-                </View>
-            </View>
-        </TouchableOpacity>
-    );
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.cardContainer}>
+        <Image source={imageSource} style={styles.cardImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.cardTitle}>{title}</Text>
+          <Text style={styles.cardDate}>{date}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPress }: { title: string, date: string, imageSource: any, description: string, onPress: () => void }) => {
-    return (
-        <TouchableOpacity onPress={onPress} style={styles.volunteerCardContainer}>
-            <Image source={imageSource} style={styles.volunteerCardImage} />
-            <View style={styles.volunteerCardContent}>
-                <Text style={styles.volunteerCardTitle}>{title}</Text>
-                <Text style={styles.volunteerCardDate}>{date}</Text>
-                <Text style={styles.volunteerCardDescription}>{description}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-};
-const EmergencyAlertCard = ({ title, date, city, description,estado, onPress }: { title: string, date: string, city: string, description: string, estado: string,onPress: () => void }) => {
-    return (
-        <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
-            <View style={styles.emergencyCardIconContainer}>
-                <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
-            </View>
-            <View style={styles.emergencyCardContent}>
-                <Text style={styles.emergencyCardTitle}>{title}</Text>
-                <Text style={styles.emergencyCardCity}>{city}</Text>
-                <Text style={styles.emergencyCardDate}>{date}</Text>
-                <Text style={styles.emergencyCardDescription}>{description}</Text>
-                <Text style={styles.emergencyCardEstado}>Estado: {estado}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-};
-
-
-
-const HorizontalCardList = ({ children }) => {
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.horizontalCardList}
-    >
+    <TouchableOpacity onPress={onPress} style={styles.volunteerCardContainer}>
+      <Image source={imageSource} style={styles.volunteerCardImage} />
+      <View style={styles.volunteerCardContent}>
+        <Text style={styles.volunteerCardTitle}>{title}</Text>
+        <Text style={styles.volunteerCardDate}>{date}</Text>
+        <Text style={styles.volunteerCardDescription}>{description}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const EmergencyAlertCard = ({ title, date, city, description, estado, onPress }: { title: string, date: string, city: string, description: string, estado: string, onPress: () => void }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
+      <View style={styles.emergencyCardIconContainer}>
+        <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
+      </View>
+      <View style={styles.emergencyCardContent}>
+        <Text style={styles.emergencyCardTitle}>{title}</Text>
+        <Text style={styles.emergencyCardCity}>{city}</Text>
+        <Text style={styles.emergencyCardDate}>{date}</Text>
+        <Text style={styles.emergencyCardDescription}>{description}</Text>
+        <Text style={styles.emergencyCardEstado}>Estado: {estado}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const HorizontalCardList = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalCardList}>
       {children}
     </ScrollView>
   );
@@ -84,62 +103,63 @@ const HorizontalCardList = ({ children }) => {
 const Homev2: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('');
-  const [informacionUtil, setInformacionUtil] = useState([]);
+  const [informacionUtil, setInformacionUtil] = useState<InformacionUtil[]>([]);
   const [versionName, setVersionName] = useState('');
-  const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState([]);
-  const [emergencias, setEmergencias] = useState([]);
+  const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState<OportunidadVoluntariado[]>([]);
+  const [emergencias, setEmergencias] = useState<Emergencia[]>([]);
 
   useEffect(() => {
     const ref = database().ref('/informacionutil');
-    const listener = ref.on('value', snapshot => {
-      const fetchedData = [];
-      snapshot.forEach((childSnapshot) => {
-        const data = childSnapshot.val();
-        fetchedData.push({
-          nombre: data.nombre,
-          imagen: data.imagen,
-          fecha: data.fecha,
-          id: childSnapshot.key // Usar el ID para identificar cada elemento de manera única
+    const listener = ref.on('value', (snapshot) => {
+        const fetchedData: InformacionUtil[] = [];
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          fetchedData.push({
+            nombre: data.nombre,
+            imagen: data.imagen,
+            fecha: data.fecha,
+            id: childSnapshot.key,
+          });
+          return undefined; // Añade esta línea
         });
+        setInformacionUtil(fetchedData);
       });
-      setInformacionUtil(fetchedData);
-    });
 
     const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
-    const oportunidadesListener = oportunidadesRef.on('value', snapshot => {
-      const fetchedOportunidades = [];
-      snapshot.forEach(childSnapshot => {
-        const data = childSnapshot.val();
-        fetchedOportunidades.push({
-          titulo: data.titulo,
-          fecha: data.fecha,
-          imagen: data.imagen,
-          descripcion: data.descripcion,
-          id: childSnapshot.key,
+    const oportunidadesListener = oportunidadesRef.on('value', (snapshot) => {
+        const fetchedOportunidades: OportunidadVoluntariado[] = [];
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          fetchedOportunidades.push({
+            titulo: data.titulo,
+            fecha: data.fecha,
+            imagen: data.imagen,
+            descripcion: data.descripcion,
+            id: childSnapshot.key,
+          });
+          return undefined; // Añade esta línea
         });
+        setOportunidadesVoluntariado(fetchedOportunidades);
       });
-      setOportunidadesVoluntariado(fetchedOportunidades);
-    });
-
+      
 
     const emergenciasRef = database().ref('/ultimasEmergencias');
-    const emergenciasListener = emergenciasRef.on('value', snapshot => {
-      const fetchedEmergencias = [];
-      snapshot.forEach(childSnapshot => {
-        const data = childSnapshot.val();
-        fetchedEmergencias.push({
-          Titulo: data.Titulo,
-          ciudad: data.ciudad,
-          fecha: data.fecha,
-          descripcion: data.descripcion,
-          estado: data.estado,
-          id: childSnapshot.key,
+    const emergenciasListener = emergenciasRef.on('value', (snapshot) => {
+        const fetchedEmergencias: Emergencia[] = [];
+        snapshot.forEach((childSnapshot) => {
+          const data = childSnapshot.val();
+          fetchedEmergencias.push({
+            Titulo: data.Titulo,
+            ciudad: data.ciudad,
+            fecha: data.fecha,
+            descripcion: data.descripcion,
+            estado: data.estado,
+            id: childSnapshot.key,
+          });
+          return undefined; // Añade esta línea
         });
+        setEmergencias(fetchedEmergencias);
       });
-      setEmergencias(fetchedEmergencias);
-    });
-
-
 
     setAppVersion(DeviceInfo.getReadableVersion());
     const getVersionName = async () => {
@@ -229,70 +249,58 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           {/* Sección de Información Útil */}
           <Text style={styles.sectionTitle}>INFORMACIÓN ÚTIL</Text>
           <HorizontalCardList>
-        {informacionUtil.map(item => (
-          <Card
-            key={item.id}
-            title={item.nombre}
-            date={item.fecha}
-            imageSource={{ uri: item.imagen }}
-            onPress={() => {
-              // Lógica para determinar qué pantalla abrir
-              if (item.nombre === 'Eventos') {
-                navigation.navigate('Eventosv2');
-              } else if (item.nombre === 'Kits') {
-                navigation.navigate('kitset');
-              }
-            }}
-          />
-        ))}
-      </HorizontalCardList>
+            {informacionUtil.map((item) => (
+              <Card key={item.id} title={item.nombre} date={item.fecha} imageSource={{ uri: item.imagen }} onPress={() => {
+                // Lógica para determinar qué pantalla abrir
+                if (item.nombre === 'Eventos') {
+                  navigation.navigate('Eventosv2');
+                } else if (item.nombre === 'Kits') {
+                  navigation.navigate('kitset');
+                }
+              }} />
+            ))}
+          </HorizontalCardList>
 
           {/* Sección de Oportunidades de Voluntarios */}
           <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIADO</Text>
           {/* Tarjetas de oportunidades aquí */}
           <View style={styles.volunteerOpportunitiesContainer}>
-  {oportunidadesVoluntariado.map(oportunidad => (
-    <VolunteerOpportunityCard
-      key={oportunidad.id}
-      title={oportunidad.titulo}
-      date={oportunidad.fecha}
-      description={oportunidad.descripcion} // Asegúrate de que este campo exista en tus datos
-      imageSource={{ uri: oportunidad.imagen }}
-      onPress={() => {
-        // Define aquí tu lógica para el manejo del toque en la tarjeta
-      }}
-    />
-  ))}
-</View>
+            {oportunidadesVoluntariado.map((oportunidad) => (
+              <VolunteerOpportunityCard key={oportunidad.id} title={oportunidad.titulo} date={oportunidad.fecha} description={oportunidad.descripcion} imageSource={{ uri: oportunidad.imagen }} onPress={() => {
+                // Define aquí tu lógica para el manejo del toque en la tarjeta
+              }} />
+            ))}
+          </View>
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
           {/* Tarjetas de ultimas emergencias aquí */}
           <View style={styles.emergencyAlertsContainer}>
-  {emergencias.map((emergencia) => (
-    <EmergencyAlertCard
-      key={emergencia.id}
-      title={emergencia.Titulo}
-      city={emergencia.ciudad} // Asegúrate de que el campo 'ciudad' esté disponible en los datos
-      date={emergencia.fecha}
-      description={emergencia.descripcion}
-      estado={emergencia.estado}
-      onPress={() => {
-        // Acciones al presionar la tarjeta de emergencia
-      }}
-    />
-  ))}
+  {emergencias
+    .filter((emergencia) => emergencia.estado === 'Activo')
+    .map((emergencia) => (
+      <EmergencyAlertCard
+        key={emergencia.id}
+        title={emergencia.Titulo}
+        city={emergencia.ciudad}
+        date={emergencia.fecha}
+        description={emergencia.descripcion}
+        estado={emergencia.estado}
+        onPress={() => {
+          // Acciones al presionar la tarjeta de emergencia
+        }}
+      />
+    ))}
 </View>
 
-
-
-           {/* Mostrar el versionName */}
-           <Text style={styles.VersionText}>Version: {versionName}</Text>
+          {/* Mostrar el versionName */}
+          <Text style={styles.VersionText}>Version: {versionName}</Text>
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -351,7 +359,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     // Estilos para los títulos de sección
   },
-
   cardContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -376,6 +383,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontWeight: 'bold',
+    color: 'black', 
     // Ajusta estos estilos según tu diseño
   },
   cardDate: {
@@ -409,7 +417,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     // Estilos para los títulos de sección
   },
-
   volunteerOpportunitiesContainer: {
     paddingHorizontal: 20, // Puedes ajustar esto como necesites
   },
@@ -502,6 +509,13 @@ const styles = StyleSheet.create({
     marginBottom: 4, // Espacio debajo del nombre de la ciudad
   },
   // Add other styles as needed
+  horizontalCardList: {
+    marginBottom: 20, // Ajusta el margen inferior según sea necesario
+  },
+  emergencyAlertsContainer: {
+    // Estilos para el contenedor de alertas de emergencia
+    marginBottom: 20, // Ajusta el margen inferior según sea necesario
+  },
 });
 
 export default Homev2;

@@ -1,4 +1,4 @@
-package com.ebo
+package com.vbo
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

@@ -8,7 +8,7 @@ import {AppRegistry} from 'react-native';
 import { initializeApp } from '@react-native-firebase/app';
 import App from './App';
 import {name as appName} from './app.json';
-import bgMessaging from './bgMessaging'; // Importa el manejador de mensajes en segundo plano
+//import bgMessaging from './bgMessaging'; // Importa el manejador de mensajes en segundo plano
 
 // Initialize Firebase
 const firebaseConfig = {

@@ -16,29 +16,34 @@ type RootStackParamList = {
 
 
   // Datos de ejemplo para las tarjetas
-const data = [
-    { id: '1', title: 'Eventos', description: 'Crear Eventos en la App',screen: 'Uiadmineventos' },
-    { id: '2', title: 'Unidades ', description: 'Crear Unidades EPR',screen: 'Uiadminepr' },
-    { id: '3', title: 'Crear Alerta', description: 'Crear Alerta',screen: 'Uiadminalerta' },
-    //{ id: '4', title: 'Card 4', description: 'Descripción de Card 4' },
+  const data: CardData[] = [
+    { id: '1', title: 'Eventos', description: 'Crear Eventos en la App', screen: 'Uiadmineventos' },
+    { id: '2', title: 'Unidades ', description: 'Crear Unidades EPR', screen: 'Uiadminepr' },
+    { id: '3', title: 'Crear Alerta', description: 'Crear Alerta', screen: 'Uiadminalerta' },
   ];
 
+interface CardData {
+  id: string;
+  title: string;
+  description: string;
+  screen: keyof RootStackParamList;
+}
  
 
   const Uiadministrador = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-    const handleCardPress = (screen: string) => {
-        navigation.navigate(screen);
-      };
-    const renderItem = ({ item }) => (
+    const handleCardPress = (screen: keyof RootStackParamList) => {
+      navigation.navigate(screen);
+  };
 
-       <TouchableOpacity
-      style={styles.card}
-      onPress={() => handleCardPress(item.screen)} // Usar el nombre de la pantalla como parámetro
+  const renderItem = ({ item }: { item: CardData }) => (
+    <TouchableOpacity
+        style={styles.card}
+        onPress={() => handleCardPress(item.screen)}
     >
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardDescription}>{item.description}</Text>
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardDescription}>{item.description}</Text>
     </TouchableOpacity>
   );
 
@@ -48,8 +53,9 @@ const data = [
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-        <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-        <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+        <Text style={styles.headerText}>Con el Apoyo de </Text>
+        <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+        
       </View>
       <Text style={styles.description}>
         Selecciona del menu 

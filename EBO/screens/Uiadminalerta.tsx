@@ -6,6 +6,8 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { firebase } from '@react-native-firebase/storage'; // Importar Firebase Storage
 import database from '@react-native-firebase/database'; // Importar Firebase Realtime Database
 import { Picker } from '@react-native-picker/picker';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { ImageLibraryOptions } from 'react-native-image-picker';
 
 
 
@@ -13,10 +15,15 @@ type RootStackParamList = {
     Uiadminalerta: undefined;
   };
 
-  const Uiadminalerta = () => {
-   // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-   const navigation = useNavigation();
+  type NavigationType = StackNavigationProp<RootStackParamList>;
+
+ 
+  const Uiadminalerta: React.FC = () => {
+   // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+   const navigation = useNavigation<NavigationType>();
+
+   //const navigation = useNavigation();
    const [nombre, setNombre] = useState('');
    const [ciudad, setCiudad] = useState('');
    const [imagen, setImagen] = useState('');
@@ -76,23 +83,26 @@ const handleSubmit = async () => {
 
   const pickImage = () => {
     const options = {
-      mediaType: 'photo',
+      mediaType: 'photo', // Usa 'photo' en lugar de 'string'
       quality: 1,
     };
     
-      launchImageLibrary(options, (response) => {
-          if (response.didCancel) {
-            console.log('User cancelled image picker');
-          } else if (response.errorCode) {
-            console.log('ImagePicker Error: ', response.errorMessage);
-          } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
-            const source = { uri: response.assets[0].uri };
-            setImagen(source.uri);
-          
-            setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
-            setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
-          }
-        });
+
+
+      // Rest of the code...
+      launchImageLibrary(options as ImageLibraryOptions, (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
+          const source = { uri: response.assets[0].uri };
+          setImagen(source.uri);
+        
+          setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
+          setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
+        }
+      });
   };
 
       const resetForm = () => {
@@ -114,8 +124,9 @@ const handleSubmit = async () => {
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.header}>
             <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-            <Image source={require('../imagenes/tsflo1.png')} style={styles.logo} />
-            <Text style={styles.headerText}>Con el Apoyo de Tunari sin Fuego</Text>
+            <Text style={styles.headerText}>Con el Apoyo de </Text>
+            <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+            
           </View>
           <Text style={styles.description}>Registrar Alerta - Emergencia</Text>
           <View style={styles.form}>

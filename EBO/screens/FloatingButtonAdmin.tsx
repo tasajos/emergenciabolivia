@@ -1,12 +1,13 @@
 // FloatingButtonAdmin.tsx
 import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, Linking } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, Linking ,Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 type NavigationType = StackNavigationProp<any>;
 
 type Props = {
-  navigation: NavigationType;
+  navigation: NavigationProp<ParamListBase>;
 };
 
 const openWhatsApp = () => {
@@ -23,8 +24,8 @@ const openWhatsApp = () => {
   
   Linking.openURL(url).catch((err) => {
     console.error('An error occurred', err);
-    alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
-  });
+    Alert.alert('Error', 'No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+  });;
 };
 
 const FloatingButtonAdmin: React.FC<Props> = ({ navigation }) => {
@@ -33,7 +34,7 @@ const FloatingButtonAdmin: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Uiadministrador')}>
         <Image source={require('../imagenes/hogar1.png')} style={styles.icon} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('MenuInicio')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Homev2')}>
         <Image source={require('../imagenes/bloqueado.png')} style={styles.icon} />
       </TouchableOpacity>
       <TouchableOpacity onPress={openWhatsApp}>
