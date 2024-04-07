@@ -17,9 +17,9 @@ type RootStackParamList = {
 
   // Datos de ejemplo para las tarjetas
   const data: CardData[] = [
-    { id: '1', title: 'Eventos', description: 'Crear Eventos en la App', screen: 'Uiadmineventos' },
-    { id: '2', title: 'Unidades ', description: 'Crear Unidades EPR', screen: 'Uiadminepr' },
-    { id: '3', title: 'Crear Alerta', description: 'Crear Alerta', screen: 'Uiadminalerta' },
+    { id: '1', title: 'Eventos', description: 'Eventos en la App', screen: 'Uiadmineventos' },
+    { id: '2', title: 'Unidades ', description: 'Unidades EPR', screen: 'Uiadminepr' },
+    { id: '3', title: 'Alertas', description: 'Alertas', screen: 'Uiadminalerta' },
   ];
 
 interface CardData {

@@ -34,6 +34,8 @@ import Ambientalistasepr from './screens/Ambientalistasepr';
 import Animalistasepr from './screens/Animalistasepr';
 import Ambientalistas2doepr from './screens/Ambientalistas2doepr';
 import Animalistas2doepr from './screens/Animalistas2doepr';
+import Uiveralertas from './screens/Uiveralertas';
+import UiEditarAlerta from './screens/UiEditarAlerta';
 import Homev2 from './screens/Homev2';
 import firebase from '@react-native-firebase/app';
 
@@ -78,12 +80,14 @@ export type RootStackParamList = {
   Login: undefined;
   Uiadministrador: undefined;
   Uiadmineventos: undefined;
+  Uiveralertas: undefined;
   Uiadminepr: undefined;
   Uiadminnotif: undefined;
   Uiadminalerta: undefined;
   MapaHospitales: undefined;
   Ambientalistasepr: undefined;
   Animalistasepr: undefined;
+  UiEditarAlerta:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -137,6 +141,8 @@ const App = () => {
         <Stack.Screen name="Uiadminepr" component={Uiadminepr} />
         <Stack.Screen name="Uiadminnotif" component={Uiadminnotif} />
         <Stack.Screen name="Uiadminalerta" component={Uiadminalerta} />
+        <Stack.Screen name="Uiveralertas" component={Uiveralertas} />
+        <Stack.Screen name="UiEditarAlerta" component={UiEditarAlerta} />
         <Stack.Screen name="MapaHospitales" component={MapaHospitales} />
         <Stack.Screen name="Ambulanciasepr" component={Ambulanciasepr} />
         <Stack.Screen name="Ambulancias2doepr" component={Ambulancias2doepr} />

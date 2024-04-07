@@ -13,6 +13,7 @@ import { ImageLibraryOptions } from 'react-native-image-picker';
 
 type RootStackParamList = {
     Uiadminalerta: undefined;
+    Uiveralertas: undefined;
   };
 
 
@@ -23,19 +24,18 @@ type RootStackParamList = {
    // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
    const navigation = useNavigation<NavigationType>();
 
-   //const navigation = useNavigation();
-   const [nombre, setNombre] = useState('');
-   const [ciudad, setCiudad] = useState('');
-   const [imagen, setImagen] = useState('');
-   const [facebook, setFacebook] = useState('');
-   const [telefono, setTelefono] = useState('');
-   const [web, setWeb] = useState('');
-   const [key, setKey] = useState(0);
-   const [imageUploadMessage, setImageUploadMessage] = useState('');
+   const [Titulo, setTitulo] = useState('');
+  const [ciudad, setCiudad] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [estado, setEstado] = useState('Activo');
+  const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10));
+  const [imagen, setImagen] = useState('');
+  const [imageUploadMessage, setImageUploadMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
    const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
-const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de carga
+//const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de carga
 
 
 const handleSubmit = async () => {
@@ -59,19 +59,20 @@ const handleSubmit = async () => {
   }
 
   try {
-    const newEventRef = database().ref('/epr').push();
+    const newEventRef = database().ref('/ultimasEmergencias').push();
     await newEventRef.set({
-      nombre,
+      Titulo,
       ciudad,
-      facebook,
-      telefono,
-      web,
+      descripcion,
+      estado,
+      fecha,
       imagen: imageUrl,
     });
 
-    Alert.alert('Unidad registrada con éxito');
+    Alert.alert('Alerta registrada con éxito');
     resetForm(); // Llamar a la función para restablecer el formulario
-    setKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la actualización de la interfaz
+
+    //setKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la actualización de la interfaz
   } catch (error) {
     console.error('Error al registrar unidad:', error);
     Alert.alert('Error al registrar unidad');
@@ -79,18 +80,18 @@ const handleSubmit = async () => {
   setIsSubmitting(false);
 };
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  //const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const pickImage = () => {
-    const options = {
-      mediaType: 'photo', // Usa 'photo' en lugar de 'string'
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
       quality: 1,
     };
     
 
 
       // Rest of the code...
-      launchImageLibrary(options as ImageLibraryOptions, (response) => {
+      launchImageLibrary(options, (response) => {
         if (response.didCancel) {
           console.log('User cancelled image picker');
         } else if (response.errorCode) {
@@ -98,29 +99,27 @@ const handleSubmit = async () => {
         } else if (response.assets && response.assets.length > 0 && response.assets[0].uri) {
           const source = { uri: response.assets[0].uri };
           setImagen(source.uri);
-        
-          setImageButtonText('Imagen Seleccionada'); // Cambia el texto del botón cuando la imagen se selecciona
-          setImageUploadMessage('Imagen Cargada'); // Establece el mensaje "Imagen Cargada"
+          setImageButtonText('Imagen Seleccionada');
+          setImageUploadMessage('Imagen Cargada');
         }
       });
-  };
+    };
 
       const resetForm = () => {
           // Restablecer todos los estados a sus valores predeterminados
-          setNombre('');
-          setCiudad('');
-          setImagen('');
-          setFacebook('');
-          setTelefono('');
-          setWeb('');
-          setImageButtonText('Selecciona Imagen'); // Restablecer el texto del botón de selección de imagen
-          setImageUploadMessage(''); // Limpiar el mensaje de carga de la imagen
-        };
+          setTitulo('');
+    setCiudad('');
+    setDescripcion('');
+    setEstado('Activo');
+    setFecha(new Date().toISOString().slice(0, 10));
+    setImagen('');
+    setImageUploadMessage('');
+  };
 
  
 
     return (
-      <SafeAreaView style={styles.container} key={key}>
+      <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
           <View style={styles.header}>
             <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
@@ -128,40 +127,48 @@ const handleSubmit = async () => {
             <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
             
           </View>
-          <Text style={styles.description}>Registrar Alerta - Emergencia</Text>
+          <Text style={styles.description}>Alertas - Emergencia</Text>
+
+          <TouchableOpacity 
+  style={styles.viewEmergenciesButton}
+  onPress={() => navigation.navigate('Uiveralertas')} // Agrega la navegación aquí
+>
+  <Text style={styles.viewEmergenciesButtonText}>Ver Emergencias</Text>
+</TouchableOpacity>
+
+
+
           <View style={styles.form}>
-            <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
-            <TextInput style={styles.input} placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} multiline />
-            <TextInput style={styles.input} placeholder="Facebook" value={facebook} onChangeText={setFacebook} />
-            <TextInput style={styles.input} placeholder="Telefono" value={telefono} onChangeText={setTelefono} />
-            <TextInput style={styles.input} placeholder="Web" value={web} onChangeText={setWeb} />
-
-            <View style={styles.imagePickerContainer}>
-<Text style={styles.imagePickerText}>{imageButtonText}</Text>
-<TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
-  <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
-</TouchableOpacity>
-<Text>{imageUploadMessage}</Text>
-</View>
-           
-         
-            
-            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isSubmitting}>
-{isSubmitting ? (
-  <ActivityIndicator size="small" color="#fff" />
-) : (
-  <Text style={styles.buttonText}>Enviar</Text>
-)}
-</TouchableOpacity>
-
-
+          <TextInput style={styles.input} placeholder="Título" value={Titulo} onChangeText={setTitulo} />
+          <TextInput style={styles.input} placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} />
+          <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
+          <Picker selectedValue={estado} onValueChange={(itemValue) => setEstado(itemValue)} style={styles.picker}>
+            <Picker.Item label="Activo" value="Activo" />
+            <Picker.Item label="Controlado" value="Controlado" />
+            <Picker.Item label="Atendido" value="Atendido" />
+            <Picker.Item label="Vencido" value="Vencido" />
+          </Picker>
+          <TextInput style={styles.input} placeholder="Fecha (AAAA-MM-DD)" value={fecha} onChangeText={setFecha} />
+          <View style={styles.imagePickerContainer}>
+            <Text style={styles.imagePickerText}>{imageButtonText}</Text>
+            <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
+              <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
+            </TouchableOpacity>
+            <Text>{imageUploadMessage}</Text>
           </View>
-          <FloatingButtonAdmin navigation={navigation} />
-        </ScrollView>
-       
-      </SafeAreaView>
-    );
-  };
+          <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Enviar</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+        <FloatingButtonAdmin navigation={navigation} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
 container: {
@@ -304,6 +311,28 @@ selectedDateText: {
   fontSize: 16,
   marginBottom: 15,
   textAlign: 'center',
+},
+picker: {
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 5,
+  padding: 15,
+  marginBottom: 10,
+  fontSize: 16,
+},
+viewEmergenciesButton: {
+  backgroundColor: '#007bff',
+  padding: 5, // Reducir el padding para disminuir el tamaño
+  borderRadius: 5,
+  alignItems: 'center',
+  marginBottom: 20,
+  marginHorizontal: '5%', // Centrar el botón en el contenedor
+  width: '30%', // Establecer el ancho al 10% del contenedor
+},
+viewEmergenciesButtonText: {
+  color: 'white',
+  fontSize: 12, // Reducir el tamaño de la fuente
+  fontWeight: 'bold',
 },
 });
 export default Uiadminalerta;
