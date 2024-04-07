@@ -25,7 +25,7 @@ type RootStackParamList = {
    const navigation = useNavigation<NavigationType>();
 
    const [Titulo, setTitulo] = useState('');
-  const [ciudad, setCiudad] = useState('');
+   const [ciudad, setCiudad] = useState('Cochabamba');
   const [descripcion, setDescripcion] = useState('');
   const [estado, setEstado] = useState('Activo');
   const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10));
@@ -140,14 +140,31 @@ const handleSubmit = async () => {
 
           <View style={styles.form}>
           <TextInput style={styles.input} placeholder="Título" value={Titulo} onChangeText={setTitulo} />
-          <TextInput style={styles.input} placeholder="Ciudad" value={ciudad} onChangeText={setCiudad} />
+          
+          <Text style={styles.label}>Ciudad:</Text>
+          <Picker selectedValue={ciudad} onValueChange={(itemValue) => setCiudad(itemValue)} style={styles.picker}>
+          <Picker.Item label="Cochabamba" value="Cochabamba" />
+          <Picker.Item label="Santa Cruz" value="Santa Cruz" />
+          <Picker.Item label="Potosi" value="Potosi" />
+          <Picker.Item label="La Paz" value="La Paz" />
+          <Picker.Item label="Beni" value="Beni" />
+          <Picker.Item label="Pando" value="Pando" />
+          <Picker.Item label="Tarija" value="Tarija" />
+          <Picker.Item label="Oruro" value="Oruro" />
+          <Picker.Item label="Chuquisaca" value="Chuquisaca" />
+          </Picker>
+
           <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
+          
+          <Text style={styles.label}>Estado:</Text>
           <Picker selectedValue={estado} onValueChange={(itemValue) => setEstado(itemValue)} style={styles.picker}>
             <Picker.Item label="Activo" value="Activo" />
             <Picker.Item label="Controlado" value="Controlado" />
             <Picker.Item label="Atendido" value="Atendido" />
             <Picker.Item label="Vencido" value="Vencido" />
           </Picker>
+
+
           <TextInput style={styles.input} placeholder="Fecha (AAAA-MM-DD)" value={fecha} onChangeText={setFecha} />
           <View style={styles.imagePickerContainer}>
             <Text style={styles.imagePickerText}>{imageButtonText}</Text>
@@ -256,6 +273,11 @@ buttonText: {
   color: 'white',
   fontSize: 16,
   fontWeight: 'bold',
+},
+label: {
+  fontSize: 16,
+  marginBottom: 10,
+  color: '#424242',
 },
 scrollViewContainer: {
   paddingBottom: '20%', // Deja espacio en la parte inferior equivalente al 20% del contenedor

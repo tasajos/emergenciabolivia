@@ -14,6 +14,8 @@ type Evento = {
   nombre: string;
   inscripcion: string;
   link: string;
+  ciudad: string;
+  estado: string;
 };
 
 type EventoCardProps = {
@@ -39,6 +41,7 @@ const EventoCard: React.FC<EventoCardProps> = ({ evento }) => {
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{evento.nombre}</Text>
           <Text style={styles.cardInfo}>{evento.descripcion}</Text>
+          <Text style={styles.cardInfo}>{evento.ciudad}</Text>
           <Text style={styles.cardInfo} onPress={() => handlePress(evento.inscripcion)}>
             {evento.fecha}
           </Text>
@@ -95,7 +98,7 @@ const Eventosv2: React.FC = () => {
         <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
       </View>
       <FlatList
-        data={evts}
+        data={evts.filter((evento) => evento.estado === 'Activo')}
         renderItem={({ item }) => <EventoCard evento={item} />}
         keyExtractor={(item) => item.key}
         style={styles.eventList}

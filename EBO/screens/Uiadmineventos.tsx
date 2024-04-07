@@ -14,6 +14,7 @@ import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { PhotoQuality } from 'react-native-image-picker';
 import { NavigationProp } from '@react-navigation/native';
 import { ImageLibraryOptions } from 'react-native-image-picker'; // Importar react-native-image-picker
+import { Picker } from '@react-native-picker/picker';
 
 type RootStackParamList = {
     Uiadmineventos: undefined;
@@ -34,6 +35,9 @@ type RootStackParamList = {
     const [inscripcion, setInscripcion] = useState('');
     const [key, setKey] = useState(0);
     const [imageUploadMessage, setImageUploadMessage] = useState('');
+    const [estado, setEstado] = useState('Activo');
+    const [ciudad, setCiudad] = useState('Cochabamba');
+
 
    
 
@@ -70,6 +74,8 @@ const handleSubmit = async () => {
         link,
         inscripcion,
         imagen: imageUrl,
+        estado,
+        ciudad
       });
   
       Alert.alert('Evento registrado con éxito');
@@ -175,6 +181,33 @@ const handleSubmit = async () => {
               <TextInput style={styles.input} placeholder="Link del Evento" value={link} onChangeText={setLink} />
               <TextInput style={styles.input} placeholder="Inscripción (Sí/No)" value={inscripcion} onChangeText={setInscripcion} />
               
+              <Text style={styles.label}>Estado:</Text>
+              <Picker
+          selectedValue={estado}
+          onValueChange={(itemValue) => setEstado(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Activo" value="Activo" />
+          <Picker.Item label="Vencido" value="Vencido" />
+        </Picker>
+
+        <Text style={styles.label}>Ciudad:</Text>
+        <Picker
+    selectedValue={ciudad}
+    onValueChange={(itemValue) => setCiudad(itemValue)}
+    style={styles.picker}
+>
+    <Picker.Item label="Cochabamba" value="Cochabamba" />
+    <Picker.Item label="Santa Cruz" value="Santa Cruz" />
+    <Picker.Item label="Potosi" value="Potosi" />
+    <Picker.Item label="La Paz" value="La Paz" />
+    <Picker.Item label="Beni" value="Beni" />
+    <Picker.Item label="Pando" value="Pando" />
+    <Picker.Item label="Tarija" value="Tarija" />
+    <Picker.Item label="Oruro" value="Oruro" />
+    <Picker.Item label="Chuquisaca" value="Chuquisaca" />
+</Picker>
+
               <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isSubmitting}>
   {isSubmitting ? (
     <ActivityIndicator size="small" color="#fff" />
@@ -201,6 +234,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  label: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#424242',
+},
   headerImage: {
     width: '80%',
     height: 60,
@@ -210,6 +248,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#424242',
     marginTop: 20,
+  },
+  picker: {
+    width: '80%',
+    marginBottom: 20,
   },
   description: {
     fontSize: 16,

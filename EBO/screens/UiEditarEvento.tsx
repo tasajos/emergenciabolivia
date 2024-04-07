@@ -46,7 +46,7 @@ const UiEditarEvento = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Editar Alerta</Text>
+      <Text style={styles.title}>Editar Evento</Text>
       <Text style={styles.label}>Nombre: {nombre}</Text>
       <Text style={styles.label}>Ciudad: {ciudad}</Text>
       <Text style={styles.label}>Descripción: {descripcion}</Text>
@@ -57,8 +57,6 @@ const UiEditarEvento = () => {
         style={styles.picker}
       >
         <Picker.Item label="Activo" value="Activo" />
-        <Picker.Item label="Controlado" value="Controlado" />
-        <Picker.Item label="Atendido" value="Atendido" />
         <Picker.Item label="Vencido" value="Vencido" />
       </Picker>
       <TouchableOpacity style={styles.button} onPress={handleUpdate}>
