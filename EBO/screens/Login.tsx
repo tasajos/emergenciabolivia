@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 
-// import { TextInput, Button } from 'react-native-paper';
 
 
 
@@ -43,7 +42,7 @@ const Login: React.FC<Props> = () => {
         navigation.navigate('Uiadministrador');
       }
     
-    } catch (error: any) { // Agrega el type assertion aquí
+    } catch (error: any) { 
       let message;
       if (error.code === 'auth/user-not-found') {
         message = "No existe una cuenta para el correo electrónico ingresado.";

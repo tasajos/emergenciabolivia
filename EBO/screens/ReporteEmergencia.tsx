@@ -307,6 +307,7 @@ const handleSubmit = async () => {
           </Picker>
 
     */}
+    <Text style={styles.label}>Descripcion:</Text>
           <TextInput style={styles.input} placeholder="Descripción" value={descripcion} onChangeText={setDescripcion} multiline />
           
           <Text style={styles.label}>Estado:</Text>
@@ -483,6 +484,7 @@ input: {
   padding: 15,
   marginBottom: 10,
   fontSize: 16,
+  color: '#424242',
 },
 button: {
   backgroundColor: '#007bff',
@@ -526,6 +528,7 @@ imagePickerContainer: {
 imagePickerText: {
   fontSize: 16,
   marginRight: 10,
+  color: '#424242',
 },
 imagePickerButton: {
   padding: 10,
@@ -562,6 +565,7 @@ picker: {
   padding: 15,
   marginBottom: 10,
   fontSize: 16,
+  color: '#424242',
 },
 viewEmergenciesButton: {
   backgroundColor: '#007bff',
