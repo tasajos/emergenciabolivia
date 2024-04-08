@@ -74,46 +74,56 @@ type RootStackParamList = {
         await storageRef.putFile(uploadUri);
         imageUrl = await storageRef.getDownloadURL();
         setImageUploadMessage('Imagen Cargada');
-  
-        const newEventRef = database().ref('/ultimasEmergencias').push();
-        await newEventRef.set({
-          Titulo,
-          ciudad,
-          descripcion,
-          estado,
-          fecha,
-          imagen: imageUrl,
-          ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
-        });
-  
-        Alert.alert('Alerta registrada con éxito');
-        resetForm();
-  
-        // Crear enlace de Google Maps para la ubicación
-        const locationLink = location.latitude && location.longitude ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}` : 'Ubicación no disponible';
-        
-        let message = `Hola, te envío los detalles de la alerta:\n` +
-                      `Título: ${Titulo}\n` +
-                      `Ciudad: ${ciudad}\n` +
-                      `Descripción: ${descripcion}\n` +
-                      `Estado: ${estado}\n` +
-                      `Fecha: ${fecha}\n` +
-                      `Ubicación: ${locationLink}\n` + // Usar el enlace de la ubicación
-                      `Imagen: ${imageUrl}`;
-  
-        let encodedMessage = encodeURIComponent(message);
-        const phoneNumber = '59170776212';
-        let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-  
-        await Linking.openURL(url);  // Espera a que se abra WhatsApp
-        setIsSendingWhatsApp(false); // Cambia el estado después de abrir WhatsApp
       } catch (error) {
-        console.error('Error:', error);
-        Alert.alert('Error', 'Ocurrió un error al enviar el mensaje.');
+        console.error('Error al subir imagen:', error);
+        Alert.alert('Error al subir la imagen');
         setIsSendingWhatsApp(false); // Asegúrate de cambiar el estado en caso de error
+        return; // Salir de la función si falla la subida de la imagen
       }
     }
-  };
+  
+    try {
+      const newEventRef = database().ref('/ultimasEmergencias').push();
+      await newEventRef.set({
+        Titulo,
+        ciudad,
+        descripcion,
+        estado,
+        fecha,
+        imagen: imageUrl,
+        ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
+      });
+  
+      Alert.alert('Alerta registrada con éxito');
+      resetForm();
+  
+      // Crear enlace de Google Maps para la ubicación
+      const locationLink = location.latitude && location.longitude ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}` : 'Ubicación no disponible';
+      
+      let message = `Hola, te envío los detalles de la alerta:\n` +
+                    `Título: ${Titulo}\n` +
+                    `Ciudad: ${ciudad}\n` +
+                    `Descripción: ${descripcion}\n` +
+                    `Estado: ${estado}\n` +
+                    `Fecha: ${fecha}\n` +
+                    `Ubicación: ${locationLink}\n`;
+  
+      if (imageUrl) {
+        message += `Imagen: ${imageUrl}\n`; // Añadir la imagen solo si existe
+      }
+  
+      let encodedMessage = encodeURIComponent(message);
+      const phoneNumber = '59170776212';
+      let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+  
+      await Linking.openURL(url); // Espera a que se abra WhatsApp
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'Ocurrió un error al enviar el mensaje.');
+    } finally {
+      setIsSendingWhatsApp(false); // Cambia el estado al finalizar el proceso
+    }
+};
    
   //continuacion
 
