@@ -91,7 +91,14 @@ android {
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
             }
         }
+
+
 }
+
+lintOptions {
+    baseline file("lint-baseline.xml")
+}
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -110,6 +117,12 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:flipper-integration")
+
+        //implementation 'com.google.android.gms:play-services-location:21.2.0'
+        implementation 'com.google.android.gms:play-services-location:21.2.0'
+
+
+     //implementation 'com.google.android.gms:play-services-location:x.y.z' // Reemplaza x.y.z con la versión más reciente
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

@@ -32,10 +32,14 @@ type RootStackParamList = {
   const [imagen, setImagen] = useState('');
   const [imageUploadMessage, setImageUploadMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+ 
+
 
 
    const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
 //const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de carga
+
+
 
 
 const handleSubmit = async () => {
@@ -67,6 +71,7 @@ const handleSubmit = async () => {
       estado,
       fecha,
       imagen: imageUrl,
+      
     });
 
     Alert.alert('Alerta registrada con éxito');
@@ -163,6 +168,9 @@ const handleSubmit = async () => {
             <Picker.Item label="Atendido" value="Atendido" />
             <Picker.Item label="Vencido" value="Vencido" />
           </Picker>
+
+          
+
 
 
           <TextInput style={styles.input} placeholder="Fecha (AAAA-MM-DD)" value={fecha} onChangeText={setFecha} />
@@ -356,5 +364,6 @@ viewEmergenciesButtonText: {
   fontSize: 12, // Reducir el tamaño de la fuente
   fontWeight: 'bold',
 },
+
 });
 export default Uiadminalerta;
