@@ -36,9 +36,14 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Ubicacionesbom')}>
         <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
-      <TouchableOpacity onPress={openWhatsApp}>
-        <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
-      </TouchableOpacity>
+            <View style={styles.whatsAppContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('NuevoBoton')}>
+          <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openWhatsApp}>
+          <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
         <Image source={require('../imagenes/add32.png')} style={styles.icon} />
       </TouchableOpacity>
@@ -48,6 +53,7 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -63,6 +69,19 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
+  },
+  whatsAppContainer: {
+    alignItems: 'center',
+    
+    //marginBottom: 5,
+    
+  },
+  alertIcon: {
+    width: 30,
+    height: 30,
+    marginBottom: 15,  // Espacio entre los botones
+    //backgroundColor: 'darkblue',
+    
   },
 });
 
