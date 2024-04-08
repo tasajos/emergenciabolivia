@@ -1,6 +1,6 @@
 // FloatingButtonBar.tsx
 import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, Linking } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet, Linking ,Alert} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type NavigationType = StackNavigationProp<any>;
@@ -23,7 +23,7 @@ const openWhatsApp = () => {
   
   Linking.openURL(url).catch((err) => {
     console.error('An error occurred', err);
-    alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+    Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
   });
 };
 

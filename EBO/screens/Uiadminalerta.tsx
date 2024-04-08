@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button ,ActivityIndicator,Alert} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, Button ,ActivityIndicator,Alert,Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -34,11 +34,92 @@ type RootStackParamList = {
   const [imagen, setImagen] = useState('');
   const [imageUploadMessage, setImageUploadMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false);
+
   //const [location, setLocation] = useState('');
   const [location, setLocation] = useState<{ latitude: number | null; longitude: number | null; }>({
     latitude: null,
     longitude: null
   });
+
+  const openWhatsApp = () => {
+    // Reemplaza con tu número de teléfono en formato internacional sin '+' ni '00'
+    let phoneNumber = '59170776212';
+  
+    let message = 'Hola, me gustaría obtener más información.'; // Mensaje que deseas enviar
+    
+    // Codifica el mensaje para que sea una URL válida
+    let encodedMessage = encodeURIComponent(message);
+    
+    // Abre WhatsApp directamente con el número y el mensaje especificado
+    let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+    
+    Linking.openURL(url).catch((err) => {
+      console.error('An error occurred', err);
+      //alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+      Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+    });
+  };
+
+
+  const sendWhatsAppMessage = async () => {
+    setIsSendingWhatsApp(true);
+    let imageUrl = '';
+    if (imagen) {
+      const uploadUri = imagen;
+      const filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+      const storageRef = firebase.storage().ref(`epr/${filename}`);
+  
+      try {
+        await storageRef.putFile(uploadUri);
+        imageUrl = await storageRef.getDownloadURL();
+        setImageUploadMessage('Imagen Cargada');
+  
+        const newEventRef = database().ref('/ultimasEmergencias').push();
+        await newEventRef.set({
+          Titulo,
+          ciudad,
+          descripcion,
+          estado,
+          fecha,
+          imagen: imageUrl,
+          ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
+        });
+  
+        Alert.alert('Alerta registrada con éxito');
+        resetForm();
+  
+        // Crear enlace de Google Maps para la ubicación
+        const locationLink = location.latitude && location.longitude ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}` : 'Ubicación no disponible';
+        
+        let message = `Hola, te envío los detalles de la alerta:\n` +
+                      `Título: ${Titulo}\n` +
+                      `Ciudad: ${ciudad}\n` +
+                      `Descripción: ${descripcion}\n` +
+                      `Estado: ${estado}\n` +
+                      `Fecha: ${fecha}\n` +
+                      `Ubicación: ${locationLink}\n` + // Usar el enlace de la ubicación
+                      `Imagen: ${imageUrl}`;
+  
+        let encodedMessage = encodeURIComponent(message);
+        const phoneNumber = '59170776212';
+        let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+  
+        await Linking.openURL(url);  // Espera a que se abra WhatsApp
+        setIsSendingWhatsApp(false); // Cambia el estado después de abrir WhatsApp
+      } catch (error) {
+        console.error('Error:', error);
+        Alert.alert('Error', 'Ocurrió un error al enviar el mensaje.');
+        setIsSendingWhatsApp(false); // Asegúrate de cambiar el estado en caso de error
+      }
+    }
+  };
+   
+  //continuacion
+
+
+
+
 
 
    const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
@@ -103,6 +184,9 @@ const handleSubmit = async () => {
   }
 
   try {
+
+    const locationLink = location.latitude && location.longitude ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}` : 'Ubicación no disponible';
+
     const newEventRef = database().ref('/ultimasEmergencias').push();
     await newEventRef.set({
       Titulo,
@@ -111,13 +195,13 @@ const handleSubmit = async () => {
       estado,
       fecha,
       imagen: imageUrl,
-      ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
-      
+      //ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
+      ubicacion: locationLink
     });
 
     Alert.alert('Alerta registrada con éxito');
     resetForm(); // Llamar a la función para restablecer el formulario
-
+    //sendWhatsAppMessage();
     //setKey(prevKey => prevKey + 1); // Incrementar la clave para forzar la actualización de la interfaz
   } catch (error) {
     console.error('Error al registrar unidad:', error);
@@ -266,6 +350,20 @@ const handleSubmit = async () => {
             )}
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+  style={styles.button}
+  onPress={sendWhatsAppMessage}
+  disabled={isSendingWhatsApp || isSubmitting}
+>
+  {isSendingWhatsApp ? (
+    <ActivityIndicator size="small" color="#fff" />
+  ) : (
+    <Text style={styles.buttonText}>Enviar a WhatsApp</Text>
+  )}
+</TouchableOpacity>
+
+
+
         <FloatingButtonAdmin navigation={navigation} />
       </ScrollView>
     </SafeAreaView>
