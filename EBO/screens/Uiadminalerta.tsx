@@ -8,7 +8,8 @@ import database from '@react-native-firebase/database'; // Importar Firebase Rea
 import { Picker } from '@react-native-picker/picker';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ImageLibraryOptions } from 'react-native-image-picker';
-
+import Geolocation from 'react-native-geolocation-service';
+import { PermissionsAndroid } from 'react-native';
 
 
 type RootStackParamList = {
@@ -32,13 +33,51 @@ type RootStackParamList = {
   const [imagen, setImagen] = useState('');
   const [imageUploadMessage, setImageUploadMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
- 
-
+  //const [location, setLocation] = useState('');
+  const [location, setLocation] = useState<{ latitude: number | null; longitude: number | null; }>({
+    latitude: null,
+    longitude: null
+  });
 
 
    const [imageButtonText, setImageButtonText] = useState('Selecciona Imagen'); // Estado para el texto del botón de selección de imagen
 //const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el estado de carga
 
+
+
+const getLocation = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: "Location Permission",
+        message: "This app needs access to your location.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      Geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.log(error);
+          Alert.alert('Error', 'No se pudo obtener la ubicación');
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+    } else {
+      console.log("Location permission denied");
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
 
 
 
@@ -71,6 +110,7 @@ const handleSubmit = async () => {
       estado,
       fecha,
       imagen: imageUrl,
+      ubicacion: location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''
       
     });
 
@@ -169,8 +209,20 @@ const handleSubmit = async () => {
             <Picker.Item label="Vencido" value="Vencido" />
           </Picker>
 
-          
-
+          <View style={styles.locationContainer}>
+          <TextInput 
+  style={[styles.input, styles.locationInput]} 
+  placeholder="Ubicación" 
+  value={location.latitude && location.longitude ? `${location.latitude}, ${location.longitude}` : ''} 
+  editable={false} // Esto hace que el input no sea editable
+/>
+  <TouchableOpacity 
+    style={[styles.button, styles.locationButton]} 
+    onPress={getLocation}
+  >
+    <Text style={styles.buttonText}>Obtener Ubicación</Text>
+  </TouchableOpacity>
+</View>
 
 
           <TextInput style={styles.input} placeholder="Fecha (AAAA-MM-DD)" value={fecha} onChangeText={setFecha} />
@@ -363,6 +415,22 @@ viewEmergenciesButtonText: {
   color: 'white',
   fontSize: 12, // Reducir el tamaño de la fuente
   fontWeight: 'bold',
+},
+locationContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 10,
+},
+
+locationInput: {
+  flex: 1, // Ocupa todo el espacio posible en la fila
+  marginRight: 10, // Añade un margen a la derecha del input
+},
+
+locationButton: {
+  backgroundColor: '#007bff',
+  paddingHorizontal: 15,
 },
 
 });

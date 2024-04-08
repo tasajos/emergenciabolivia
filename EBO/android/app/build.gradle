@@ -119,7 +119,7 @@ dependencies {
     implementation("com.facebook.react:flipper-integration")
 
         //implementation 'com.google.android.gms:play-services-location:21.2.0'
-        implementation 'com.google.android.gms:play-services-location:21.2.0'
+        implementation 'com.google.android.gms:play-services-location:21.0.1'
 
 
      //implementation 'com.google.android.gms:play-services-location:x.y.z' // Reemplaza x.y.z con la versión más reciente
