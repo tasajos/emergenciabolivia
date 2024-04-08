@@ -37,7 +37,7 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
         <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
             <View style={styles.whatsAppContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('NuevoBoton')}>
+        <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')}>
           <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={openWhatsApp}>

@@ -39,6 +39,7 @@ import Uivereventos from './screens/Uivereventos';
 import UiEditarAlerta from './screens/UiEditarAlerta';
 import UiEditarEvento from './screens/UiEditarEvento';
 import Homev2 from './screens/Homev2';
+import ReporteEmergencia from './screens/ReporteEmergencia';
 import firebase from '@react-native-firebase/app';
 
 
@@ -92,6 +93,7 @@ export type RootStackParamList = {
   Animalistasepr: undefined;
   UiEditarAlerta:undefined;
   UiEditarEvento:undefined;
+  ReporteEmergencia:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -160,6 +162,7 @@ const App = () => {
         <Stack.Screen name="Animalistas2doepr" component={Animalistas2doepr} />
         <Stack.Screen name="Eventosv2" component={Eventosv2} />
         <Stack.Screen name="Homev2" component={Homev2} />
+        <Stack.Screen name="ReporteEmergencia" component={ReporteEmergencia} />
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -19,7 +19,7 @@ const UiEditarAlerta = () => {
   const navigation = useNavigation<UiEditarAlertaNavigationProp>();
   const { id } = route.params;
   const [Titulo, setTitulo] = useState('');
-  const [ciudad, setCiudad] = useState('');
+  const [ciudad, setCiudad] = useState('Cochabamba');
   const [descripcion, setDescripcion] = useState('');
   const [fecha, setFecha] = useState('');
   const [estado, setEstado] = useState('Activo');
@@ -40,7 +40,10 @@ const UiEditarAlerta = () => {
 
   const handleUpdate = () => {
     const alertaRef = database().ref(`/ultimasEmergencias/${id}`);
-    alertaRef.update({ estado });
+    alertaRef.update({
+      estado: estado,
+      ciudad: ciudad, // Añade esta línea para actualizar la ciudad
+    });
     navigation.goBack();
   };
 
@@ -49,6 +52,20 @@ const UiEditarAlerta = () => {
       <Text style={styles.title}>Editar Alerta</Text>
       <Text style={styles.label}>Título: {Titulo}</Text>
       <Text style={styles.label}>Ciudad: {ciudad}</Text>
+
+      
+          <Picker selectedValue={ciudad} onValueChange={(itemValue) => setCiudad(itemValue)} style={styles.picker}>
+          <Picker.Item label="Cochabamba" value="Cochabamba" />
+          <Picker.Item label="Santa Cruz" value="Santa Cruz" />
+          <Picker.Item label="Potosi" value="Potosi" />
+          <Picker.Item label="La Paz" value="La Paz" />
+          <Picker.Item label="Beni" value="Beni" />
+          <Picker.Item label="Pando" value="Pando" />
+          <Picker.Item label="Tarija" value="Tarija" />
+          <Picker.Item label="Oruro" value="Oruro" />
+          <Picker.Item label="Chuquisaca" value="Chuquisaca" />
+          </Picker>
+
       <Text style={styles.label}>Descripción: {descripcion}</Text>
       <Text style={styles.label}>Fecha: {fecha}</Text>
       <Picker
@@ -61,6 +78,8 @@ const UiEditarAlerta = () => {
         <Picker.Item label="Atendido" value="Atendido" />
         <Picker.Item label="Vencido" value="Vencido" />
       </Picker>
+
+
       <TouchableOpacity style={styles.button} onPress={handleUpdate}>
         <Text style={styles.buttonText}>Actualizar</Text>
       </TouchableOpacity>

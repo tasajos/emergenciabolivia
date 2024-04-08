@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image,Alert } from 'react-native';
+import { StyleSheet,ScrollView, View, Text, TextInput, TouchableOpacity, Image,Alert } from 'react-native';
 import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -7,9 +7,7 @@ import auth from '@react-native-firebase/auth';
 
 // import { TextInput, Button } from 'react-native-paper';
 
-type Props = {
-  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
-};
+
 
 type RootStackParamList = {
   // ... other route parameters
@@ -18,16 +16,19 @@ type RootStackParamList = {
   // ... any other routes you navigate to
 };
 
-const Login: React.FC<Props> = ({ navigation }) => {
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
+};
+
+const Login: React.FC<Props> = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
 
 
-  type RootStackParamList = {
-    // ... otros parámetros de tus rutas
-    Login: undefined; // Asegúrate de tener una ruta Eventos en tu StackNavigator
-  };
+ 
+
   const handleLogin = async () => {
     // Asegúrate de que el correo electrónico y la contraseña no estén vacíos
     if (email.trim() === '' || password.trim() === '') {
@@ -39,7 +40,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
       let response = await auth().signInWithEmailAndPassword(email, password);
       if (response && response.user) {
         Alert.alert("Éxito", "Login Exitoso");
-        navigation.navigate('Uiadministrador'); // Navega a la pantalla principal
+        navigation.navigate('Uiadministrador');
       }
     
     } catch (error: any) { // Agrega el type assertion aquí
@@ -82,36 +83,41 @@ const Login: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.version}>Login</Text>
-      <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
-      <TextInput
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Password"
-        secureTextEntry
-      />
-    
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handlePasswordRecovery}>
-        <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
-      </TouchableOpacity>
-      <FloatingButtonBar navigation={navigation} />
-    </View>
-    
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.version}>Login</Text>
+        <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
+        <TextInput
+          style={styles.input}
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={setPassword}
+          value={password}
+          placeholder="Password"
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePasswordRecovery}>
+          <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
+        </TouchableOpacity>
+      </View>
+      
+        <FloatingButtonBar navigation={navigation} />
+      
+ 
+      
+       
+      </ScrollView>
+   
   );
-  
 };
 
 const styles = StyleSheet.create({
@@ -122,9 +128,29 @@ const styles = StyleSheet.create({
     padding: 30,
     backgroundColor: '#fff',
   },
+  floatingButtonBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  contentContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 30,
+    marginBottom: 80,
+  },
   version: {
     alignSelf: 'flex-start',
     marginVertical: 10,
+  },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
   logo: {
     width: 100,
@@ -138,7 +164,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     color: '#424242',
-    
   },
   forgotPassword: {
     alignSelf: 'flex-end',
