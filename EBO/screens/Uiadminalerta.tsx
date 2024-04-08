@@ -10,6 +10,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { ImageLibraryOptions } from 'react-native-image-picker';
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 
 type RootStackParamList = {
@@ -224,7 +225,31 @@ const handleSubmit = async () => {
   </TouchableOpacity>
 </View>
 
+<View style={styles.mapContainer}>
+  <MapView
+    style={styles.map}
+    region={{
+      latitude: location.latitude || -17.413977, // Coordenadas predeterminadas o actuales
+      longitude: location.longitude || -66.165322,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    }}
+    showsUserLocation={true}
+  >
+    {location.latitude && location.longitude && (
+      <Marker
+        coordinate={{
+          latitude: location.latitude,
+          longitude: location.longitude,
+        }}
+        title={"Tu Ubicación"}
+      />
+    )}
+  </MapView>
+</View>
 
+
+<Text style={styles.label}>Fecha:</Text>
           <TextInput style={styles.input} placeholder="Fecha (AAAA-MM-DD)" value={fecha} onChangeText={setFecha} />
           <View style={styles.imagePickerContainer}>
             <Text style={styles.imagePickerText}>{imageButtonText}</Text>
@@ -433,5 +458,14 @@ locationButton: {
   paddingHorizontal: 15,
 },
 
+mapContainer: {
+  height: 200, // Ajusta la altura según lo que necesites
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+map: {
+  ...StyleSheet.absoluteFillObject,
+},
 });
 export default Uiadminalerta;
