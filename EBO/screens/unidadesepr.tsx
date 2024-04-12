@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { RootStackParamList } from '../App';
 import FloatingButtonBar from './FloatingButtonBar';
 import { Alert } from 'react-native';
@@ -15,16 +15,24 @@ type Props = StackScreenProps<RootStackParamList, 'unidadesepr'>; // Cambiado de
 
 
 const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
-  const { unidad } = route.params ?? { unidad: { 
-    name: 'Nombre por defecto', 
-    image: { uri: 'ruta por defecto' } ,
-    telefono: '70776212',
-    facebook: 'https://www.facebook.com/yunkabo',
-    web: 'https://www.yunkaatoq.org'
-  
-  } };
+  const { unidad } = route.params ?? {
+    unidad: {
+      name: 'Nombre por defecto', 
+      image: { uri: 'ruta por defecto' },
+      telefono: '70776212',
+      facebook: 'https://www.facebook.com/yunkabo',
+      web: 'https://www.yunkaatoq.org',
+      latitude: null, // Simulando datos incompletos
+      longitude: null,
+    }
+  };
 
-  
+  // Verificar si las coordenadas son válidas
+  const latitude = unidad.latitude ?? 0;
+  const longitude = unidad.longitude ?? 0;
+  const isValidLocation = (unidad.latitude != null) && (unidad.longitude != null);
+
+
   // Imprimir la URI de la imagen en la consola
   console.log("URI de la imagen:", unidad.image.uri);
   console.log("Datos de la unidad:", unidad);
@@ -60,39 +68,44 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Bomberos Voluntarios {unidad.name}</Text>
-          {/* Comprobar si la URI de la imagen existe antes de intentar cargar la imagen */}
-          {unidad.image && unidad.image.uri ? (
-            <Image source={{ uri: unidad.image.uri }} style={styles.logo} />
-          ) : (
-            // Cargar una imagen predeterminada si la URI no está disponible
-            <Image source={{ uri: unidad.image.uri + '?timestamp=' + new Date().getTime() }}
-            style={styles.logo} />
-          )}
+          <Image source={{ uri: unidad.image.uri }} style={styles.logo} />
         </View>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: -17.413977,
-            longitude: -66.165322,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        />
+        {isValidLocation ? (
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: latitude,
+                longitude: longitude
+              }}
+              title={`Bomberos Voluntarios ${unidad.name}`}
+              description={`Teléfono: ${unidad.telefono}`}
+            />
+          </MapView>
+        ) : (
+          <View style={[styles.map, styles.center]}>
+            <Text>No hay datos de ubicación disponibles para mostrar el mapa.</Text>
+          </View>
+        )}
         <TouchableOpacity style={styles.emergencyCallButton} onPress={handleCallPress}>
           <Text style={styles.emergencyCallText}>Llamada de Emergencia</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleFacebookPress} style={styles.imageButton}>
-              <Image source={require('../imagenes/redessociales/facebook.png')} style={styles.iconImage} />
-              <Text>Visita Facebook</Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
-              <Image source={require('../imagenes/redessociales/red-mundial.png')} style={styles.iconImage} />
-              <Text>Visita la Web</Text>
-            </TouchableOpacity>
-
+          <TouchableOpacity onPress={handleFacebookPress} style={styles.imageButton}>
+            <Image source={require('../imagenes/redessociales/facebook.png')} style={styles.iconImage} />
+            <Text>Visita Facebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
+            <Image source={require('../imagenes/redessociales/red-mundial.png')} style={styles.iconImage} />
+            <Text>Visita la Web</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <FloatingButtonBar navigation={navigation} />
@@ -108,6 +121,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
    backgroundColor: 'blue',
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 18,

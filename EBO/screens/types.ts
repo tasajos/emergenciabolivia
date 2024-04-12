@@ -6,5 +6,7 @@ export interface Unidad {
     telefono: string;
   facebook: string;
   web: string;
+  latitude: number | null |undefined;  // Permitir 'number' o 'null'
+  longitude: number | null|undefined;  // Permitir 'number' o 'null'
   }
   
