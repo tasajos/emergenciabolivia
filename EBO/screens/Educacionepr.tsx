@@ -120,7 +120,7 @@ const Educacionepr: React.FC<Props> = ({ navigation }) => {
           <View style={styles.headerContainer}>
             {/* Example of logo and text in header */}
             <Text style={styles.supportText}>Con el Apoyo de</Text>
-            <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+            <Image source={require('../imagenes/logov4.png')} style={styles.logo} />
             
           </View>
           <View style={styles.searchContainer}>

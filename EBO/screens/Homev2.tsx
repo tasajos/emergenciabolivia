@@ -218,7 +218,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
         <ScrollView style={styles.scrollView}>
           <View style={styles.headerContainer}>
             <Text style={styles.supportText}>Con el Apoyo de</Text>
-            <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+            <Image source={require('../imagenes/logov4.png')} style={styles.logo} />
           </View>
 
           <Text style={styles.infoTitle2}>VOLUNTARIOS</Text>

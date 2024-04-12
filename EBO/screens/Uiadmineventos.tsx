@@ -143,7 +143,7 @@ const handleSubmit = async () => {
             <View style={styles.header}>
               <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
               <Text style={styles.headerText}>Con el Apoyo de</Text>
-              <Image source={require('../imagenes/instit2.png')} style={styles.logo} />
+              <Image source={require('../imagenes/logov4.png')} style={styles.logo} />
               
             </View>
             <Text style={styles.description}> Eventos</Text>
