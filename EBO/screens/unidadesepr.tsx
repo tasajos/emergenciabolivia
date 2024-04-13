@@ -24,6 +24,7 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
       web: 'https://www.yunkaatoq.org',
       latitude: null, // Simulando datos incompletos
       longitude: null,
+      ciudad: 'Nombre de la Ciudad'
     }
   };
 
@@ -69,6 +70,7 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
         <View style={styles.header}>
           <Text style={styles.headerText}>Bomberos Voluntarios {unidad.name}</Text>
           <Image source={{ uri: unidad.image.uri }} style={styles.logo} />
+          <Text style={styles.cityText}>{unidad.ciudad}</Text>
         </View>
         {isValidLocation ? (
           <MapView
@@ -99,11 +101,11 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={handleFacebookPress} style={styles.imageButton}>
-            <Image source={require('../imagenes/redessociales/facebook.png')} style={styles.iconImage} />
+            <Image source={require('../imagenes/redessociales/facebook128.png')} style={styles.iconImage} />
             <Text>Visita Facebook</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
-            <Image source={require('../imagenes/redessociales/red-mundial.png')} style={styles.iconImage} />
+            <Image source={require('../imagenes/redessociales/red-mundial128.png')} style={styles.iconImage} />
             <Text>Visita la Web</Text>
           </TouchableOpacity>
         </View>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     padding: 5,
-   backgroundColor: 'blue',
+   backgroundColor: '#56BBCF',
   },
   center: {
     justifyContent: 'center',
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 18,
-    color: 'white',
+    color: 'black',
   },
   logo: {
     width: 100, // Tamaño fijo para la imagen
@@ -180,6 +182,11 @@ const styles = StyleSheet.create({
     width: 40, // Ajusta según el tamaño de tus imágenes
     height: 40, // Ajusta según el tamaño de tus imágenes
     
+  },
+  cityText: {
+    fontSize: 18,
+    color: 'black', // O el color que prefieras
+    marginTop: 5, // Ajusta el espacio sobre el nombre de la ciudad
   },
 });
 
