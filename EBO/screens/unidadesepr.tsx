@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // Ajustar la imagen dentro del contenedor
   },
   map: {
-    height: 200,
+    height: 350,
     width: '100%',
   },
   emergencyCallButton: {
