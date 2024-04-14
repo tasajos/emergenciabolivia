@@ -8,5 +8,6 @@ export interface Unidad {
   web: string;
   latitude: number | null |undefined;  // Permitir 'number' o 'null'
   longitude: number | null|undefined;  // Permitir 'number' o 'null'
+  whatsapp: string | null|undefined; 
   }
   

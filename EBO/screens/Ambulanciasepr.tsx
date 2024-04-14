@@ -64,7 +64,8 @@ const Ambulanciasepr: React.FC<Props> = ({ navigation }) => {
             telefono: data[key].telefono,
             facebook: data[key].facebook,
             web: data[key].web,
-
+            latitude: data[key].latitude,
+            longitude: data[key].longitude,
 
           }));
   
@@ -82,23 +83,7 @@ const Ambulanciasepr: React.FC<Props> = ({ navigation }) => {
     const clearSearch = () => {
         setSearchQuery('');
       };
-    const items = [
-        { name: 'Yunka Atoq', image: require('../imagenes/logos/yunka_atoq_log.png') },
-        { name: 'Thasnuq', image: require('../imagenes/logos/thasnuq.jpg') },
-        { name: 'Resistencia', image: require('../imagenes/logos/resistencia.jpeg') },
-        { name: 'Cruz de Malta', image: require('../imagenes/logos/cruzdemalta.jpeg') },
-        { name: 'Bear', image: require('../imagenes/emblemabo.png') },
-        { name: 'Sar Bolivia', image: require('../imagenes/logos/logosar.png') },
-        { name: 'Aeronauticos', image: require('../imagenes/logos/aeronauticosbv.jpg') },
-        { name: 'Fuego y Rescate', image: require('../imagenes/logos/fuego_rescate.png') },
-        // ... add all your items here
-      ];
-
-
-
-      //const handlePress = (itemName: string) => {
-        //navigation.navigate('unidadesepr', { name: itemName });
-     // };
+     
 
      const handlePress = (unidad: Unidad) => {
       navigation.navigate('Ambulancias2doepr', { unidad: unidad });

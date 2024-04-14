@@ -70,6 +70,8 @@ const Ambientalistasepr: React.FC<Props> = ({ navigation }) => {
             telefono: data[key].telefono,
             facebook: data[key].facebook,
             web: data[key].web,
+            latitude: data[key].latitude,
+            longitude: data[key].longitude,
 
 
           }));

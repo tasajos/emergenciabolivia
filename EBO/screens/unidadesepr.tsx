@@ -15,6 +15,7 @@ type Props = StackScreenProps<RootStackParamList, 'unidadesepr'>; // Cambiado de
 
 
 const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
+ 
   const { unidad } = route.params ?? {
     unidad: {
       name: 'Nombre por defecto', 
@@ -24,9 +25,13 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
       web: 'https://www.yunkaatoq.org',
       latitude: null, // Simulando datos incompletos
       longitude: null,
-      ciudad: 'Nombre de la Ciudad'
+      ciudad: 'Nombre de la Ciudad',
+      whatsapp: 'https://wa.me/59170776212',
     }
   };
+
+// constructor whatsapp
+  
 
   // Verificar si las coordenadas son válidas
   const latitude = unidad.latitude ?? 0;
@@ -63,6 +68,35 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
     Alert.alert('Enlace no disponible', 'El enlace web no está disponible para esta unidad.');
   }
   };
+
+  const handlewhatsapp = () => {
+
+    const mensaje = 'Mensaje desde la Aplicacion Voluntarios Bolivia quiero saber mas';
+  const mensajeCodificado = encodeURIComponent(mensaje);
+
+  // Verifica si el número de WhatsApp está disponible antes de continuar
+  if (!unidad.whatsapp) {
+    Alert.alert('WhatsApp no disponible', 'No se ha proporcionado un número de WhatsApp.');
+    return;
+  }
+
+  // Elimina todos los caracteres que no sean dígitos y añade el mensaje codificado
+  // Utiliza el operador de encadenamiento opcional (?.) y el operador de coalescencia nula (??) para manejar 'null' o 'undefined'
+  const phoneNumber = unidad.whatsapp?.replace(/\D/g, '') ?? '';
+  if (!phoneNumber) {
+    Alert.alert('WhatsApp no disponible', 'El número de WhatsApp proporcionado no es válido.');
+    return;
+  }
+
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${mensajeCodificado}`;
+
+  // Intenta abrir la URL directamente sin Linking.canOpenURL
+  Linking.openURL(whatsappURL).catch((err) => {
+    Alert.alert('Error', 'Ocurrió un error al abrir WhatsApp: ' + err.message);
+  });
+};
+
+
 
   return (
     <>
@@ -104,10 +138,15 @@ const UnidadesEPR: React.FC<Props> = ({ route, navigation }) => {
             <Image source={require('../imagenes/redessociales/facebook128.png')} style={styles.iconImage} />
             <Text>Visita Facebook</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={handlewhatsapp} style={styles.imageButton}>
+            <Image source={require('../imagenes/redessociales/whatsapp_app.png')} style={styles.iconImage} />
+            <Text>Whatsapp</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
             <Image source={require('../imagenes/redessociales/red-mundial128.png')} style={styles.iconImage} />
             <Text>Visita la Web</Text>
           </TouchableOpacity>
+        
         </View>
       </View>
       <FloatingButtonBar navigation={navigation} />
@@ -138,7 +177,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // Ajustar la imagen dentro del contenedor
   },
   map: {
-    height: 350,
+    height: 280,
     width: '100%',
   },
   emergencyCallButton: {
@@ -174,7 +213,7 @@ const styles = StyleSheet.create({
   imageButton: {
     alignItems: 'center',
     //justifyContent: 'center',
-    width: 100,
+    width: 110,
     marginHorizontal: 5,
     
   },
