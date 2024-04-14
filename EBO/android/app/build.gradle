@@ -79,8 +79,8 @@ android {
         applicationId "chakuy.com.vbo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 30
-        versionName "Charlie 1.6.3"
+        versionCode 31
+        versionName "Charlie 1.6.4"
     }
     signingConfigs {
     release {

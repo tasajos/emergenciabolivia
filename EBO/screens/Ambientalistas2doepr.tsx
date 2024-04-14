@@ -25,7 +25,8 @@ type Props = StackScreenProps<RootStackParamList, 'Ambientalistas2doepr'>; // Ca
     web: 'https://www.yunkaatoq.org',
     latitude: null, // Simulando datos incompletos
     longitude: null,
-    ciudad: 'Nombre de la Ciudad'
+    ciudad: 'Nombre de la Ciudad',
+    whatsapp: 'https://wa.me/59170776212',
 
   } };
 
@@ -64,6 +65,33 @@ type Props = StackScreenProps<RootStackParamList, 'Ambientalistas2doepr'>; // Ca
     Alert.alert('Enlace no disponible', 'El enlace web no está disponible para esta unidad.');
   }
   };
+
+  const handlewhatsapp = () => {
+
+    const mensaje = 'Mensaje desde la Aplicacion Voluntarios Bolivia quiero saber mas';
+  const mensajeCodificado = encodeURIComponent(mensaje);
+
+  // Verifica si el número de WhatsApp está disponible antes de continuar
+  if (!unidad.whatsapp) {
+    Alert.alert('WhatsApp no disponible', 'No se ha proporcionado un número de WhatsApp.');
+    return;
+  }
+
+  // Elimina todos los caracteres que no sean dígitos y añade el mensaje codificado
+  // Utiliza el operador de encadenamiento opcional (?.) y el operador de coalescencia nula (??) para manejar 'null' o 'undefined'
+  const phoneNumber = unidad.whatsapp?.replace(/\D/g, '') ?? '';
+  if (!phoneNumber) {
+    Alert.alert('WhatsApp no disponible', 'El número de WhatsApp proporcionado no es válido.');
+    return;
+  }
+
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${mensajeCodificado}`;
+
+  // Intenta abrir la URL directamente sin Linking.canOpenURL
+  Linking.openURL(whatsappURL).catch((err) => {
+    Alert.alert('Error', 'Ocurrió un error al abrir WhatsApp: ' + err.message);
+  });
+};
 
   return (
     <>
@@ -114,6 +142,10 @@ type Props = StackScreenProps<RootStackParamList, 'Ambientalistas2doepr'>; // Ca
             <Image source={require('../imagenes/redessociales/facebook128.png')} style={styles.iconImage} />
             <Text>Visita Facebook</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={handlewhatsapp} style={styles.imageButton}>
+            <Image source={require('../imagenes/redessociales/whatsapp_app.png')} style={styles.iconImage} />
+            <Text>Whatsapp</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleWebPress} style={styles.imageButton}>
             <Image source={require('../imagenes/redessociales/red-mundial128.png')} style={styles.iconImage} />
             <Text>Visita la Web</Text>
@@ -148,7 +180,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // Ajustar la imagen dentro del contenedor
   },
   map: {
-    height: 350,
+    height: 300,
     width: '100%',
   },
   emergencyCallButton: {
@@ -184,13 +216,13 @@ const styles = StyleSheet.create({
   imageButton: {
     alignItems: 'center',
     //justifyContent: 'center',
-    width: 100,
+    width: 110,
     marginHorizontal: 5,
     
   },
   iconImage: {
-    width: 60, // Ajusta según el tamaño de tus imágenes
-    height: 60, // Ajusta según el tamaño de tus imágenes
+    width: 40, // Ajusta según el tamaño de tus imágenes
+    height: 40, // Ajusta según el tamaño de tus imágenes
     
   },
   cityText: {

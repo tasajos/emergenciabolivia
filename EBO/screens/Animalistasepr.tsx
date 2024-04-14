@@ -73,6 +73,7 @@ const Animalistasepr: React.FC<Props> = ({ navigation }) => {
             web: data[key].web,
             latitude: data[key].latitude,
             longitude: data[key].longitude,
+            whatsapp: data[key].whatsapp,
 
           }));
   

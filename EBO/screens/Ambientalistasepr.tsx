@@ -72,6 +72,7 @@ const Ambientalistasepr: React.FC<Props> = ({ navigation }) => {
             web: data[key].web,
             latitude: data[key].latitude,
             longitude: data[key].longitude,
+            whatsapp: data[key].whatsapp,
 
 
           }));
@@ -93,17 +94,7 @@ const Ambientalistasepr: React.FC<Props> = ({ navigation }) => {
     const clearSearch = () => {
         setSearchQuery('');
       };
-    const items = [
-        { name: 'Yunka Atoq', image: require('../imagenes/logos/yunka_atoq_log.png') },
-        { name: 'Thasnuq', image: require('../imagenes/logos/thasnuq.jpg') },
-        { name: 'Resistencia', image: require('../imagenes/logos/resistencia.jpeg') },
-        { name: 'Cruz de Malta', image: require('../imagenes/logos/cruzdemalta.jpeg') },
-        { name: 'Bear', image: require('../imagenes/emblemabo.png') },
-        { name: 'Sar Bolivia', image: require('../imagenes/logos/logosar.png') },
-        { name: 'Aeronauticos', image: require('../imagenes/logos/aeronauticosbv.jpg') },
-        { name: 'Fuego y Rescate', image: require('../imagenes/logos/fuego_rescate.png') },
-        // ... add all your items here
-      ];
+    
 
 
 
@@ -254,7 +245,7 @@ const Ambientalistasepr: React.FC<Props> = ({ navigation }) => {
     itemText: {
         textAlign: 'center',
         marginTop: 2,
-        fontSize: 12, // Reducir el tamaño de la fuente si es necesario
+        fontSize: 10, // Reducir el tamaño de la fuente si es necesario
         flexWrap: 'wrap', // Permitir que el texto se ajuste al siguiente renglón
       },
     footerContainer: {
