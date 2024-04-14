@@ -17,6 +17,7 @@ type RootStackParamList = {
   Animalistasepr: undefined;
   Ambulanciasepr: undefined;
   Eventosv2: undefined;
+  Voluntarios: undefined;
   kitset: undefined;
 };
 
@@ -256,6 +257,8 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
                   navigation.navigate('Eventosv2');
                 } else if (item.nombre === 'Kits') {
                   navigation.navigate('kitset');
+                }if (item.nombre === 'Conviertete en Voluntario') {
+                  navigation.navigate('Voluntarios');
                 }
               }} />
             ))}
