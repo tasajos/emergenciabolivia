@@ -54,10 +54,10 @@ const roadMapSteps = [
       },
       {
         step: 'Paso 4 - Opcional',
-        description: 'Puedes ingresar al canal de whatsapp de Voluntarios Bolivia, para saber mas noticias del mundo de voluntariado',
+        description: 'CLICK AQUI!....Para ingresar al canal de whatsapp de Voluntarios Bolivia, para saber mas noticias del mundo de voluntariado',
         imageSource: require('../imagenes/circulo.png'), // Asegúrate de tener esta imagen en tu proyecto
         isLink: true,
-      link: 'https://whatsapp.com/channel/0029VaEPHQOFi8xkAaPY3d46'
+      link: 'https://whatsapp.com/channel/0029VabE8nN7DAWtEBn6Pq2y'
       },
     // Repite para más pasos...
   ];
@@ -80,7 +80,7 @@ const roadMapSteps = [
 
   const openWhatsApp = () => {
     console.log("Intentando abrir WhatsApp...");
-    const url = 'https://whatsapp.com/channel/0029VaEPHQOFi8xkAaPY3d46';
+    const url = 'https://whatsapp.com/channel/0029VabE8nN7DAWtEBn6Pq2y';
     Linking.openURL(url).catch(err => {
         console.error('An error occurred', err);
         Alert.alert("Error", "Ocurrió un error al intentar abrir el enlace");
