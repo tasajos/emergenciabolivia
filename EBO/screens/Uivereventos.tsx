@@ -69,7 +69,7 @@ type RootStackParamList = {
             <View style={styles.header}>
               <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
               <Text style={styles.headerText}>Con el Apoyo de </Text>
-              <Image source={require('../imagenes/logov4.png')} style={styles.logo} />
+              <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
             </View>
             <Text style={styles.description}>Ver - Eventos</Text>
             <FlatList

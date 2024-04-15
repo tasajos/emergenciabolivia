@@ -94,17 +94,7 @@ const Animalistasepr: React.FC<Props> = ({ navigation }) => {
     const clearSearch = () => {
         setSearchQuery('');
       };
-    const items = [
-        { name: 'Yunka Atoq', image: require('../imagenes/logos/yunka_atoq_log.png') },
-        { name: 'Thasnuq', image: require('../imagenes/logos/thasnuq.jpg') },
-        { name: 'Resistencia', image: require('../imagenes/logos/resistencia.jpeg') },
-        { name: 'Cruz de Malta', image: require('../imagenes/logos/cruzdemalta.jpeg') },
-        { name: 'Bear', image: require('../imagenes/emblemabo.png') },
-        { name: 'Sar Bolivia', image: require('../imagenes/logos/logosar.png') },
-        { name: 'Aeronauticos', image: require('../imagenes/logos/aeronauticosbv.jpg') },
-        { name: 'Fuego y Rescate', image: require('../imagenes/logos/fuego_rescate.png') },
-        // ... add all your items here
-      ];
+  
 
 
 
@@ -128,7 +118,7 @@ const Animalistasepr: React.FC<Props> = ({ navigation }) => {
           <View style={styles.headerContainer}>
             {/* Example of logo and text in header */}
             <Text style={styles.supportText}>Con el Apoyo de</Text>
-            <Image source={require('../imagenes/logov4.png')} style={styles.logo} />
+            <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
             
           </View>
           <View style={styles.searchContainer}>
