@@ -101,7 +101,7 @@ const roadMapSteps = [
       <Text style={styles.description}>Sigue los pasos para convertirte en un Voluntario</Text>
 
       <View style={styles.bannerContainer}>
-        <Image source={require('../imagenes/voluntarios.jpg')} style={styles.bannerStyle} />
+        <Image source={require('../imagenes/Bvoluntarios.jpg')} style={styles.bannerStyle} />
       </View>
       <ScrollView style={styles.scrollView}>
       <View style={styles.roadMapContainer}>
