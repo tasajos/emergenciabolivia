@@ -195,20 +195,13 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   };
 
   const onWhatsappchanelPress = () => {
+    console.log("Intentando abrir WhatsApp...");
     const url = 'https://whatsapp.com/channel/0029VabE8nN7DAWtEBn6Pq2y';
-  
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (!supported) {
-          Alert.alert('Error', 'No se puede abrir el canal de WhatsApp.');
-        } else {
-          return Linking.openURL(url);
-        }
-      })
-      .catch((err) => {
-        Alert.alert('Error', 'Ocurrió un error al abrir el enlace: ' + err.message);
-      });
-  };
+    Linking.openURL(url).catch(err => {
+        console.error('An error occurred', err);
+        Alert.alert("Error", "Ocurrió un error al intentar abrir el enlace");
+    });
+};
 
   const onEducacionPress = () => {
     navigation.navigate('Educacionepr');
