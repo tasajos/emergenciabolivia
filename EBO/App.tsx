@@ -42,6 +42,7 @@ import Homev2 from './screens/Homev2';
 import ReporteEmergencia from './screens/ReporteEmergencia';
 import Voluntarios from './screens/Voluntarios';
 import OporVoluntarios from './screens/OporVoluntarios';
+import AlertaEmergenciaInforme from './screens/AlertaEmergenciaInforme';
 import firebase from '@react-native-firebase/app';
 
 
@@ -97,6 +98,7 @@ export type RootStackParamList = {
   UiEditarEvento:undefined;
   Voluntarios:undefined;
   OporVoluntarios:undefined;
+  AlertaEmergenciaInforme:undefined;
   ReporteEmergencia:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
@@ -169,6 +171,7 @@ const App = () => {
         <Stack.Screen name="ReporteEmergencia" component={ReporteEmergencia} />
         <Stack.Screen name="Voluntarios" component={Voluntarios} />
         <Stack.Screen name="OporVoluntarios" component={OporVoluntarios} />
+        <Stack.Screen name="AlertaEmergenciaInforme" component={AlertaEmergenciaInforme} />
 
       </Stack.Navigator>
     </NavigationContainer>
