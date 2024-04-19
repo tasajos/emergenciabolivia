@@ -20,6 +20,7 @@ type RootStackParamList = {
   Voluntarios: undefined;
   kitset: undefined;
   OporVoluntarios: undefined; 
+  AlertaEmergenciaInforme: undefined; 
 };
 
 type Props = {
@@ -296,15 +297,9 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   {emergencias
     .filter((emergencia) => emergencia.estado === 'Activo')
     .map((emergencia) => (
-      <EmergencyAlertCard
-        key={emergencia.id}
-        title={emergencia.Titulo}
-        city={emergencia.ciudad}
-        date={emergencia.fecha}
-        description={emergencia.descripcion}
-        estado={emergencia.estado}
+      <EmergencyAlertCard key={emergencia.id} title={emergencia.Titulo} city={emergencia.ciudad} date={emergencia.fecha} description={emergencia.descripcion}estado={emergencia.estado}
         onPress={() => {
-          // Acciones al presionar la tarjeta de emergencia
+          navigation.navigate('AlertaEmergenciaInforme', { emergencia: emergencia });// Acciones al presionar la tarjeta de emergencia
         }}
       />
     ))}
