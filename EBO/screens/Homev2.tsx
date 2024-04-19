@@ -19,6 +19,7 @@ type RootStackParamList = {
   Eventosv2: undefined;
   Voluntarios: undefined;
   kitset: undefined;
+  OporVoluntarios: undefined; 
 };
 
 type Props = {
@@ -270,7 +271,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           <View style={styles.volunteerOpportunitiesContainer}>
             {oportunidadesVoluntariado.map((oportunidad) => (
               <VolunteerOpportunityCard key={oportunidad.id} title={oportunidad.titulo} date={oportunidad.fecha} description={oportunidad.descripcion} imageSource={{ uri: oportunidad.imagen }} onPress={() => {
-                // Define aquí tu lógica para el manejo del toque en la tarjeta
+                navigation.navigate('OporVoluntarios', { oportunidad: oportunidad });
               }} />
             ))}
           </View>

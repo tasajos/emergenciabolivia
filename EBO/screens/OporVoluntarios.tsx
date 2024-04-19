@@ -2,37 +2,75 @@
 import React, { useState, useEffect } from 'react';
 import { View, Linking,Platform,Text, StyleSheet, Image, ScrollView,FlatList, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation,useRoute  } from '@react-navigation/native';
 import FloatingButtonBar from './FloatingButtonBar';
-import RoadMapItem from './RoadMapItem'; // Asegúrate de crear este componente como se mencionó anteriormente
-
+import database from '@react-native-firebase/database';
 
 type RootStackParamList = {
-    OporVolunt: undefined;
-  };
+  OporVolunt: undefined;
+  OporVoluntarios: { oportunidad: OportunidadVoluntariado };
+};
 
-
+type OportunidadVoluntariado = {
+  titulo: string;
+  fecha: string;
+  imagen: string;
+  descripcion: string;
+  id: string | null;
+  cuerpo?: string;  // Agregar si no está presente
+  link?: string;    // Agregar si no está presente
+};
 
   const OporVoluntarios = () => {
 
+
+const route = useRoute();
+const { oportunidad } = route.params;
+const [detallesOportunidad, setDetallesOportunidad] = useState(oportunidad);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+    useEffect(() => {
+      if (oportunidad.id) {
+        const ref = database().ref(`/oportunidadesVoluntariado/${oportunidad.id}`);
+        ref.on('value', snapshot => {
+          const data = snapshot.val();
+          if (data) {
+            setDetallesOportunidad(prevState => ({ ...prevState, ...data }));
+          }
+        });
+  
+        return () => ref.off();
+      }
+    }, [oportunidad.id]);
 
-    return (
-        <SafeAreaView style={styles.container}>
-          <View style={styles.header}>
-            <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-            <Text style={styles.headerText}>Con el Apoyo de</Text>
-            <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
-          </View>
 
-
-        <View style={styles.footer}>
-      <FloatingButtonBar navigation={navigation} />
+   return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
+          <Text style={styles.headerText}>Con el Apoyo de</Text>
+          <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
+        </View>
+        <View style={styles.postContainer}>
+          <Image source={{ uri: detallesOportunidad.imagen }} style={styles.postImage} />
+          <Text style={styles.postTitle}>{detallesOportunidad.titulo}</Text>
+          <Text style={styles.postDescription}>{detallesOportunidad.descripcion}</Text>
+          <Text style={styles.postBody}>{detallesOportunidad.cuerpo}</Text>
+          <Text style={styles.postDate}>{detallesOportunidad.fecha}</Text>
+          {detallesOportunidad.link && (
+            <TouchableOpacity onPress={() => Linking.openURL(detallesOportunidad.link)}>
+              <Text style={styles.linkStyle}>Más información</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <FloatingButtonBar navigation={navigation} />
       </View>
     </SafeAreaView>
   );
-};
+}
     
 const styles = StyleSheet.create({
     container: {
@@ -100,6 +138,41 @@ const styles = StyleSheet.create({
         
     footer: {
     padding: 20,  // This padding serves as the margin around the floating bar
+    },
+    postContainer: {
+      backgroundColor: '#e9ebee',
+      padding: 15,
+      borderRadius: 10,
+      margin: 20,
+    },
+    postImage: {
+      width: '100%',
+      height: 200,
+      borderRadius: 10,
+    },
+    postTitle: {
+      fontWeight: 'bold',
+      fontSize: 18,
+      marginVertical: 8,
+    },
+    postDescription: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#333',
+    },
+    postDate: {
+      fontSize: 12,
+      color: '#666',
+      marginTop: 5,
+    },
+    postBody: {
+      fontSize: 14,
+      color: '#333',
+      marginTop: 10,
+    },
+    linkStyle: {
+      color: '#1e90ff',
+      marginTop: 10,
     },
         
   });
