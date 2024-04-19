@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity,Linking,Alert } from 'react-native';
+//import {  } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
@@ -194,6 +194,22 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
     navigation.navigate('RecInfo');
   };
 
+  const onWhatsappchanelPress = () => {
+    const url = 'https://whatsapp.com/channel/0029VabE8nN7DAWtEBn6Pq2y';
+  
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (!supported) {
+          Alert.alert('Error', 'No se puede abrir el canal de WhatsApp.');
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch((err) => {
+        Alert.alert('Error', 'Ocurrió un error al abrir el enlace: ' + err.message);
+      });
+  };
+
   const onEducacionPress = () => {
     navigation.navigate('Educacionepr');
   };
@@ -227,6 +243,11 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             <View style={styles.buttonContainer}>
+
+            <TouchableOpacity onPress={onWhatsappchanelPress} style={styles.imageButton}>
+                <Image source={require('../imagenes/wwchat.png')} style={styles.iconImage} />
+              </TouchableOpacity>
+
               <TouchableOpacity onPress={onBomberosPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/Group129.png')} style={styles.iconImage} />
               </TouchableOpacity>
