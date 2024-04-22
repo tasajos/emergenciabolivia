@@ -1,50 +1,53 @@
-// AlertaEmergenciaInforme.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Linking,Platform,Text, StyleSheet, Image, ScrollView,FlatList, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import { View, Linking, Platform, Text, StyleSheet, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation,useRoute  } from '@react-navigation/native';
-import FloatingButtonBar from './FloatingButtonBar';
 import database from '@react-native-firebase/database';
+import FloatingButtonBar from './FloatingButtonBar';
 
 type RootStackParamList = {
-  OporVolunt: undefined;
-  OporVoluntarios: { oportunidad: OportunidadVoluntariado };
+  AlertaEmergencia: undefined;
+  AlertaEmergenciaInforme: { emergencia: EmergenciaVoluntariado | null };
 };
 
-type OportunidadVoluntariado = {
-  titulo: string;
+type EmergenciaVoluntariado = {
+  Titulo: string;
   fecha: string;
-  imagen: string;
+  imagen?: string;
   descripcion: string;
   id: string | null;
-  cuerpo?: string;  // Agregar si no está presente
-  link?: string;    // Agregar si no está presente
+  ciudad?: string;
+  tipo?: string;
+  link?: string;
 };
 
-  const AlertaEmergenciaInforme = () => {
+type NavigationType = StackNavigationProp<RootStackParamList, 'AlertaEmergenciaInforme'>;
 
+const AlertaEmergenciaInforme = () => {
+  const route = useRoute();
+  const emergencia = route.params?.emergencia;
+  const [detallesOportunidad, setDetallesOportunidad] = useState<EmergenciaVoluntariado | null>(emergencia);
+  const navigation = useNavigation<NavigationType>();
 
-const route = useRoute();
-const { oportunidad } = route.params;
-const [detallesOportunidad, setDetallesOportunidad] = useState(oportunidad);
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  useEffect(() => {
+    if (emergencia && emergencia.id) {
+      const ref = database().ref(`/ultimasEmergencias/${emergencia.id}`);
+      ref.on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+          setDetallesOportunidad(prevState => ({ ...prevState, ...data }));
+        }
+      });
 
-    useEffect(() => {
-      if (oportunidad.id) {
-        const ref = database().ref(`/oportunidadesVoluntariado/${oportunidad.id}`);
-        ref.on('value', snapshot => {
-          const data = snapshot.val();
-          if (data) {
-            setDetallesOportunidad(prevState => ({ ...prevState, ...data }));
-          }
-        });
-  
-        return () => ref.off();
-      }
-    }, [oportunidad.id]);
+      return () => ref.off();
+    }
+  }, [emergencia]);
 
+  if (!detallesOportunidad) {
+    return <Text>Cargando...</Text>;
+  }
 
-   return (
+  return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
@@ -53,11 +56,13 @@ const [detallesOportunidad, setDetallesOportunidad] = useState(oportunidad);
           <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
         </View>
         <View style={styles.postContainer}>
-          <Image source={{ uri: detallesOportunidad.imagen }} style={styles.postImage} />
-          <Text style={styles.postTitle}>{detallesOportunidad.titulo}</Text>
+          <Image source={{ uri: detallesOportunidad.imagen || '../imagenes/noimagen.png' }} style={styles.postImage} />
+          <Text style={styles.postTitle}>{detallesOportunidad.Titulo}</Text>
           <Text style={styles.postDescription}>{detallesOportunidad.descripcion}</Text>
-          <Text style={styles.postBody}>{detallesOportunidad.cuerpo}</Text>
+          <Text style={styles.postTipo}>{detallesOportunidad.tipo}</Text>
+          <Text style={styles.postBody}>{detallesOportunidad.ciudad}</Text>
           <Text style={styles.postDate}>{detallesOportunidad.fecha}</Text>
+          
           {detallesOportunidad.link && (
             <TouchableOpacity onPress={() => Linking.openURL(detallesOportunidad.link)}>
               <Text style={styles.linkStyle}>Más información</Text>
@@ -70,111 +75,94 @@ const [detallesOportunidad, setDetallesOportunidad] = useState(oportunidad);
       </View>
     </SafeAreaView>
   );
-}
-    
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-    },
-    scrollView: {
-        flex: 1, // Important to ensure it takes up remaining space and allows for scrolling
-    },
-    header: {
-      alignItems: 'center',
-      marginBottom: 20,
-    },
-    headerImage: {
-      width: '80%',
-      height: 60,
-      resizeMode: 'contain',
-    },
-    headerText: {
-      fontSize: 20,
-      color: '#424242',
-      marginTop: 20,
-      fontWeight: 'bold',
-    },
-    description: {
-      fontSize: 18,
-      textAlign: 'center',
-      marginHorizontal: 20,
-      marginBottom: 20,
-      color: '#424242',
-    },
-        
-       
-    logo: {
-      height: 50,
-      resizeMode: 'contain',
-      marginTop: 20,
-    },
-    roadMapContainer: {
-        marginHorizontal: 20, // Esto agregará un margen a los lados
-        marginTop: 20, // Esto agregará un margen en la parte superior
-      },
-      bannerStyle: {
-        width: '100%', // La imagen llena el contenedor
-        height: '100%', // La imagen llena el contenedor
-        resizeMode: 'cover', // La imagen cubre todo el espacio, las esquinas redondeadas serán visibles
-      },
+};
 
-            bannerContainer: {
-                width: '100%', // Asegura que el contenedor tenga el ancho completo
-                height: 120, // Altura para el contenedor, igual que la imagen
-                borderRadius: 10, // Redondea las esquinas del contenedor
-                overflow: 'hidden', // Asegura que todo dentro del contenedor se recorte a las esquinas redondeadas
-                marginVertical: 20, // Margen vertical para la separación
-                elevation: 5, // Sombra para Android
-                ...Platform.select({ // Sombra para iOS
-                  ios: {
-                    shadowColor: 'black',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 4,
-                  },
-                }),
-              },
-        
-    footer: {
-    padding: 20,  // This padding serves as the margin around the floating bar
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white', // Fondo más claro, típico de Facebook
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingTop: 20,
+  },
+  headerImage: {
+    width: '80%',
+    height: 60,
+    resizeMode: 'contain',
+  },
+  headerText: {
+    fontSize: 18,
+    color: '#4B4F56', // Color de texto más suave
+    marginTop: 10,
+    fontWeight: '600', // Menos bold que 'bold'
+  },
+  logo: {
+    height: 40,
+    resizeMode: 'contain',
+    marginTop: 10,
+  },
+  postContainer: {
+    backgroundColor: '#FFFFFF', // Fondo blanco para las tarjetas de post
+    padding: 15,
+    borderRadius: 12,
+    marginHorizontal: 15,
+    marginTop: 5,
+    marginBottom: 10,
+    shadowColor: '#000', // Sombras para dar profundidad
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    postContainer: {
-      backgroundColor: '#e9ebee',
-      padding: 15,
-      borderRadius: 10,
-      margin: 20,
-    },
-    postImage: {
-      width: '100%',
-      height: 200,
-      borderRadius: 10,
-    },
-    postTitle: {
-      fontWeight: 'bold',
-      fontSize: 18,
-      marginVertical: 8,
-    },
-    postDescription: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-    postDate: {
-      fontSize: 12,
-      color: '#666',
-      marginTop: 5,
-    },
-    postBody: {
-      fontSize: 14,
-      color: '#333',
-      marginTop: 10,
-    },
-    linkStyle: {
-      color: '#1e90ff',
-      marginTop: 10,
-    },
-        
-  });
-  
-  export default AlertaEmergenciaInforme;
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  postImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+  },
+  postTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#212529', // Título oscuro para más contraste
+    marginTop: 8,
+  },
+  postDescription: {
+    fontSize: 16,
+    color: '#495057', // Descripción en un tono de gris oscuro
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  postTipo: {
+    fontSize: 14,
+    color: '#6C757D', // Información adicional en gris más suave
+    marginBottom: 2,
+  },
+  postBody: {
+    fontSize: 14,
+    color: '#343A40', // Detalles importantes pero con menor enfasis que el título
+    marginTop: 2,
+  },
+  postDate: {
+    fontSize: 12,
+    color: '#ADB5BD', // Fecha en gris claro
+    marginTop: 2,
+    marginBottom: 10,
+  },
+  linkStyle: {
+    color: '#007BFF', // Enlace en azul, similar a los enlaces de Facebook
+    marginTop: 4,
+  },
+  footer: {
+    padding: 20,
+    backgroundColor: '#F0F2F5', // Fondo del pie de página igual que el contenedor principal
+  },
+});
+
+export default AlertaEmergenciaInforme;
