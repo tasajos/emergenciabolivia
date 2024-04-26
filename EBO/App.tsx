@@ -35,6 +35,7 @@ import Animalistasepr from './screens/Animalistasepr';
 import Ambientalistas2doepr from './screens/Ambientalistas2doepr';
 import Animalistas2doepr from './screens/Animalistas2doepr';
 import Uiveralertas from './screens/Uiveralertas';
+import Uiscreendetalle from './screens/Uiscreendetalle';
 import Uivereventos from './screens/Uivereventos';
 import UiEditarAlerta from './screens/UiEditarAlerta';
 import UiEditarEvento from './screens/UiEditarEvento';
@@ -96,6 +97,7 @@ export type RootStackParamList = {
   Animalistasepr: undefined;
   UiEditarAlerta:undefined;
   UiEditarEvento:undefined;
+  Uiscreendetalle:undefined;
   Voluntarios:undefined;
   OporVoluntarios:undefined;
   AlertaEmergenciaInforme:undefined;
@@ -157,6 +159,7 @@ const App = () => {
         <Stack.Screen name="Uivereventos" component={Uivereventos} />
         <Stack.Screen name="UiEditarAlerta" component={UiEditarAlerta} />
         <Stack.Screen name="UiEditarEvento" component={UiEditarEvento} />
+        <Stack.Screen name="Uiscreendetalle" component={Uiscreendetalle} />
         <Stack.Screen name="MapaHospitales" component={MapaHospitales} />
         <Stack.Screen name="Ambulanciasepr" component={Ambulanciasepr} />
         <Stack.Screen name="Ambulancias2doepr" component={Ambulancias2doepr} />

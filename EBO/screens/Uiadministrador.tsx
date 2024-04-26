@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Asegúrate de que este import está correcto
 import firebase from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
+import FloatingButtonAdmin from './FloatingButtonAdmin'; // Asegúrate de que este componente esté bien importado
 
 const Uiadministrador = () => {
   const [emergencias, setEmergencias] = useState([]);
+  const navigation = useNavigation(); // Define correctamente el hook aquí
 
   useEffect(() => {
     const db = database();
@@ -15,14 +18,14 @@ const Uiadministrador = () => {
         const val = childSnapshot.val();
         data.push({
           key: childSnapshot.key,
-          title: val.Titulo,
+          title: val.Titulo, // Asegúrate de que los campos coincidan con los de Firebase
           city: val.ciudad,
           description: val.descripcion,
           type: val.tipo,
           state: val.estado,
           date: val.fecha,
           time: val.hora,
-          imageUrl: val.imagen // Asegúrate de que la URL de la imagen esté almacenada en este campo en Firebase
+          imageUrl: val.imagen // Verifica que este campo sea correcto
         });
       });
       setEmergencias(data);
@@ -32,7 +35,10 @@ const Uiadministrador = () => {
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => navigation.navigate('Uiscreendetalle', { item })} // Utiliza navigation aquí
+    >
       <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title} - {item.city}</Text>
@@ -45,12 +51,18 @@ const Uiadministrador = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
+        <Text style={styles.headerText}>Con el Apoyo de</Text>
+        <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
+      </View>
       <FlatList 
         data={emergencias}
         renderItem={renderItem}
         keyExtractor={item => item.key}
         contentContainerStyle={styles.listContainer}
       />
+      <FloatingButtonAdmin />
     </SafeAreaView>
   );
 };
@@ -59,6 +71,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerImage: {
+    width: '80%',
+    height: 60,
+    resizeMode: 'contain',
+  },
+  headerText: {
+    fontSize: 16,
+    color: '#424242',
+    marginTop: 20,
+  },
+  logo: {
+    height: 50,
+    resizeMode: 'contain',
+    marginTop: 20,
   },
   listContainer: {
     paddingHorizontal: 10,
