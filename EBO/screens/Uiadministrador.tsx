@@ -38,7 +38,7 @@ const Uiadministrador = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
-      onPress={() => navigation.navigate('Uiscreendetalle', { item })} // Utiliza navigation aquí
+      onPress={() => navigation.navigate('Uiscreendetalle', { item: { ...item, key: item.key } })}
     >
       <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
       <View style={styles.cardContent}>
