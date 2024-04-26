@@ -21,6 +21,7 @@ const Uiadministrador = () => {
           title: val.Titulo, // Asegúrate de que los campos coincidan con los de Firebase
           city: val.ciudad,
           description: val.descripcion,
+          ubicacion: val.ubicacion,
           type: val.tipo,
           state: val.estado,
           date: val.fecha,

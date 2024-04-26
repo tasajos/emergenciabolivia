@@ -1,9 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import FloatingButtonAdmin from './FloatingButtonAdmin'; // Asegúrate de que este componente está correctamente importado
 
 const Uiscreendetalle = ({ route }) => {
   const { item } = route.params;
+  const coordinates = item.ubicacion ? item.ubicacion.split('query=').pop().split(',').map(Number) : null;
+
+  const isValidCoordinates =
+    coordinates &&
+    coordinates.length === 2 &&
+    !isNaN(coordinates[0]) &&
+    !isNaN(coordinates[1]);
+
+  if (!isValidCoordinates) {
+    return (
+      <View style={styles.container}>
+        <Text>Las coordenadas de la ubicación no están disponibles o son inválidas.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -14,6 +30,30 @@ const Uiscreendetalle = ({ route }) => {
           <Text style={styles.headerText}>Detalle de la Emergencia</Text>
           <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
         </View>
+
+        {/* Mapa con la ubicación */}
+        {isValidCoordinates && (
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: coordinates[0],
+                longitude: coordinates[1],
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: coordinates[0],
+                  longitude: coordinates[1],
+                }}
+                title={item.title}
+                description={item.description}
+              />
+            </MapView>
+          </View>
+        )}
 
         {/* Imagen y detalles */}
         <Image source={{ uri: item.imageUrl }} style={styles.image} />
@@ -38,70 +78,60 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  headerImage: {
+    width: '100%',
+    height: 60,
+    resizeMode: 'contain',
+    marginBottom: 10,
   },
   headerText: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#424242',
-    marginTop: 20,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-  },
-  content: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  descriptionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  description: {
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  detailsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  details: {
-    fontSize: 14,
-    marginLeft: 10,
   },
   logo: {
     height: 50,
     resizeMode: 'contain',
-    marginTop: 20,
+    marginBottom: 20,
+  },
+  mapContainer: {
+    height: 250,
+    borderColor: '#DDD',
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginVertical: 20,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
   image: {
     width: '100%',
     height: 200,
     resizeMode: 'cover',
+    borderRadius: 10,
+    marginVertical: 20,
   },
   detailContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   description: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 18,
+    marginBottom: 8,
   },
   info: {
-    fontSize: 14,
-    marginBottom: 5,
+    fontSize: 16,
+    marginBottom: 4,
   },
-
 });
 
 export default Uiscreendetalle;
