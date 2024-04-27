@@ -1,57 +1,69 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button,Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
 import { Picker } from '@react-native-picker/picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
+import { useNavigation } from '@react-navigation/native';
 
-const Uiscreendetalle = ({ route }: { route: any }) => {
-    const { item } = route.params;
-    const coordinates = item.ubicacion ? item.ubicacion.split('query=').pop().split(',').map(Number) : null;
-  
-    const [subestado, setSubestado] = useState('');
-    const [unidad, setUnidad] = useState('');
-    const [telefonoResponsable, setTelefonoResponsable] = useState('');
-  
-    const isValidCoordinates =
-      coordinates &&
-      coordinates.length === 2 &&
-      !isNaN(coordinates[0]) &&
-      !isNaN(coordinates[1]);
-  
-      const handleUpdate = async () => {
-        if (!item.key) {
-          Alert.alert("Error", "No se encontró un identificador único para la actualización.");
-          return;
-        }
-    
-        try {
-          const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
-          await updateRef.update({
-            subestado,
-            unidad,
-            telefonoResponsable
-          });
-    
-          Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.');
-        } catch (error: any) {
-          Alert.alert('Error al actualizar', error.message);
-        }
-      };
-  
-    if (!isValidCoordinates) {
-      return (
-        <View style={styles.container}>
-          <Text>Las coordenadas de la ubicación no están disponibles o son inválidas.</Text>
-        </View>
-      );
+const Uiscreendetalle = ({ route }) => {
+  const { item } = route.params;
+  const navigation = useNavigation(); // Hook de React Navigation
+  const coordinates = item.ubicacion ? item.ubicacion.split('query=').pop().split(',').map(Number) : null;
+
+  const [subestado, setSubestado] = useState(item.subestado || '');
+  const [unidad, setUnidad] = useState(item.unidad || '');
+  const [telefonoResponsable, setTelefonoResponsable] = useState(item.telefonoResponsable || '');
+
+  const isValidCoordinates = coordinates && coordinates.length === 2 && coordinates.every(coord => !isNaN(coord));
+
+  useEffect(() => {
+    const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+    const listener = ref.on('value', snapshot => {
+      const data = snapshot.val();
+      if (data) {
+        setSubestado(data.subestado || '');
+        setUnidad(data.unidad || '');
+        setTelefonoResponsable(data.telefonoResponsable || '');
+      }
+    });
+
+    return () => ref.off('value', listener);
+  }, [item.key]);
+
+  const handleUpdate = async () => {
+    if (!item.key) {
+      Alert.alert("Error", "No se encontró un identificador único para la actualización.");
+      return;
     }
+
+    try {
+      const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+      const newHistoryRef = updateRef.child('historial').push();
+      await updateRef.update({
+        subestado,
+        unidad,
+        telefonoResponsable
+      });
+      await newHistoryRef.set({
+        subestado,
+        unidad,
+        telefonoResponsable,
+        timestamp: Date.now()
+      });
+
+      Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.', [
+        { text: "OK", onPress: () => navigation.push('Uiscreendetalle', { item: { ...item, key: item.key } }) }
+      ]);
+    } catch (error) {
+      Alert.alert('Error al actualizar', error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
-    <ScrollView style={styles.scrollView}>
-
+      <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
           <Text style={styles.headerText}>Detalle de la Emergencia</Text>
@@ -89,9 +101,9 @@ const Uiscreendetalle = ({ route }: { route: any }) => {
             selectedValue={subestado}
             onValueChange={(itemValue, itemIndex) => setSubestado(itemValue)}
             style={styles.picker}>
-            <Picker.Item label="Atendiendo" value="atendiendo" />
-            <Picker.Item label="Rumbo a la emergencia" value="rumbo" />
-            <Picker.Item label="Completado" value="completado" />
+            <Picker.Item label="Atendiendo" value="Atendiendo" />
+            <Picker.Item label="Rumbo a la emergencia" value="Rumbo a la emergencia" />
+            <Picker.Item label="Completado" value="Completado" />
           </Picker>
 
           <Text style={styles.label}>Unidad:</Text>
