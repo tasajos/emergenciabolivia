@@ -4,7 +4,7 @@ import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
-
+import database from '@react-native-firebase/database';
 
 
 
@@ -29,20 +29,29 @@ const Login: React.FC<Props> = () => {
  
 
   const handleLogin = async () => {
-    // Asegúrate de que el correo electrónico y la contraseña no estén vacíos
     if (email.trim() === '' || password.trim() === '') {
       Alert.alert("Error", "Por favor, ingrese un correo electrónico y una contraseña.");
-      return; // Detiene la ejecución si alguno de los campos está vacío
+      return;
     }
   
     try {
       let response = await auth().signInWithEmailAndPassword(email, password);
       if (response && response.user) {
-        Alert.alert("Éxito", "Login Exitoso");
-        navigation.navigate('Uiadministrador');
+        // Verifica el rol del usuario en la base de datos
+        const userId = response.user.uid;
+        const userRef = database().ref(`/UsuariosVbo/${userId}`);
+        userRef.on('value', (snapshot) => {
+          const userData = snapshot.val();
+          if (userData && userData.rol === 'Voluntario') {
+            Alert.alert("Éxito", "Login Exitoso");
+            navigation.navigate('Uiadministrador');
+          } else {
+            Alert.alert("Acceso denegado", "No tienes el rol de voluntario necesario para acceder a esta sección.");
+            auth().signOut(); // Desconecta al usuario si no tiene el rol adecuado
+          }
+        });
       }
-    
-    } catch (error: any) { 
+    } catch (error) {
       let message;
       if (error.code === 'auth/user-not-found') {
         message = "No existe una cuenta para el correo electrónico ingresado.";

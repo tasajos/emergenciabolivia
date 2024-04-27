@@ -3,6 +3,8 @@ import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet, Linking ,Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
 
 type NavigationType = StackNavigationProp<any>;
 
@@ -28,7 +30,9 @@ const openWhatsApp = () => {
   });;
 };
 
-const FloatingButtonAdmin: React.FC<Props> = ({ navigation }) => {
+const FloatingButtonAdmin = () => {
+  const navigation = useNavigation();  // Usando el hook useNavigation
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Uiadministrador')}>
