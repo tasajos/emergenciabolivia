@@ -159,7 +159,8 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
               <Text>Subestado: {entry.subestado}</Text>
               <Text>Unidad: {entry.unidad}</Text>
               <Text>Teléfono: {entry.telefonoResponsable}</Text>
-              <Text>Fecha: {new Date(entry.timestamp).toLocaleString()}</Text>
+              {/*<Text>Fecha: {new Date(entry.timestamp).toLocaleString()}</Text>*/}
+              <Text>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
             </View>
           ))}
         </View>
