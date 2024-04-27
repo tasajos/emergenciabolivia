@@ -5,31 +5,58 @@ import FloatingButtonAdmin from './FloatingButtonAdmin';
 import { Picker } from '@react-native-picker/picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, RouteProp } from '@react-navigation/native';
 
-const Uiscreendetalle = ({ route }) => {
+type EmergencyDetail = {
+  key: string;
+  title: string;
+  city: string;
+  description: string;
+  type: string;
+  state: string;
+  date: string;
+  time: string;
+  imageUrl: string;
+  ubicacion: string;
+  subestado?: string;
+  unidad?: string;
+  telefonoResponsable?: string;
+};
+
+type EmergencyHistory = {
+  subestado?: string;
+  unidad?: string;
+  telefonoResponsable?: string;
+  timestamp: number;
+};
+
+type UiscreendetalleRouteProp = RouteProp<{ params: { item: EmergencyDetail } }, 'params'>;
+type Props = {
+  route: UiscreendetalleRouteProp;
+};
+
+const Uiscreendetalle: React.FC<Props> = ({ route }) => {
   const { item } = route.params;
-  const navigation = useNavigation(); // Hook de React Navigation
-  const coordinates = item.ubicacion ? item.ubicacion.split('query=').pop().split(',').map(Number) : null;
+  const navigation = useNavigation();
+  const coordinates = item.ubicacion?.split('query=').pop()?.split(',').map(Number);
 
   const [subestado, setSubestado] = useState(item.subestado || '');
   const [unidad, setUnidad] = useState(item.unidad || '');
   const [telefonoResponsable, setTelefonoResponsable] = useState(item.telefonoResponsable || '');
-
-  const isValidCoordinates = coordinates && coordinates.length === 2 && coordinates.every(coord => !isNaN(coord));
+  const [history, setHistory] = useState<EmergencyHistory[]>([]);
 
   useEffect(() => {
-    const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
-    const listener = ref.on('value', snapshot => {
-      const data = snapshot.val();
-      if (data) {
-        setSubestado(data.subestado || '');
-        setUnidad(data.unidad || '');
-        setTelefonoResponsable(data.telefonoResponsable || '');
-      }
+    const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}/historial`);
+    ref.on('value', snapshot => {
+      const historyData: EmergencyHistory[] = [];
+      snapshot.forEach(child => {
+        const data = child.val() as EmergencyHistory;
+        historyData.push(data);
+      });
+      setHistory(historyData);
     });
 
-    return () => ref.off('value', listener);
+    return () => ref.off('value');
   }, [item.key]);
 
   const handleUpdate = async () => {
@@ -70,7 +97,7 @@ const Uiscreendetalle = ({ route }) => {
           <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
         </View>
 
-        {isValidCoordinates && (
+        {coordinates && (
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -124,6 +151,16 @@ const Uiscreendetalle = ({ route }) => {
           />
 
           <Button title="Actualizar Información" onPress={handleUpdate} />
+
+          {/* Display history */}
+          {history.map((entry, index) => (
+            <View key={index} style={styles.historyItem}>
+              <Text>Subestado: {entry.subestado}</Text>
+              <Text>Unidad: {entry.unidad}</Text>
+              <Text>Teléfono: {entry.telefonoResponsable}</Text>
+              <Text>Fecha: {new Date(entry.timestamp).toLocaleString()}</Text>
+            </View>
+          ))}
         </View>
       </ScrollView>
       <FloatingButtonAdmin />
@@ -137,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   scrollView: {
-    marginBottom: 60,  // Espacio adicional para el FloatingButtonAdmin
+    marginBottom: 60,
   },
   header: {
     alignItems: 'center',
@@ -181,7 +218,7 @@ const styles = StyleSheet.create({
   detailContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    marginBottom: 50,  // Added space at the bottom for better scrolling
+    marginBottom: 50,
   },
   title: {
     fontSize: 22,
@@ -209,6 +246,13 @@ const styles = StyleSheet.create({
   },
   picker: {
     marginBottom: 10,
+  },
+  historyItem: {
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
 });
 
