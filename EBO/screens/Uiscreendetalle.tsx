@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
 
-const Uiscreendetalle = ({ route }) => {
+const Uiscreendetalle = ({ route }: { route: any }) => {
     const { item } = route.params;
     const coordinates = item.ubicacion ? item.ubicacion.split('query=').pop().split(',').map(Number) : null;
   
@@ -35,7 +35,7 @@ const Uiscreendetalle = ({ route }) => {
           });
     
           Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.');
-        } catch (error) {
+        } catch (error: any) {
           Alert.alert('Error al actualizar', error.message);
         }
       };
@@ -50,7 +50,8 @@ const Uiscreendetalle = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+    <ScrollView style={styles.scrollView}>
+
         <View style={styles.header}>
           <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
           <Text style={styles.headerText}>Detalle de la Emergencia</Text>
@@ -122,6 +123,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollView: {
+    marginBottom: 60,  // Espacio adicional para el FloatingButtonAdmin
   },
   header: {
     alignItems: 'center',

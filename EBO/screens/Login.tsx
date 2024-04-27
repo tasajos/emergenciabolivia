@@ -44,14 +44,14 @@ const Login: React.FC<Props> = () => {
           const userData = snapshot.val();
           if (userData && userData.rol === 'Voluntario') {
             Alert.alert("Éxito", "Login Exitoso");
-            navigation.navigate('Uiadministrador');
+            navigation.navigate('Uiadministrador' as never); // Fix: Pass the correct screen name as a parameter
           } else {
             Alert.alert("Acceso denegado", "No tienes el rol de voluntario necesario para acceder a esta sección.");
             auth().signOut(); // Desconecta al usuario si no tiene el rol adecuado
           }
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message;
       if (error.code === 'auth/user-not-found') {
         message = "No existe una cuenta para el correo electrónico ingresado.";
