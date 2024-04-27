@@ -128,6 +128,7 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             selectedValue={subestado}
             onValueChange={(itemValue, itemIndex) => setSubestado(itemValue)}
             style={styles.picker}>
+             <Picker.Item label="Seleccione una Opcion" value="" />
             <Picker.Item label="Atendiendo" value="Atendiendo" />
             <Picker.Item label="Rumbo a la emergencia" value="Rumbo a la emergencia" />
             <Picker.Item label="Completado" value="Completado" />
