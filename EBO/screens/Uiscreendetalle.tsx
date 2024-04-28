@@ -21,6 +21,8 @@ type EmergencyDetail = {
   subestado?: string;
   unidad?: string;
   telefonoResponsable?: string;
+  necesitaAyuda?: string;
+  notas?: string;
 };
 
 type EmergencyHistory = {
@@ -28,6 +30,8 @@ type EmergencyHistory = {
   unidad?: string;
   telefonoResponsable?: string;
   timestamp: number;
+  necesitaAyuda?: string;
+  notas?: string;
 };
 
 type UiscreendetalleRouteProp = RouteProp<{ params: { item: EmergencyDetail } }, 'params'>;
@@ -44,6 +48,8 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
   const [unidad, setUnidad] = useState(item.unidad || '');
   const [telefonoResponsable, setTelefonoResponsable] = useState(item.telefonoResponsable || '');
   const [history, setHistory] = useState<EmergencyHistory[]>([]);
+  const [necesitaAyuda, setNecesitaAyuda] = useState(item.necesitaAyuda || '');
+  const [notas, setNotas] = useState(item.notas || '');
 
   useEffect(() => {
     const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}/historial`);
@@ -71,13 +77,22 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
       await updateRef.update({
         subestado,
         unidad,
-        telefonoResponsable
+        telefonoResponsable,
+        necesitaAyuda,
+        notas
+
+
+
       });
       await newHistoryRef.set({
         subestado,
         unidad,
         telefonoResponsable,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        necesitaAyuda,
+        notas,
+
+
       });
 
       Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.', [
@@ -150,6 +165,26 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             placeholder="Ingrese el teléfono del responsable"
             keyboardType="phone-pad"
           />
+ <Text style={styles.label}>Necesita ayuda:</Text>
+          <Picker
+            selectedValue={necesitaAyuda}
+            onValueChange={setNecesitaAyuda}
+            style={styles.picker}>
+            <Picker.Item label="Seleccione una Opción" value="" />
+            <Picker.Item label="Sí" value="Sí" />
+            <Picker.Item label="No" value="No" />
+          </Picker>
+
+          <Text style={styles.label}>Notas:</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setNotas}
+            value={notas}
+            placeholder="Ingrese notas adicionales"
+            multiline
+          />
+
+
 
           <Button title="Actualizar Información" onPress={handleUpdate} />
 
@@ -159,6 +194,8 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
               <Text>Subestado: {entry.subestado}</Text>
               <Text>Unidad: {entry.unidad}</Text>
               <Text>Teléfono: {entry.telefonoResponsable}</Text>
+              <Text>Necesita ayuda: {entry.necesitaAyuda}</Text>
+              <Text>Notas: {entry.notas}</Text>
               {/*<Text>Fecha: {new Date(entry.timestamp).toLocaleString()}</Text>*/}
               <Text>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
             </View>

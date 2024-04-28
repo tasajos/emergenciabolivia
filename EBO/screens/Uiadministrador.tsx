@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList,ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Asegúrate de que este import está correcto
 import firebase from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
@@ -52,6 +52,7 @@ const Uiadministrador = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.header}>
         <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
         <Text style={styles.headerText}>Con el Apoyo de</Text>
@@ -63,6 +64,7 @@ const Uiadministrador = () => {
         keyExtractor={item => item.key}
         contentContainerStyle={styles.listContainer}
       />
+      </ScrollView>
       <FloatingButtonAdmin />
     </SafeAreaView>
   );
@@ -72,6 +74,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollView: {
+    marginBottom: 60,
   },
   header: {
     alignItems: 'center',
