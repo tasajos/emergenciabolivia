@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/cli": "^13.6.4",
     "@react-native-community/datetimepicker": "^7.6.3",
     "@react-native-firebase/app": "^19.1.0",
