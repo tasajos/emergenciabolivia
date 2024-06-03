@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useNavigation, RouteProp } from '@react-navigation/native';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/database';
 
 type SCIFormRouteProp = RouteProp<{ params: { item: any } }, 'params'>;
 type Props = {
@@ -13,13 +15,28 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   const [dateTime, setDateTime] = useState('');
   const [location, setLocation] = useState('');
   const [incidentCommand, setIncidentCommand] = useState('');
-
   const navigation = useNavigation();
 
-  const handleSubmit = () => {
-    // Implementar lógica de guardado si es necesario
-    Alert.alert('Formulario SCI 201', 'Formulario guardado con éxito.');
-    navigation.goBack();
+  const handleSubmit = async () => {
+    if (!incidentName || !dateTime || !location || !incidentCommand) {
+      Alert.alert('Error', 'Por favor, complete todos los campos');
+      return;
+    }
+
+    try {
+      const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+      await updateRef.update({
+        incidentName,
+        dateTime,
+        location,
+        incidentCommand
+      });
+
+      Alert.alert('Formulario SCI 201', 'Formulario guardado con éxito.');
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo guardar el formulario');
+    }
   };
 
   return (
