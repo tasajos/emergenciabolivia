@@ -14,21 +14,36 @@ type Props = {
 const SCIForm: React.FC<Props> = ({ route }) => {
   const { item } = route.params;
   const [nombreIncidente, setNombreIncidente] = useState('');
-  const [fechaSCI, setFechaSCI] = useState('');
   const [ubicacionSCI, setUbicacionSCI] = useState<{ latitude: number | null; longitude: number | null; }>({
     latitude: null,
     longitude: null,
   });
   const [unidadComandoSCI, setUnidadComandoSCI] = useState('');
   const [comandanteIncidente, setComandanteIncidente] = useState('');
+  const [isFormEditable, setIsFormEditable] = useState(true);
   const [showEssentialInfo, setShowEssentialInfo] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
-    const now = new Date();
-    const bolivianTime = now.toLocaleString('es-BO', { timeZone: 'America/La_Paz' });
-    setFechaSCI(bolivianTime);
-  }, []);
+    const fetchData = async () => {
+      const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+      const snapshot = await updateRef.once('value');
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setNombreIncidente(data.nombreIncidente);
+        setUbicacionSCI({
+          latitude: parseFloat(data.ubicacionSCI.split(',')[0]),
+          longitude: parseFloat(data.ubicacionSCI.split(',')[1]),
+        });
+        setUnidadComandoSCI(data.unidadComandoSCI);
+        setComandanteIncidente(data.comandanteIncidente);
+        setIsFormEditable(false);
+        setShowEssentialInfo(true);
+      }
+    };
+
+    fetchData();
+  }, [item.key]);
 
   const getLocation = async () => {
     try {
@@ -65,22 +80,26 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   };
 
   const handleSubmit = async () => {
-    if (!nombreIncidente || !fechaSCI || !ubicacionSCI.latitude || !ubicacionSCI.longitude || !unidadComandoSCI || !comandanteIncidente) {
+    if (!nombreIncidente || !ubicacionSCI.latitude || !ubicacionSCI.longitude || !unidadComandoSCI || !comandanteIncidente) {
       Alert.alert('Error', 'Por favor, complete todos los campos');
       return;
     }
+
+    const now = new Date();
+    const bolivianTime = now.toLocaleString('es-BO', { timeZone: 'America/La_Paz' });
 
     try {
       const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
       await updateRef.update({
         nombreIncidente,
-        fechaSCI,
+        fechaSCI: bolivianTime,
         ubicacionSCI: `${ubicacionSCI.latitude}, ${ubicacionSCI.longitude}`,
         unidadComandoSCI,
         comandanteIncidente
       });
 
       Alert.alert('Formulario SCI 201', 'Formulario guardado con éxito.');
+      setIsFormEditable(false);
       setShowEssentialInfo(true);
     } catch (error) {
       Alert.alert('Error', 'No se pudo guardar el formulario');
@@ -96,12 +115,7 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         value={nombreIncidente}
         onChangeText={setNombreIncidente}
         placeholder="Ingrese el nombre del incidente"
-      />
-      <Text style={styles.label}>Fecha y Hora:</Text>
-      <TextInput
-        style={styles.input}
-        value={fechaSCI}
-        editable={false}
+        editable={isFormEditable}
       />
       <Text style={styles.label}>Ubicación:</Text>
       <View style={styles.locationContainer}>
@@ -111,9 +125,11 @@ const SCIForm: React.FC<Props> = ({ route }) => {
           editable={false}
           placeholder="Ubicación"
         />
-        <TouchableOpacity style={styles.locationButton} onPress={getLocation}>
-          <Text style={styles.locationButtonText}>Obtener</Text>
-        </TouchableOpacity>
+        {isFormEditable && (
+          <TouchableOpacity style={styles.locationButton} onPress={getLocation}>
+            <Text style={styles.locationButtonText}>Obtener</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.mapContainer}>
         <MapView
@@ -140,6 +156,7 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         value={unidadComandoSCI}
         onChangeText={setUnidadComandoSCI}
         placeholder="Ingrese el mando del incidente"
+        editable={isFormEditable}
       />
       <Text style={styles.label}>Comandante del Incidente:</Text>
       <TextInput
@@ -147,9 +164,10 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         value={comandanteIncidente}
         onChangeText={setComandanteIncidente}
         placeholder="Ingrese el comandante del incidente"
+        editable={isFormEditable}
       />
-      <Button title="Guardar" onPress={handleSubmit} />
-      
+      {isFormEditable && <Button title="Guardar" onPress={handleSubmit} />}
+
       {showEssentialInfo && (
         <View style={styles.essentialInfoContainer}>
           <Text style={styles.essentialInfoHeader}>Información Esencial del SCI</Text>
