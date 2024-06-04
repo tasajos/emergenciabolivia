@@ -21,10 +21,10 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   });
   const [unidadComandoSCI, setUnidadComandoSCI] = useState('');
   const [comandanteIncidente, setComandanteIncidente] = useState('');
+  const [showEssentialInfo, setShowEssentialInfo] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Set the date and time to Bolivian time
     const now = new Date();
     const bolivianTime = now.toLocaleString('es-BO', { timeZone: 'America/La_Paz' });
     setFechaSCI(bolivianTime);
@@ -81,7 +81,7 @@ const SCIForm: React.FC<Props> = ({ route }) => {
       });
 
       Alert.alert('Formulario SCI 201', 'Formulario guardado con éxito.');
-      navigation.goBack();
+      setShowEssentialInfo(true);
     } catch (error) {
       Alert.alert('Error', 'No se pudo guardar el formulario');
     }
@@ -149,6 +149,33 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         placeholder="Ingrese el comandante del incidente"
       />
       <Button title="Guardar" onPress={handleSubmit} />
+      
+      {showEssentialInfo && (
+        <View style={styles.essentialInfoContainer}>
+          <Text style={styles.essentialInfoHeader}>Información Esencial del SCI</Text>
+          <Text style={styles.registerText}>Registrar</Text>
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={styles.orangeButton}>
+              <Text style={styles.orangeButtonText}>PC</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton}>
+              <Text style={styles.orangeButtonText}>B</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton}>
+              <Text style={styles.orangeButtonText}>ACV</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton}>
+              <Text style={styles.orangeButtonText}>H</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton}>
+              <Text style={styles.orangeButtonText}>C</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.redButton}>
+              <Text style={styles.redButtonText}>Transferir Mando</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -199,6 +226,48 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  essentialInfoContainer: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  essentialInfoHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  registerText: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  orangeButton: {
+    backgroundColor: 'orange',
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
+  orangeButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  redButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
+  redButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
