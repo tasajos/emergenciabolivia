@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   sectionListContainer: {
     paddingHorizontal: 10,
-    paddingBottom: 80,
+    paddingBottom: 90,
   },
   floatingButtonContainer: {
     flex: 0.1, // 10% del espacio
