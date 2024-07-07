@@ -28,7 +28,9 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   const [isFormEditable, setIsFormEditable] = useState(true);
   const [showEssentialInfo, setShowEssentialInfo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false); // Estado para controlar la visibilidad del modal de confirmación
+  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [pcModalVisible, setPCModalVisible] = useState(false);
+  const [pcLocation, setPCLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -141,6 +143,28 @@ const SCIForm: React.FC<Props> = ({ route }) => {
     }
   };
 
+  const handlePCPress = () => {
+    setPCModalVisible(true);
+  };
+
+  const handlePCSave = async () => {
+    if (!pcLocation) {
+      Alert.alert('Error', 'Por favor, seleccione una ubicación para el PC.');
+      return;
+    }
+
+    try {
+      const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+      await updateRef.update({
+        pcLocation: `${pcLocation.latitude}, ${pcLocation.longitude}`,
+      });
+      setPCModalVisible(false);
+      Alert.alert('PC Registrado', 'Punto de Control registrado con éxito.');
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo registrar el Punto de Control.');
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Formulario SCI 201</Text>
@@ -248,7 +272,7 @@ const SCIForm: React.FC<Props> = ({ route }) => {
           <Text style={styles.essentialInfoHeader}>Información Importante del SCI</Text>
           <Text style={styles.registerText}>Registrar</Text>
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.orangeButton}>
+            <TouchableOpacity style={styles.orangeButton} onPress={handlePCPress}>
               <Text style={styles.orangeButtonText}>PC</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.orangeButton}>
@@ -317,6 +341,46 @@ const SCIForm: React.FC<Props> = ({ route }) => {
             <TouchableOpacity style={styles.closeButton} onPress={() => setConfirmationModalVisible(false)}>
               <Text style={styles.closeButtonText}>Cerrar</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={pcModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setPCModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Puesto Comando (PC)</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setPCLocation(e.nativeEvent.coordinate)}
+              >
+                {pcLocation && (
+                  <Marker
+                    coordinate={pcLocation}
+                    title="Puesto Comando"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={handlePCSave}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setPCModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
