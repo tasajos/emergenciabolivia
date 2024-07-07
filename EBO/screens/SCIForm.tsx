@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, PermissionsAndroid, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, PermissionsAndroid, ScrollView, Modal } from 'react-native';
 import { useNavigation, RouteProp } from '@react-navigation/native';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
@@ -20,8 +20,15 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   });
   const [unidadComandoSCI, setUnidadComandoSCI] = useState('');
   const [comandanteIncidente, setComandanteIncidente] = useState('');
+  const [descripcionIncidente, setDescripcionIncidente] = useState('');
+  const [accionesTomadas, setAccionesTomadas] = useState('');
+  const [objetivosIncidente, setObjetivosIncidente] = useState('');
+  const [recursosAsignados, setRecursosAsignados] = useState('');
+  const [notasAdicionales, setNotasAdicionales] = useState('');
   const [isFormEditable, setIsFormEditable] = useState(true);
   const [showEssentialInfo, setShowEssentialInfo] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false); // Estado para controlar la visibilidad del modal de confirmación
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -37,6 +44,11 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         });
         setUnidadComandoSCI(data.unidadComandoSCI);
         setComandanteIncidente(data.comandanteIncidente);
+        setDescripcionIncidente(data.descripcionIncidente || '');
+        setAccionesTomadas(data.accionesTomadas || '');
+        setObjetivosIncidente(data.objetivosIncidente || '');
+        setRecursosAsignados(data.recursosAsignados || '');
+        setNotasAdicionales(data.notasAdicionales || '');
         setIsFormEditable(false);
         setShowEssentialInfo(true);
       }
@@ -95,7 +107,12 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         fechaSCI: bolivianTime,
         ubicacionSCI: `${ubicacionSCI.latitude}, ${ubicacionSCI.longitude}`,
         unidadComandoSCI,
-        comandanteIncidente
+        comandanteIncidente,
+        descripcionIncidente,
+        accionesTomadas,
+        objetivosIncidente,
+        recursosAsignados,
+        notasAdicionales
       });
 
       Alert.alert('Formulario SCI 201', 'Formulario guardado con éxito.');
@@ -103,6 +120,24 @@ const SCIForm: React.FC<Props> = ({ route }) => {
       setShowEssentialInfo(true);
     } catch (error) {
       Alert.alert('Error', 'No se pudo guardar el formulario');
+    }
+  };
+
+  const handleTransferCommand = () => {
+    setModalVisible(true);
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
+      await updateRef.update({
+        unidadComandoSCI,
+        comandanteIncidente,
+      });
+      setModalVisible(false);
+      setConfirmationModalVisible(true); // Mostrar el modal de confirmación
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo guardar los cambios');
     }
   };
 
@@ -166,11 +201,51 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         placeholder="Ingrese el comandante del incidente"
         editable={isFormEditable}
       />
+      <Text style={styles.label}>Descripción del Incidente:</Text>
+      <TextInput
+        style={styles.input}
+        value={descripcionIncidente}
+        onChangeText={setDescripcionIncidente}
+        placeholder="Ingrese la descripción del incidente"
+        editable={isFormEditable}
+      />
+      <Text style={styles.label}>Acciones Tomadas:</Text>
+      <TextInput
+        style={styles.input}
+        value={accionesTomadas}
+        onChangeText={setAccionesTomadas}
+        placeholder="Ingrese las acciones tomadas"
+        editable={isFormEditable}
+      />
+      <Text style={styles.label}>Objetivos del Incidente:</Text>
+      <TextInput
+        style={styles.input}
+        value={objetivosIncidente}
+        onChangeText={setObjetivosIncidente}
+        placeholder="Ingrese los objetivos del incidente"
+        editable={isFormEditable}
+      />
+      <Text style={styles.label}>Recursos Asignados:</Text>
+      <TextInput
+        style={styles.input}
+        value={recursosAsignados}
+        onChangeText={setRecursosAsignados}
+        placeholder="Ingrese los recursos asignados"
+        editable={isFormEditable}
+      />
+      <Text style={styles.label}>Notas Adicionales:</Text>
+      <TextInput
+        style={styles.input}
+        value={notasAdicionales}
+        onChangeText={setNotasAdicionales}
+        placeholder="Ingrese notas adicionales"
+        editable={isFormEditable}
+      />
       {isFormEditable && <Button title="Guardar" onPress={handleSubmit} />}
 
       {showEssentialInfo && (
         <View style={styles.essentialInfoContainer}>
-          <Text style={styles.essentialInfoHeader}>Información Esencial del SCI</Text>
+          <Text style={styles.essentialInfoHeader}>Información Importante del SCI</Text>
           <Text style={styles.registerText}>Registrar</Text>
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.orangeButton}>
@@ -188,12 +263,63 @@ const SCIForm: React.FC<Props> = ({ route }) => {
             <TouchableOpacity style={styles.orangeButton}>
               <Text style={styles.orangeButtonText}>C</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.redButton}>
+            <TouchableOpacity style={styles.redButton} onPress={handleTransferCommand}>
               <Text style={styles.redButtonText}>Transferir Mando</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Modificar Comandante y Unidad al Mando</Text>
+            <Text style={styles.label}>Unidad al Mando del Incidente:</Text>
+            <TextInput
+              style={styles.input}
+              value={unidadComandoSCI}
+              onChangeText={setUnidadComandoSCI}
+              placeholder="Ingrese el mando del incidente"
+            />
+            <Text style={styles.label}>Comandante del Incidente:</Text>
+            <TextInput
+              style={styles.input}
+              value={comandanteIncidente}
+              onChangeText={setComandanteIncidente}
+              placeholder="Ingrese el comandante del incidente"
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                <Text style={styles.saveButtonText}>Guardar Cambios</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={confirmationModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setConfirmationModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Transferencia de Mando Correcta</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setConfirmationModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -284,6 +410,64 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   redButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  saveButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  closeButtonText: {
     color: 'white',
     fontWeight: 'bold',
   },
