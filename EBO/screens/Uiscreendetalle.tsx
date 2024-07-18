@@ -222,12 +222,12 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
           {/* Display history */}
           {history.map((entry, index) => (
             <View key={index} style={styles.historyItem}>
-              <Text>Subestado: {entry.subestado}</Text>
-              <Text>Unidad: {entry.unidad}</Text>
-              <Text>Teléfono: {entry.telefonoResponsable}</Text>
-              <Text>Necesita ayuda: {entry.necesitaAyuda}</Text>
-              <Text>Notas: {entry.notas}</Text>
-              <Text>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
+              <Text style={styles.historyText}>Subestado: {entry.subestado}</Text>
+              <Text style={styles.historyText}>Unidad: {entry.unidad}</Text>
+              <Text style={styles.historyText}>Teléfono: {entry.telefonoResponsable}</Text>
+              <Text style={styles.historyText}>Necesita ayuda: {entry.necesitaAyuda}</Text>
+              <Text style={styles.historyText}>Notas: {entry.notas}</Text>
+              <Text style={styles.historyText}>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
             </View>
           ))}
         </View>
@@ -310,28 +310,34 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: 'black',
   },
   description: {
     fontSize: 18,
     marginBottom: 8,
+    color: 'black',
   },
   info: {
     fontSize: 16,
     marginBottom: 4,
+    color: 'black',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
+    color: 'black',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     marginBottom: 10,
+    color: 'black',
   },
   picker: {
     marginBottom: 10,
+    color: 'black',
   },
   activateButton: {
     backgroundColor: 'red',
@@ -362,6 +368,9 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
   },
+  historyText: {
+    color: 'black',
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -378,6 +387,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 18,
     marginBottom: 20,
+    color: 'black',
   },
   modalButtons: {
     flexDirection: 'row',

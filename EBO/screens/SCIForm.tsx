@@ -29,8 +29,22 @@ const SCIForm: React.FC<Props> = ({ route }) => {
   const [showEssentialInfo, setShowEssentialInfo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+
+  // Estados para los modales de ubicación
   const [pcModalVisible, setPCModalVisible] = useState(false);
+  const [baseModalVisible, setBaseModalVisible] = useState(false);
+  const [acvModalVisible, setACVModalVisible] = useState(false);
+  const [helipuertoModalVisible, setHelipuertoModalVisible] = useState(false);
+  const [helipuerto1ModalVisible, setHelipuerto1ModalVisible] = useState(false);
+  const [campamentoModalVisible, setCampamentoModalVisible] = useState(false);
+
   const [pcLocation, setPCLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [baseLocation, setBaseLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [acvLocation, setACVLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [helipuertoLocation, setHelipuertoLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [helipuerto1Location, setHelipuerto1Location] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [campamentoLocation, setCampamentoLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -143,25 +157,82 @@ const SCIForm: React.FC<Props> = ({ route }) => {
     }
   };
 
-  const handlePCPress = () => {
-    setPCModalVisible(true);
+  const handleLocationPress = (type: string) => {
+    switch (type) {
+      case 'PC':
+        setPCModalVisible(true);
+        break;
+      case 'Base':
+        setBaseModalVisible(true);
+        break;
+      case 'ACV':
+        setACVModalVisible(true);
+        break;
+      case 'Helipuerto':
+        setHelipuertoModalVisible(true);
+        break;
+      case 'Helipuerto1':
+        setHelipuerto1ModalVisible(true);
+        break;
+      case 'Campamento':
+        setCampamentoModalVisible(true);
+        break;
+      default:
+        break;
+    }
   };
 
-  const handlePCSave = async () => {
-    if (!pcLocation) {
-      Alert.alert('Error', 'Por favor, seleccione una ubicación para el PC.');
+  const handleLocationSave = async (type: string) => {
+    let location;
+    let fieldName;
+    switch (type) {
+      case 'PC':
+        location = pcLocation;
+        fieldName = 'pcLocation';
+        setPCModalVisible(false);
+        break;
+      case 'Base':
+        location = baseLocation;
+        fieldName = 'baseLocation';
+        setBaseModalVisible(false);
+        break;
+      case 'ACV':
+        location = acvLocation;
+        fieldName = 'acvLocation';
+        setACVModalVisible(false);
+        break;
+      case 'Helipuerto':
+        location = helipuertoLocation;
+        fieldName = 'helipuertoLocation';
+        setHelipuertoModalVisible(false);
+        break;
+      case 'Helipuerto1':
+        location = helipuerto1Location;
+        fieldName = 'helipuerto1Location';
+        setHelipuerto1ModalVisible(false);
+        break;
+      case 'Campamento':
+        location = campamentoLocation;
+        fieldName = 'campamentoLocation';
+        setCampamentoModalVisible(false);
+        break;
+      default:
+        break;
+    }
+
+    if (!location) {
+      Alert.alert('Error', 'Por favor, seleccione una ubicación.');
       return;
     }
 
     try {
       const updateRef = firebase.database().ref(`/ultimasEmergencias/${item.key}`);
       await updateRef.update({
-        pcLocation: `${pcLocation.latitude}, ${pcLocation.longitude}`,
+        [fieldName]: `${location.latitude}, ${location.longitude}`,
       });
-      setPCModalVisible(false);
-      Alert.alert('PC Registrado', 'Punto de Control registrado con éxito.');
+      Alert.alert('Ubicación Registrada', 'Ubicación registrada con éxito.');
     } catch (error) {
-      Alert.alert('Error', 'No se pudo registrar el Punto de Control.');
+      Alert.alert('Error', 'No se pudo registrar la ubicación.');
     }
   };
 
@@ -272,19 +343,22 @@ const SCIForm: React.FC<Props> = ({ route }) => {
           <Text style={styles.essentialInfoHeader}>Información Importante del SCI</Text>
           <Text style={styles.registerText}>Registrar</Text>
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.orangeButton} onPress={handlePCPress}>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('PC')}>
               <Text style={styles.orangeButtonText}>PC</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.orangeButton}>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('Base')}>
               <Text style={styles.orangeButtonText}>B</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.orangeButton}>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('ACV')}>
               <Text style={styles.orangeButtonText}>ACV</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.orangeButton}>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('Helipuerto')}>
               <Text style={styles.orangeButtonText}>H</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.orangeButton}>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('Helipuerto1')}>
+              <Text style={styles.orangeButtonText}>H1</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.orangeButton} onPress={() => handleLocationPress('Campamento')}>
               <Text style={styles.orangeButtonText}>C</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.redButton} onPress={handleTransferCommand}>
@@ -345,6 +419,7 @@ const SCIForm: React.FC<Props> = ({ route }) => {
         </View>
       </Modal>
 
+      {/* Modales para las ubicaciones */}
       <Modal
         visible={pcModalVisible}
         transparent={true}
@@ -374,10 +449,210 @@ const SCIForm: React.FC<Props> = ({ route }) => {
               </MapView>
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.saveButton} onPress={handlePCSave}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('PC')}>
                 <Text style={styles.saveButtonText}>Guardar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.cancelButton} onPress={() => setPCModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={baseModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setBaseModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Base</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setBaseLocation(e.nativeEvent.coordinate)}
+              >
+                {baseLocation && (
+                  <Marker
+                    coordinate={baseLocation}
+                    title="Base"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('Base')}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setBaseModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={acvModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setACVModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Área de Concentración de Víctimas (ACV)</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setACVLocation(e.nativeEvent.coordinate)}
+              >
+                {acvLocation && (
+                  <Marker
+                    coordinate={acvLocation}
+                    title="ACV"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('ACV')}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setACVModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={helipuertoModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setHelipuertoModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Helipuerto</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setHelipuertoLocation(e.nativeEvent.coordinate)}
+              >
+                {helipuertoLocation && (
+                  <Marker
+                    coordinate={helipuertoLocation}
+                    title="Helipuerto"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('Helipuerto')}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setHelipuertoModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={helipuerto1ModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setHelipuerto1ModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Helipuerto 1</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setHelipuerto1Location(e.nativeEvent.coordinate)}
+              >
+                {helipuerto1Location && (
+                  <Marker
+                    coordinate={helipuerto1Location}
+                    title="Helipuerto 1"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('Helipuerto1')}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setHelipuerto1ModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={campamentoModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setCampamentoModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Seleccionar Campamento</Text>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                region={{
+                  latitude: ubicacionSCI.latitude || -17.413977,
+                  longitude: ubicacionSCI.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setCampamentoLocation(e.nativeEvent.coordinate)}
+              >
+                {campamentoLocation && (
+                  <Marker
+                    coordinate={campamentoLocation}
+                    title="Campamento"
+                  />
+                )}
+              </MapView>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.saveButton} onPress={() => handleLocationSave('Campamento')}>
+                <Text style={styles.saveButtonText}>Guardar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setCampamentoModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancelar</Text>
               </TouchableOpacity>
             </View>
@@ -398,10 +673,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: 'black',
   },
   label: {
     fontSize: 18,
     marginBottom: 10,
+    color: 'black',
   },
   input: {
     borderWidth: 1,
@@ -409,6 +686,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+    color: 'black',
   },
   locationContainer: {
     flexDirection: 'row',
@@ -446,10 +724,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: 'black',
   },
   registerText: {
     fontSize: 18,
     marginBottom: 10,
+    color: 'black',
   },
   buttonRow: {
     flexDirection: 'row',
@@ -494,6 +774,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: 'black',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: 'black',
   },
   buttonContainer: {
     flexDirection: 'row',
