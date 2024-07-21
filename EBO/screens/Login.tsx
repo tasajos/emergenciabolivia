@@ -81,71 +81,68 @@ const Login: React.FC<Props> = () => {
   };
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.version}>Login</Text>
-        <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
-        <TextInput
-          style={styles.input}
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Email"
-          placeholderTextColor="#999" // Color del placeholder para dark theme
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
-          placeholderTextColor="#999" // Color del placeholder para dark theme
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handlePasswordRecovery}>
-          <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
-        </TouchableOpacity>
+    <View style={styles.mainContainer}>
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.version}>Login</Text>
+          <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Email"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handlePasswordRecovery}>
+            <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      <View style={styles.floatingButtonBarContainer}>
+        <FloatingButtonBar navigation={navigation} />
       </View>
-      
-      <FloatingButtonBar navigation={navigation} />
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
     backgroundColor: '#fff',
-  },
-  floatingButtonBarContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   scrollContainer: {
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 100,
+  },
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
-    marginBottom: 80,
   },
   version: {
     alignSelf: 'flex-start',
     marginVertical: 10,
-  },
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
+    fontSize: 18,
+    color: '#424242',
   },
   logo: {
     width: 100,
@@ -153,13 +150,14 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    width: '100%',
+    width: 250,
     height: 40,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     color: '#424242',
+    borderRadius: 5,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -167,15 +165,26 @@ const styles = StyleSheet.create({
     color: 'blue',
   },
   button: {
-    width: '60%',
+    width: 80,
     height: 40,
     backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
+    borderRadius: 5,
+    marginVertical: 10,
   },
   buttonText: {
     color: '#ffffff',
+  },
+  floatingButtonBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
