@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet,ScrollView, View, Text, TextInput, TouchableOpacity, Image,Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-
-
 type RootStackParamList = {
-  // ... other route parameters
   Login: undefined;
-  Uiadministrador: undefined; // Add this if your screen navigates to a Uiadministrador route
-  // ... any other routes you navigate to
+  Uiadministrador: undefined;
 };
 
 type Props = {
@@ -24,10 +20,6 @@ const Login: React.FC<Props> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-
- 
-
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
       Alert.alert("Error", "Por favor, ingrese un correo electrónico y una contraseña.");
@@ -37,17 +29,16 @@ const Login: React.FC<Props> = () => {
     try {
       let response = await auth().signInWithEmailAndPassword(email, password);
       if (response && response.user) {
-        // Verifica el rol del usuario en la base de datos
         const userId = response.user.uid;
         const userRef = database().ref(`/UsuariosVbo/${userId}`);
         userRef.on('value', (snapshot) => {
           const userData = snapshot.val();
           if (userData && userData.rol === 'Voluntario') {
             Alert.alert("Éxito", "Login Exitoso");
-            navigation.navigate('Uiadministrador' as never); // Fix: Pass the correct screen name as a parameter
+            navigation.navigate('Uiadministrador' as never);
           } else {
             Alert.alert("Acceso denegado", "No tienes el rol de voluntario necesario para acceder a esta sección.");
-            auth().signOut(); // Desconecta al usuario si no tiene el rol adecuado
+            auth().signOut();
           }
         });
       }
@@ -66,7 +57,6 @@ const Login: React.FC<Props> = () => {
   };
 
   const handlePasswordRecovery = () => {
-    // Maneja aquí la recuperación de la contraseña
     if (email.trim() === '') {
       Alert.alert('Ingrese email', 'Por favor ingrese su email para resetear su password.');
       return;
@@ -76,14 +66,14 @@ const Login: React.FC<Props> = () => {
       .then(() => {
         Alert.alert('Revisa tu email', 'Link de reinicio de contraseña fue enviada a tu correo');
       })
-      .catch((error: any) => { // Agrega el type assertion aquí
+      .catch((error: any) => {
         let message = "Ha ocurrido un error inesperado.";
         if (error.code === 'auth/user-not-found') {
           message = "No existe una cuenta con ese correo electrónico.";
         } else if (error.code === 'auth/invalid-email') {
           message = "El correo electrónico no es válido.";
         } else {
-          message = error.message; // Puedes optar por mostrar el mensaje de error de Firebase
+          message = error.message;
         }
       
         Alert.alert("Error", message);
@@ -100,6 +90,7 @@ const Login: React.FC<Props> = () => {
           onChangeText={setEmail}
           value={email}
           placeholder="Email"
+          placeholderTextColor="#999" // Color del placeholder para dark theme
           keyboardType="email-address"
           autoCapitalize="none"
         />
@@ -108,6 +99,7 @@ const Login: React.FC<Props> = () => {
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
+          placeholderTextColor="#999" // Color del placeholder para dark theme
           secureTextEntry
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
@@ -118,13 +110,8 @@ const Login: React.FC<Props> = () => {
         </TouchableOpacity>
       </View>
       
-        <FloatingButtonBar navigation={navigation} />
-      
- 
-      
-       
-      </ScrollView>
-   
+      <FloatingButtonBar navigation={navigation} />
+    </ScrollView>
   );
 };
 
@@ -170,6 +157,7 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 10,
     borderWidth: 1,
+    borderColor: '#ccc',
     padding: 10,
     color: '#424242',
   },
