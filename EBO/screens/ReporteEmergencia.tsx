@@ -33,8 +33,14 @@ const ReporteEmergencia: React.FC = () => {
     latitude: null,
     longitude: null
   });
+  const [isLocationObtained, setIsLocationObtained] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [mapModalVisible, setMapModalVisible] = useState(false);
+  const [newLocation, setNewLocation] = useState<{ latitude: number | null; longitude: number | null; }>({
+    latitude: null,
+    longitude: null
+  });
 
   useEffect(() => {
     const obtenerFechaHora = () => {
@@ -95,6 +101,7 @@ const ReporteEmergencia: React.FC = () => {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude
             });
+            setIsLocationObtained(true);
           },
           (error) => {
             console.log(error);
@@ -112,11 +119,20 @@ const ReporteEmergencia: React.FC = () => {
   };
 
   const handleMapPress = useCallback(debounce((coordinate) => {
-    setLocation({
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
-    });
-  }, 500), []);
+    if (isLocationObtained) {
+      setNewLocation({
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+      });
+    }
+  }, 500), [isLocationObtained]);
+
+  const handleRegisterNewCoordinates = () => {
+    setLocation(newLocation);
+    setMapModalVisible(false);
+    setModalMessage('Nuevas coordenadas registradas');
+    setModalVisible(true);
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -140,7 +156,8 @@ const ReporteEmergencia: React.FC = () => {
     }
 
     try {
-      const locationLink = location.latitude && location.longitude ? `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}` : 'Ubicación no disponible';
+      const locationToUse = newLocation.latitude && newLocation.longitude ? newLocation : location;
+      const locationLink = locationToUse.latitude && locationToUse.longitude ? `https://www.google.com/maps/search/?api=1&query=${locationToUse.latitude},${locationToUse.longitude}` : 'Ubicación no disponible';
 
       const newEventRef = database().ref('/ultimasEmergencias').push();
       await newEventRef.set({
@@ -190,6 +207,8 @@ const ReporteEmergencia: React.FC = () => {
     setImagen('');
     setImageUploadMessage('');
     setLocation({ latitude: null, longitude: null });
+    setIsLocationObtained(false);
+    setNewLocation({ latitude: null, longitude: null });
   };
 
   return (
@@ -226,6 +245,13 @@ const ReporteEmergencia: React.FC = () => {
             </TouchableOpacity>
           </View>
 
+          <TouchableOpacity 
+            style={[styles.button, styles.newLocationButton]} 
+            onPress={() => setMapModalVisible(true)}
+          >
+            <Text style={styles.buttonText}>Registrar otra Ubicación</Text>
+          </TouchableOpacity>
+
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -238,7 +264,7 @@ const ReporteEmergencia: React.FC = () => {
               showsUserLocation={true}
               onPress={(e) => handleMapPress(e.nativeEvent.coordinate)}
             >
-              {location.latitude && location.longitude && (
+              {isLocationObtained && location.latitude && location.longitude && (
                 <Marker
                   coordinate={{
                     latitude: location.latitude,
@@ -296,6 +322,56 @@ const ReporteEmergencia: React.FC = () => {
             </View>
           </View>
         </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={mapModalVisible}
+          onRequestClose={() => setMapModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalMessage}>Selecciona una nueva ubicación</Text>
+              <MapView
+                style={styles.mapModal}
+                region={{
+                  latitude: location.latitude || -17.413977,
+                  longitude: location.longitude || -66.165322,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+                onPress={(e) => setNewLocation({
+                  latitude: e.nativeEvent.coordinate.latitude,
+                  longitude: e.nativeEvent.coordinate.longitude,
+                })}
+              >
+                {newLocation.latitude && newLocation.longitude && (
+                  <Marker
+                    coordinate={{
+                      latitude: newLocation.latitude,
+                      longitude: newLocation.longitude,
+                    }}
+                    title={"Nueva Ubicación"}
+                  />
+                )}
+              </MapView>
+              <View style={styles.modalButtonsContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.modalButton]}
+                  onPress={handleRegisterNewCoordinates}
+                >
+                  <Text style={styles.modalButtonText}>Registrar Nuevas Coordenadas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.modalButton]}
+                  onPress={() => setMapModalVisible(false)}
+                >
+                  <Text style={styles.modalButtonText}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -349,6 +425,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
+    marginVertical: 5, // Added to provide space between buttons
   },
   buttonText: {
     color: 'white',
@@ -417,6 +494,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     paddingHorizontal: 15,
   },
+  newLocationButton: {
+    backgroundColor: '#007bff',
+    marginTop: 10,
+  },
   mapContainer: {
     height: 200,
     width: '100%',
@@ -425,6 +506,10 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+  },
+  mapModal: {
+    height: 400, // Adjust height to fit better within the modal
+    width: '100%',
   },
   modalContainer: {
     flex: 1,
@@ -435,27 +520,34 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '80%',
     backgroundColor: 'white',
-    padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    padding: 0, // Remove padding so map takes full width
   },
   modalMessage: {
     fontSize: 18,
-    marginBottom: 20,
+    marginVertical: 10,
     textAlign: 'center',
     color: '#424242',
+  },
+  modalButtonsContainer: {
+    width: '100%',
+    padding: 20, // Add padding to container to space buttons
   },
   modalButton: {
     backgroundColor: '#007bff',
     padding: 10,
     borderRadius: 5,
+    marginVertical: 5,
     alignItems: 'center',
   },
   modalButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
 
 export default ReporteEmergencia;
+
+
