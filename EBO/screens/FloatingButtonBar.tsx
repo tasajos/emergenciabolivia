@@ -1,6 +1,5 @@
-// FloatingButtonBar.tsx
 import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, Linking ,Alert} from 'react-native';
+import { View, TouchableOpacity, Image, Text, StyleSheet, Linking, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type NavigationType = StackNavigationProp<any>;
@@ -10,15 +9,9 @@ type Props = {
 };
 
 const openWhatsApp = () => {
-  // Reemplaza con tu número de teléfono en formato internacional sin '+' ni '00'
   let phoneNumber = '59170776212';
-
-  let message = 'Hola, me gustaría obtener más información.'; // Mensaje que deseas enviar
-  
-  // Codifica el mensaje para que sea una URL válida
+  let message = 'Hola, me gustaría obtener más información.';
   let encodedMessage = encodeURIComponent(message);
-  
-  // Abre WhatsApp directamente con el número y el mensaje especificado
   let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
   
   Linking.openURL(url).catch((err) => {
@@ -36,38 +29,22 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Ubicacionesbom')}>
         <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
-
-
-{/* 
-            <View style={styles.whatsAppContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')}>
-          <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
-        </TouchableOpacity>
-
-        */}
-
-<TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')}>
-          <Image source={require('../imagenes/alerta64.png')} style={styles.icon} />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={openWhatsApp}>
-          <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
-        </TouchableOpacity>
-     
-
-{/* 
-      <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
-        <Image source={require('../imagenes/add32.png')} style={styles.icon} />
+      
+      <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')} style={styles.alertContainer}>
+        <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
+        <Text style={styles.alertText}>Reportar Emergencia</Text>
       </TouchableOpacity>
-*/}
-
+      
+      <TouchableOpacity onPress={openWhatsApp}>
+        <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
+      </TouchableOpacity>
+      
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Image source={require('../imagenes/acceso.png')} style={styles.icon} />
       </TouchableOpacity>
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -84,18 +61,17 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  whatsAppContainer: {
+  alertContainer: {
     alignItems: 'center',
-    
-    //marginBottom: 5,
-    
   },
   alertIcon: {
     width: 30,
     height: 30,
-    marginBottom: 5,  // Espacio entre los botones
-    //backgroundColor: 'darkblue',
-    
+  },
+  alertText: {
+    marginTop: 5,
+    fontSize: 12,
+    color: 'black',
   },
 });
 
