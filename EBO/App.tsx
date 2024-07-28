@@ -45,6 +45,7 @@ import Voluntarios from './screens/Voluntarios';
 import OporVoluntarios from './screens/OporVoluntarios';
 import AlertaEmergenciaInforme from './screens/AlertaEmergenciaInforme';
 import firebase from '@react-native-firebase/app';
+import SCIForm from './screens/SCIForm';
 
 
 // Configuración de Firebase
@@ -102,6 +103,7 @@ export type RootStackParamList = {
   OporVoluntarios:undefined;
   AlertaEmergenciaInforme:undefined;
   ReporteEmergencia:undefined;
+  SCIForm:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -175,6 +177,7 @@ const App = () => {
         <Stack.Screen name="Voluntarios" component={Voluntarios} />
         <Stack.Screen name="OporVoluntarios" component={OporVoluntarios} />
         <Stack.Screen name="AlertaEmergenciaInforme" component={AlertaEmergenciaInforme} />
+        <Stack.Screen name="SCIForm" component={SCIForm} />
 
       </Stack.Navigator>
     </NavigationContainer>

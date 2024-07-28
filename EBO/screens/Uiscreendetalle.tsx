@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button, Alert, TouchableOpacity, Modal } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
 import { Picker } from '@react-native-picker/picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, RouteProp } from '@react-navigation/native';
 
 type EmergencyDetail = {
@@ -50,6 +51,8 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
   const [history, setHistory] = useState<EmergencyHistory[]>([]);
   const [necesitaAyuda, setNecesitaAyuda] = useState(item.necesitaAyuda || '');
   const [notas, setNotas] = useState(item.notas || '');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [sciActivated, setSciActivated] = useState(false);
 
   useEffect(() => {
     const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}/historial`);
@@ -61,6 +64,16 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
       });
       setHistory(historyData);
     });
+
+    // Check if SCI is already activated
+    const checkSCIActivated = async () => {
+      const value = await AsyncStorage.getItem(`sciActivated_${item.key}`);
+      if (value === 'true') {
+        setSciActivated(true);
+      }
+    };
+
+    checkSCIActivated();
 
     return () => ref.off('value');
   }, [item.key]);
@@ -80,9 +93,6 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
         telefonoResponsable,
         necesitaAyuda,
         notas
-
-
-
       });
       await newHistoryRef.set({
         subestado,
@@ -91,8 +101,6 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
         timestamp: Date.now(),
         necesitaAyuda,
         notas,
-
-
       });
 
       Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.', [
@@ -101,6 +109,21 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
     } catch (error) {
       Alert.alert('Error al actualizar', error.message);
     }
+  };
+
+  const handleActivateSCI = () => {
+    setModalVisible(true);
+  };
+
+  const confirmActivateSCI = async () => {
+    setModalVisible(false);
+    setSciActivated(true);
+    await AsyncStorage.setItem(`sciActivated_${item.key}`, 'true');
+    Alert.alert('SCI Activado', 'El Sistema de Comando de Incidentes ha sido activado.');
+  };
+
+  const navigateToSCIForm = () => {
+    navigation.navigate('SCIForm', { item });
   };
 
   return (
@@ -143,7 +166,7 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             selectedValue={subestado}
             onValueChange={(itemValue, itemIndex) => setSubestado(itemValue)}
             style={styles.picker}>
-             <Picker.Item label="Seleccione una Opcion" value="" />
+            <Picker.Item label="Seleccione una Opcion" value="" />
             <Picker.Item label="Atendiendo" value="Atendiendo" />
             <Picker.Item label="Rumbo a la emergencia" value="Rumbo a la emergencia" />
             <Picker.Item label="Completado" value="Completado" />
@@ -165,7 +188,7 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             placeholder="Ingrese el teléfono del responsable"
             keyboardType="phone-pad"
           />
- <Text style={styles.label}>Necesita ayuda:</Text>
+          <Text style={styles.label}>Necesita ayuda:</Text>
           <Picker
             selectedValue={necesitaAyuda}
             onValueChange={setNecesitaAyuda}
@@ -184,25 +207,49 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             multiline
           />
 
-
-
           <Button title="Actualizar Información" onPress={handleUpdate} />
+
+          <TouchableOpacity style={styles.activateButton} onPress={handleActivateSCI}>
+            <Text style={styles.activateButtonText}>Activar SCI</Text>
+          </TouchableOpacity>
+
+          {sciActivated && (
+            <TouchableOpacity style={styles.viewSCIButton} onPress={navigateToSCIForm}>
+              <Text style={styles.viewSCIButtonText}>Ver SCI</Text>
+            </TouchableOpacity>
+          )}
 
           {/* Display history */}
           {history.map((entry, index) => (
             <View key={index} style={styles.historyItem}>
-              <Text>Subestado: {entry.subestado}</Text>
-              <Text>Unidad: {entry.unidad}</Text>
-              <Text>Teléfono: {entry.telefonoResponsable}</Text>
-              <Text>Necesita ayuda: {entry.necesitaAyuda}</Text>
-              <Text>Notas: {entry.notas}</Text>
-              {/*<Text>Fecha: {new Date(entry.timestamp).toLocaleString()}</Text>*/}
-              <Text>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
+              <Text style={styles.historyText}>Subestado: {entry.subestado}</Text>
+              <Text style={styles.historyText}>Unidad: {entry.unidad}</Text>
+              <Text style={styles.historyText}>Teléfono: {entry.telefonoResponsable}</Text>
+              <Text style={styles.historyText}>Necesita ayuda: {entry.necesitaAyuda}</Text>
+              <Text style={styles.historyText}>Notas: {entry.notas}</Text>
+              <Text style={styles.historyText}>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
             </View>
           ))}
         </View>
       </ScrollView>
       <FloatingButtonAdmin />
+
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>¿Desea activar SCI?</Text>
+            <View style={styles.modalButtons}>
+              <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+              <Button title="Confirmar" onPress={confirmActivateSCI} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -263,28 +310,56 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: 'black',
   },
   description: {
     fontSize: 18,
     marginBottom: 8,
+    color: 'black',
   },
   info: {
     fontSize: 16,
     marginBottom: 4,
+    color: 'black',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
+    color: 'black',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     marginBottom: 10,
+    color: 'black',
   },
   picker: {
     marginBottom: 10,
+    color: 'black',
+  },
+  activateButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  activateButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  viewSCIButton: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  viewSCIButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   historyItem: {
     marginTop: 10,
@@ -292,6 +367,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  historyText: {
+    color: 'black',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: 'black',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
 });
 

@@ -1,41 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList,ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Asegúrate de que este import está correcto
+import { View, Text, StyleSheet, Image, SectionList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 
 import firebase from '@react-native-firebase/app';
 import database from '@react-native-firebase/database';
-import FloatingButtonAdmin from './FloatingButtonAdmin'; // Asegúrate de que este componente esté bien importado
+import FloatingButtonAdmin from './FloatingButtonAdmin';
+
+interface Emergencia {
+  key: string;
+  title: string;
+  city: string;
+  description: string;
+  ubicacion: string;
+  type: string;
+  state: string;
+  date: string;
+  time: string;
+  imageUrl: string;
+}
 
 const Uiadministrador = () => {
-  const [emergencias, setEmergencias] = useState([]);
-  const navigation = useNavigation(); // Define correctamente el hook aquí
+  const [emergencias, setEmergencias] = useState<{ title: string, data: Emergencia[] }[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const db = database();
     const emergenciasRef = db.ref('ultimasEmergencias').orderByChild('estado').equalTo('Activo');
     const onValueChange = emergenciasRef.on('value', (snapshot) => {
-      const data = [];
+      const data: Emergencia[] = [];
       snapshot.forEach((childSnapshot) => {
         const val = childSnapshot.val();
         data.push({
-          key: childSnapshot.key,
-          title: val.Titulo, // Asegúrate de que los campos coincidan con los de Firebase
-          city: val.ciudad,
-          description: val.descripcion,
-          ubicacion: val.ubicacion,
-          type: val.tipo,
-          state: val.estado,
-          date: val.fecha,
-          time: val.hora,
-          imageUrl: val.imagen // Verifica que este campo sea correcto
+          key: childSnapshot.key || '',
+          title: val.Titulo || '',
+          city: val.ciudad || '',
+          description: val.descripcion || '',
+          ubicacion: val.ubicacion || '',
+          type: val.tipo || '',
+          state: val.estado || '',
+          date: val.fecha || '',
+          time: val.hora || '',
+          imageUrl: val.imagen || ''
         });
+        return false; // Retorna false para continuar con el siguiente childSnapshot
       });
-      setEmergencias(data);
+      setEmergencias([{ title: "Emergencias Activas", data }]);
     });
 
     return () => emergenciasRef.off('value', onValueChange);
   }, []);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: Emergencia }) => (
     <TouchableOpacity 
       style={styles.card}
       onPress={() => navigation.navigate('Uiscreendetalle', { item: { ...item, key: item.key } })}
@@ -50,22 +64,26 @@ const Uiadministrador = () => {
     </TouchableOpacity>
   );
 
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <View style={styles.header}>
+      <Text style={styles.headerText}>{title}</Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-      <View style={styles.header}>
-        <Image source={require('../imagenes/top.png')} style={styles.headerImage} />
-        <Text style={styles.headerText}>Con el Apoyo de</Text>
-        <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
+      <View style={styles.listContainer}>
+        <SectionList 
+          sections={emergencias}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          keyExtractor={item => item.key}
+          contentContainerStyle={styles.sectionListContainer}
+        />
       </View>
-      <FlatList 
-        data={emergencias}
-        renderItem={renderItem}
-        keyExtractor={item => item.key}
-        contentContainerStyle={styles.listContainer}
-      />
-      </ScrollView>
-      <FloatingButtonAdmin />
+      <View style={styles.floatingButtonContainer}>
+        <FloatingButtonAdmin />
+      </View>
     </SafeAreaView>
   );
 };
@@ -74,31 +92,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    flexDirection: 'column',
   },
-  scrollView: {
-    marginBottom: 60,
+  listContainer: {
+    flex: 0.9, // 90% del espacio
+  },
+  sectionListContainer: {
+    paddingHorizontal: 10,
+    paddingBottom: 90,
+  },
+  floatingButtonContainer: {
+    flex: 0.1, // 10% del espacio
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
   header: {
     alignItems: 'center',
     marginBottom: 20,
-  },
-  headerImage: {
-    width: '80%',
-    height: 60,
-    resizeMode: 'contain',
+    padding: 10,
+    backgroundColor: '#f8f8f8',
   },
   headerText: {
     fontSize: 16,
+    fontWeight: 'bold',
     color: '#424242',
-    marginTop: 20,
-  },
-  logo: {
-    height: 50,
-    resizeMode: 'contain',
-    marginTop: 20,
-  },
-  listContainer: {
-    paddingHorizontal: 10,
   },
   card: {
     backgroundColor: '#fff',
@@ -116,7 +134,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10
+    borderBottomLeftRadius: 10,
   },
   cardContent: {
     flex: 1,
@@ -124,6 +142,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
+    color: '#666',
     fontWeight: 'bold',
   },
   cardDescription: {

@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet,ScrollView, View, Text, TextInput, TouchableOpacity, Image,Alert } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-
-
 type RootStackParamList = {
-  // ... other route parameters
   Login: undefined;
-  Uiadministrador: undefined; // Add this if your screen navigates to a Uiadministrador route
-  // ... any other routes you navigate to
+  Uiadministrador: undefined;
 };
 
 type Props = {
@@ -24,10 +20,6 @@ const Login: React.FC<Props> = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
-
- 
-
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
       Alert.alert("Error", "Por favor, ingrese un correo electrónico y una contraseña.");
@@ -37,17 +29,16 @@ const Login: React.FC<Props> = () => {
     try {
       let response = await auth().signInWithEmailAndPassword(email, password);
       if (response && response.user) {
-        // Verifica el rol del usuario en la base de datos
         const userId = response.user.uid;
         const userRef = database().ref(`/UsuariosVbo/${userId}`);
         userRef.on('value', (snapshot) => {
           const userData = snapshot.val();
           if (userData && userData.rol === 'Voluntario') {
             Alert.alert("Éxito", "Login Exitoso");
-            navigation.navigate('Uiadministrador' as never); // Fix: Pass the correct screen name as a parameter
+            navigation.navigate('Uiadministrador' as never);
           } else {
             Alert.alert("Acceso denegado", "No tienes el rol de voluntario necesario para acceder a esta sección.");
-            auth().signOut(); // Desconecta al usuario si no tiene el rol adecuado
+            auth().signOut();
           }
         });
       }
@@ -66,7 +57,6 @@ const Login: React.FC<Props> = () => {
   };
 
   const handlePasswordRecovery = () => {
-    // Maneja aquí la recuperación de la contraseña
     if (email.trim() === '') {
       Alert.alert('Ingrese email', 'Por favor ingrese su email para resetear su password.');
       return;
@@ -76,14 +66,14 @@ const Login: React.FC<Props> = () => {
       .then(() => {
         Alert.alert('Revisa tu email', 'Link de reinicio de contraseña fue enviada a tu correo');
       })
-      .catch((error: any) => { // Agrega el type assertion aquí
+      .catch((error: any) => {
         let message = "Ha ocurrido un error inesperado.";
         if (error.code === 'auth/user-not-found') {
           message = "No existe una cuenta con ese correo electrónico.";
         } else if (error.code === 'auth/invalid-email') {
           message = "El correo electrónico no es válido.";
         } else {
-          message = error.message; // Puedes optar por mostrar el mensaje de error de Firebase
+          message = error.message;
         }
       
         Alert.alert("Error", message);
@@ -91,74 +81,68 @@ const Login: React.FC<Props> = () => {
   };
 
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.version}>Login</Text>
-        <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
-        <TextInput
-          style={styles.input}
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handlePasswordRecovery}>
-          <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
-        </TouchableOpacity>
-      </View>
-      
-        <FloatingButtonBar navigation={navigation} />
-      
- 
-      
-       
+    <View style={styles.mainContainer}>
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.version}>Login</Text>
+          <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
+          <TextInput
+            style={styles.input}
+            onChangeText={setEmail}
+            value={email}
+            placeholder="Email"
+            placeholderTextColor="#999"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handlePasswordRecovery}>
+            <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-   
+      <View style={styles.floatingButtonBarContainer}>
+        <FloatingButtonBar navigation={navigation} />
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
     backgroundColor: '#fff',
-  },
-  floatingButtonBarContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
   scrollContainer: {
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 100,
+  },
   contentContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
-    marginBottom: 80,
   },
   version: {
     alignSelf: 'flex-start',
     marginVertical: 10,
-  },
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
+    fontSize: 18,
+    color: '#424242',
   },
   logo: {
     width: 100,
@@ -166,12 +150,14 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   input: {
-    width: '100%',
+    width: 250,
     height: 40,
     marginBottom: 10,
     borderWidth: 1,
+    borderColor: '#ccc',
     padding: 10,
     color: '#424242',
+    borderRadius: 5,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -179,15 +165,26 @@ const styles = StyleSheet.create({
     color: 'blue',
   },
   button: {
-    width: '60%',
+    width: 80,
     height: 40,
     backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
+    borderRadius: 5,
+    marginVertical: 10,
   },
   buttonText: {
     color: '#ffffff',
+  },
+  floatingButtonBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
