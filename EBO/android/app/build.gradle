@@ -79,8 +79,8 @@ android {
         applicationId "chakuy.com.vbo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 46
-        versionName "Delta 1.8"
+        versionCode 47
+        versionName "Delta 1.9"
     }
     signingConfigs {
     release {
