@@ -20,12 +20,12 @@ type NavigationType = StackNavigationProp<any>; // Reemplaza 'any' con tu tipo d
 const HomeScreen = ({ navigation }: HomeScreenProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Voluntarios de Bolivia</Text>
+      <Text style={styles.title}>Emergencias de Bolivia</Text>
       <Image
         source={require('../imagenes/Voluntarios.png')} // Asegúrate de que la ruta a la imagen es correcta
         style={styles.image}
       />
-      <Text style={styles.subtitle}>Uniendo a las Instituciones de Voluntarios de Bolivia</Text>
+      <Text style={styles.subtitle}>Conoce, Apoya y Reporta a las unidades de Emergencia de Bolivia</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Homev2')}// Asegúrate de tener configurada la navegación
