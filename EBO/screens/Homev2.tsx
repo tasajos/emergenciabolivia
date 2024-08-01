@@ -39,6 +39,7 @@ type OportunidadVoluntariado = {
   fecha: string;
   imagen: string;
   descripcion: string;
+  estado: string;
   id: string | null;
 };
 
@@ -128,18 +129,22 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
         setInformacionUtil(fetchedData);
       });
 
-    const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
-    const oportunidadesListener = oportunidadesRef.on('value', (snapshot) => {
+      const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
+      const oportunidadesListener = oportunidadesRef.on('value', (snapshot) => {
         const fetchedOportunidades: OportunidadVoluntariado[] = [];
         snapshot.forEach((childSnapshot) => {
           const data = childSnapshot.val();
-          fetchedOportunidades.push({
-            titulo: data.titulo,
-            fecha: data.fecha,
-            imagen: data.imagen,
-            descripcion: data.descripcion,
-            id: childSnapshot.key,
-          });
+          // Filtrar solo aquellas oportunidades con estado "Activo"
+          if (data.estado === 'Activo') {
+            fetchedOportunidades.push({
+              titulo: data.titulo,
+              fecha: data.fecha,
+              imagen: data.imagen,
+              descripcion: data.descripcion,
+              estado: data.estado,
+              id: childSnapshot.key,
+            });
+          }
           return undefined; // Añade esta línea
         });
         setOportunidadesVoluntariado(fetchedOportunidades);
