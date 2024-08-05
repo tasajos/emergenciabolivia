@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Image, Text, StyleSheet, Linking, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import database from '@react-native-firebase/database';
 
 type NavigationType = StackNavigationProp<any>;
 
@@ -8,19 +9,32 @@ type Props = {
   navigation: NavigationType;
 };
 
-const openWhatsApp = () => {
-  let phoneNumber = '59170776212';
-  let message = 'Hola, me gustaría obtener más información.';
-  let encodedMessage = encodeURIComponent(message);
-  let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-  
-  Linking.openURL(url).catch((err) => {
-    console.error('An error occurred', err);
-    Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
-  });
-};
-
 const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState(''); // State to store the phone number
+
+  useEffect(() => {
+    // Fetch phone number from Firebase
+    const phoneNumberRef = database().ref('/whatsappnroapp');
+    phoneNumberRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      setPhoneNumber(data);
+    });
+
+    // Cleanup listener on unmount
+    return () => phoneNumberRef.off();
+  }, []);
+
+  const openWhatsApp = () => {
+    let message = 'Hola, me gustaría obtener más información.';
+    let encodedMessage = encodeURIComponent(message);
+    let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+
+    Linking.openURL(url).catch((err) => {
+      console.error('An error occurred', err);
+      Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+    });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Homev2')}>
@@ -29,16 +43,16 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Ubicacionesbom')}>
         <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')} style={styles.alertContainer}>
         <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
         <Text style={styles.alertText}>Reportar Emergencia</Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={openWhatsApp}>
         <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Image source={require('../imagenes/acceso.png')} style={styles.icon} />
       </TouchableOpacity>

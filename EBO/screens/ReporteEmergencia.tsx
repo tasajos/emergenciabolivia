@@ -41,6 +41,7 @@ const ReporteEmergencia: React.FC = () => {
     latitude: null,
     longitude: null
   });
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null); // Estado para almacenar el número de teléfono
 
   useEffect(() => {
     const obtenerFechaHora = () => {
@@ -55,9 +56,24 @@ const ReporteEmergencia: React.FC = () => {
     return () => clearInterval(intervalo);
   }, []);
 
+  useEffect(() => {
+    // Recuperar el número de teléfono de Firebase
+    const phoneRef = database().ref('/whatsappnroapp');
+    phoneRef.once('value')
+      .then(snapshot => {
+        setPhoneNumber(snapshot.val() || null);
+      })
+      .catch(error => {
+        console.error('Error fetching phone number:', error);
+      });
+  }, []);
+
   const sendWhatsAppMessage = async (imageUrl: string, locationLink: string) => {
     try {
-      const phoneNumber = '59170776212';
+      if (!phoneNumber) {
+        throw new Error('Número de teléfono no disponible.');
+      }
+
       let message = `Hola, te envío los detalles de la alerta:\n` +
                     `Descripción: ${descripcion}\n` +
                     `Estado: ${estado}\n` +
@@ -70,7 +86,7 @@ const ReporteEmergencia: React.FC = () => {
       }
 
       let encodedMessage = encodeURIComponent(message);
-      let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+      let url = `whatsapp://send?phone=591${phoneNumber}&text=${encodedMessage}`;
 
       await Linking.openURL(url);
     } catch (error) {
@@ -584,4 +600,3 @@ const styles = StyleSheet.create({
 });
 
 export default ReporteEmergencia;
-
