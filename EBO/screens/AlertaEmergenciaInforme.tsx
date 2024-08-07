@@ -26,6 +26,7 @@ type HistorialEntry = {
   necesitaAyuda: string;
   notas: string;
   subestado: string;
+  imageUrl: string;
   telefonoResponsable: string;
   timestamp: number;
   unidad: string;
@@ -90,6 +91,13 @@ const AlertaEmergenciaInforme = () => {
                   <Text style={styles.unidadText}>Unidad: {unidad.unidad}</Text>
                   <Text style={styles.unidadText}>Necesita Ayuda: {unidad.necesitaAyuda}</Text>
                   <Text style={styles.unidadText}>Teléfono Responsable: {unidad.telefonoResponsable}</Text>
+                  <Text style={styles.unidadText}>Sub Estado: {unidad.subestado}</Text>
+                  {unidad.imageUrl ? (
+                    <Image source={{ uri: unidad.imageUrl }} style={styles.historialImage} />
+                  ) : (
+                    <Text style={styles.unidadText}>Sin Imagen</Text>
+                  )}
+                  <Text style={styles.unidadText}>Fecha: {new Date(unidad.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
                 </View>
               ))}
             </View>
@@ -212,6 +220,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#495057',
     marginTop: 4,
+  },
+  historialImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 10,
+    marginVertical: 10,
   },
 });
 
