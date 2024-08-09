@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity,Linking,Alert } from 'react-native';
-//import {  } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity, Linking, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
@@ -19,8 +18,8 @@ type RootStackParamList = {
   Eventosv2: undefined;
   Voluntarios: undefined;
   kitset: undefined;
-  OporVoluntarios: undefined; 
-  AlertaEmergenciaInforme: undefined; 
+  OporVoluntarios: undefined;
+  AlertaEmergenciaInforme: undefined;
 };
 
 type Props = {
@@ -39,10 +38,20 @@ type OportunidadVoluntariado = {
   fecha: string;
   imagen: string;
   descripcion: string;
+  estado: string;
   id: string | null;
 };
 
 type Emergencia = {
+  Titulo: string;
+  ciudad: string;
+  fecha: string;
+  descripcion: string;
+  estado: string;
+  id: string | null;
+};
+
+type EmergenciaControl = {
   Titulo: string;
   ciudad: string;
   fecha: string;
@@ -78,9 +87,9 @@ const VolunteerOpportunityCard = ({ title, date, imageSource, description, onPre
   );
 };
 
-const EmergencyAlertCard = ({ title, date, city, description, estado, onPress }: { title: string, date: string, city: string, description: string, estado: string, onPress: () => void }) => {
+const EmergencyAlertCard = ({ title, date, city, description, estado, onPress, isControlled }: { title: string, date: string, city: string, description: string, estado: string, onPress: () => void, isControlled?: boolean }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.emergencyCardContainer}>
+    <TouchableOpacity onPress={onPress} style={[styles.emergencyCardContainer, isControlled && styles.controlledEmergencyCardContainer]}>
       <View style={styles.emergencyCardIconContainer}>
         <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
       </View>
@@ -94,6 +103,24 @@ const EmergencyAlertCard = ({ title, date, city, description, estado, onPress }:
     </TouchableOpacity>
   );
 };
+
+const ControlAlertCard = ({ title, date, city, description, estado, onPress, isControlled }: { title: string, date: string, city: string, description: string, estado: string, onPress: () => void, isControlled?: boolean }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.emergencyCardContainer, isControlled && styles.controlledEmergencyCardContainer]}>
+      <View style={styles.emergencyCardIconContainer}>
+        <Image source={require('../imagenes/alerta.png')} style={styles.emergencyCardIcon} />
+      </View>
+      <View style={styles.emergencyCardContent}>
+        <Text style={styles.emergencyCardTitle}>{title}</Text>
+        <Text style={styles.emergencyCardCity}>{city}</Text>
+        <Text style={styles.emergencyCardDate}>{date}</Text>
+        <Text style={styles.emergencyCardDescription}>{description}</Text>
+        <Text style={styles.emergencyCardEstado}>Estado: {estado}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 
 const HorizontalCardList = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -109,49 +136,58 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   const [informacionUtil, setInformacionUtil] = useState<InformacionUtil[]>([]);
   const [versionName, setVersionName] = useState('');
   const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState<OportunidadVoluntariado[]>([]);
-  const [emergencias, setEmergencias] = useState<Emergencia[]>([]);
+  const [emergenciasActivas, setEmergenciasActivas] = useState<Emergencia[]>([]);
+  const [emergenciasAtendidas, setEmergenciasAtendidas] = useState<EmergenciaControl[]>([]);
 
   useEffect(() => {
     const ref = database().ref('/informacionutil');
     const listener = ref.on('value', (snapshot) => {
-        const fetchedData: InformacionUtil[] = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          fetchedData.push({
-            nombre: data.nombre,
-            imagen: data.imagen,
-            fecha: data.fecha,
-            id: childSnapshot.key,
-          });
-          return undefined; // Añade esta línea
+      const fetchedData: InformacionUtil[] = [];
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        fetchedData.push({
+          nombre: data.nombre,
+          imagen: data.imagen,
+          fecha: data.fecha,
+          id: childSnapshot.key,
         });
-        setInformacionUtil(fetchedData);
+        return undefined;
       });
+      setInformacionUtil(fetchedData);
+    });
 
     const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
     const oportunidadesListener = oportunidadesRef.on('value', (snapshot) => {
-        const fetchedOportunidades: OportunidadVoluntariado[] = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
+      const fetchedOportunidades: OportunidadVoluntariado[] = [];
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        if (data.estado === 'Activo') {
           fetchedOportunidades.push({
             titulo: data.titulo,
             fecha: data.fecha,
             imagen: data.imagen,
             descripcion: data.descripcion,
+            estado: data.estado,
             id: childSnapshot.key,
           });
-          return undefined; // Añade esta línea
-        });
-        setOportunidadesVoluntariado(fetchedOportunidades);
+        }
+        return undefined;
       });
-      
+      setOportunidadesVoluntariado(fetchedOportunidades);
+    });
 
     const emergenciasRef = database().ref('/ultimasEmergencias');
     const emergenciasListener = emergenciasRef.on('value', (snapshot) => {
-        const fetchedEmergencias: Emergencia[] = [];
-        snapshot.forEach((childSnapshot) => {
-          const data = childSnapshot.val();
-          fetchedEmergencias.push({
+      const fetchedEmergenciasActivas: Emergencia[] = [];
+      const fetchedEmergenciasAtendidas: EmergenciaControl[] = [];
+      const now = new Date();
+
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        const emergenciaDate = new Date(data.fecha);
+
+        if (data.estado === 'Activo') {
+          fetchedEmergenciasActivas.push({
             Titulo: data.Titulo,
             ciudad: data.ciudad,
             fecha: data.fecha,
@@ -159,10 +195,33 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
             estado: data.estado,
             id: childSnapshot.key,
           });
-          return undefined; // Añade esta línea
-        });
-        setEmergencias(fetchedEmergencias);
+        } 
+          
+      
+        return undefined;
       });
+
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        const emergenciaDate = new Date(data.fecha);
+
+        if (data.estado === 'Controlado') {
+          fetchedEmergenciasAtendidas.push({
+            Titulo: data.Titulo,
+            ciudad: data.ciudad,
+            fecha: data.fecha,
+            descripcion: data.descripcion,
+            estado: data.estado,
+            id: childSnapshot.key,
+          });
+        } 
+          
+      
+        return undefined;
+      });
+      setEmergenciasActivas(fetchedEmergenciasActivas);
+      setEmergenciasAtendidas(fetchedEmergenciasAtendidas);
+    });
 
     setAppVersion(DeviceInfo.getReadableVersion());
     const getVersionName = async () => {
@@ -175,11 +234,10 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       setLoading(false);
     }, 2000);
 
-    // Desmontar el listener
     return () => {
-      // Desmontar ambos listeners
       ref.off('value', listener);
       oportunidadesRef.off('value', oportunidadesListener);
+      emergenciasRef.off('value', emergenciasListener);
     };
   }, []);
 
@@ -199,10 +257,10 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
     console.log("Intentando abrir WhatsApp...");
     const url = 'https://whatsapp.com/channel/0029VabE8nN7DAWtEBn6Pq2y';
     Linking.openURL(url).catch(err => {
-        console.error('An error occurred', err);
-        Alert.alert("Error", "Ocurrió un error al intentar abrir el enlace");
+      console.error('An error occurred', err);
+      Alert.alert("Error", "Ocurrió un error al intentar abrir el enlace");
     });
-};
+  };
 
   const onEducacionPress = () => {
     navigation.navigate('Educacionepr');
@@ -237,8 +295,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             <View style={styles.buttonContainer}>
-
-            <TouchableOpacity onPress={onWhatsappchanelPress} style={styles.imageButton}>
+              <TouchableOpacity onPress={onWhatsappchanelPress} style={styles.imageButton}>
                 <Image source={require('../imagenes/wwchat.png')} style={styles.iconImage} />
               </TouchableOpacity>
 
@@ -268,12 +325,11 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
           <HorizontalCardList>
             {informacionUtil.map((item) => (
               <Card key={item.id} title={item.nombre} date={item.fecha} imageSource={{ uri: item.imagen }} onPress={() => {
-                // Lógica para determinar qué pantalla abrir
                 if (item.nombre === 'Eventos') {
                   navigation.navigate('Eventosv2');
                 } else if (item.nombre === 'Kits') {
                   navigation.navigate('kitset');
-                }if (item.nombre === 'Conviertete en Voluntario') {
+                } if (item.nombre === 'Conviertete en Voluntario') {
                   navigation.navigate('Voluntarios');
                 }
               }} />
@@ -282,7 +338,6 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
 
           {/* Sección de Oportunidades de Voluntarios */}
           <Text style={styles.sectionTitle}>OPORTUNIDADES DE VOLUNTARIADO</Text>
-          {/* Tarjetas de oportunidades aquí */}
           <View style={styles.volunteerOpportunitiesContainer}>
             {oportunidadesVoluntariado.map((oportunidad) => (
               <VolunteerOpportunityCard key={oportunidad.id} title={oportunidad.titulo} date={oportunidad.fecha} description={oportunidad.descripcion} imageSource={{ uri: oportunidad.imagen }} onPress={() => {
@@ -290,20 +345,43 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
               }} />
             ))}
           </View>
+
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
-          {/* Tarjetas de ultimas emergencias aquí */}
           <View style={styles.emergencyAlertsContainer}>
-  {emergencias
-    .filter((emergencia) => emergencia.estado === 'Activo')
-    .map((emergencia) => (
-      <EmergencyAlertCard key={emergencia.id} title={emergencia.Titulo} city={emergencia.ciudad} date={emergencia.fecha} description={emergencia.descripcion}estado={emergencia.estado}
-        onPress={() => {
-          navigation.navigate('AlertaEmergenciaInforme', { emergencia: emergencia });// Acciones al presionar la tarjeta de emergencia
-        }}
-      />
-    ))}
-</View>
+            {emergenciasActivas.map((emergencia) => (
+              <EmergencyAlertCard
+                key={emergencia.id}
+                title={emergencia.Titulo}
+                city={emergencia.ciudad}
+                date={emergencia.fecha}
+                description={emergencia.descripcion}
+                estado={emergencia.estado}
+                onPress={() => {
+                  navigation.navigate('AlertaEmergenciaInforme', { emergencia: emergencia });
+                }}
+              />
+            ))}
+          </View>
+
+          {/* Sección de EMERGENCIAS ATENDIDAS */}
+          <Text style={styles.sectionTitle}>EMERGENCIAS ATENDIDAS</Text>
+          <View style={styles.emergencyAlertsContainer}>
+            {emergenciasAtendidas.map((emergencia) => (
+              <EmergencyAlertCard
+                key={emergencia.id}
+                title={emergencia.Titulo}
+                city={emergencia.ciudad}
+                date={emergencia.fecha}
+                description={emergencia.descripcion}
+                estado={emergencia.estado}
+                isControlled={true}
+                onPress={() => {
+                  navigation.navigate('AlertaEmergenciaInforme', { emergencia: emergencia });
+                }}
+              />
+            ))}
+          </View>
 
           {/* Mostrar el versionName */}
           <Text style={styles.VersionText}>Version: {versionName}</Text>
@@ -349,19 +427,19 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   horizontalScroll: {
-    height: 120, // Ajuste la altura según sea necesario
+    height: 120,
     marginTop: 10,
   },
   buttonContainer: {
-    flexDirection: 'row', // Asegúrese de que los botones estén alineados horizontalmente
-    alignItems: 'center', // Alineación vertical de los botones
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   imageButton: {
     alignItems: 'center',
     marginHorizontal: 5,
   },
   iconImage: {
-    width: 80, // Ajuste según el tamaño de sus imágenes
+    width: 80,
     height: 80,
   },
   sectionTitle: {
@@ -370,7 +448,6 @@ const styles = StyleSheet.create({
     color: '#424242',
     marginVertical: 10,
     marginLeft: 20,
-    // Estilos para los títulos de sección
   },
   cardContainer: {
     backgroundColor: 'white',
@@ -379,8 +456,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     flexDirection: 'row',
-    elevation: 3, // Para Android - sombra ligera
-    shadowColor: '#000', // Para iOS - sombra ligera
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -388,7 +465,6 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 100,
     height: 100,
-    // Ajusta estos valores según tu diseño
   },
   cardContent: {
     padding: 10,
@@ -396,12 +472,10 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontWeight: 'bold',
-    color: 'black', 
-    // Ajusta estos estilos según tu diseño
+    color: 'black',
   },
   cardDate: {
     color: 'gray',
-    // Ajusta estos estilos según tu diseño
   },
   progressBarBackground: {
     backgroundColor: '#e0e0e0',
@@ -413,14 +487,11 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     backgroundColor: '#3b5998',
-    // Ajusta estos estilos según tu diseño
   },
   detailsButton: {
-    // Estilos para el botón de detalles
   },
   detailsButtonText: {
     color: '#1e90ff',
-    // Ajusta estos estilos según tu diseño
   },
   VersionText: {
     fontWeight: 'bold',
@@ -428,21 +499,19 @@ const styles = StyleSheet.create({
     color: '#424242',
     marginVertical: 10,
     marginLeft: 20,
-    // Estilos para los títulos de sección
   },
   volunteerOpportunitiesContainer: {
-    paddingHorizontal: 20, // Puedes ajustar esto como necesites
+    paddingHorizontal: 20,
   },
   volunteerCardContainer: {
-    backgroundColor: '#f5f8fa', // Color de fondo claro como Twitter
+    backgroundColor: '#f5f8fa',
     borderBottomWidth: 1,
-    borderBottomColor: '#e1e8ed', // Borde inferior sutil
+    borderBottomColor: '#e1e8ed',
     paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,
-    borderRadius: 18, // Aumenta para más redondez
-    // Puedes también agregar sombra para elevar la tarjeta como en el diseño de Material
+    borderRadius: 18,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -453,9 +522,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   volunteerCardImage: {
-    width: 60, // Más pequeño para un estilo más sutil
+    width: 60,
     height: 60,
-    borderRadius: 30, // Circular como los avatares de Twitter
+    borderRadius: 30,
     marginRight: 10,
   },
   volunteerCardContent: {
@@ -463,27 +532,30 @@ const styles = StyleSheet.create({
   },
   volunteerCardTitle: {
     fontWeight: 'bold',
-    color: '#14171a', // Color de texto casi negro
+    color: '#14171a',
   },
   volunteerCardDate: {
-    color: '#657786', // Color de texto gris para fechas y otros detalles
+    color: '#657786',
     fontSize: 12,
   },
   volunteerCardDescription: {
-    color: '#657786', // Puedes usar el color que prefieras
+    color: '#657786',
     marginTop: 4,
     fontSize: 14,
-    // Ajusta estos estilos para que se adapten al diseño de tu aplicación
   },
   emergencyCardContainer: {
-    backgroundColor: '#fff4f4', // Un color de fondo claro similar al de las alertas de Facebook
+    backgroundColor: '#fff4f4',
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#ffcccb', // Un borde suave
+    borderColor: '#ffcccb',
     padding: 15,
-    marginBottom: 10, // Espacio entre tarjetas
+    marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  controlledEmergencyCardContainer: {
+    backgroundColor: '#e6f9e6',
+    borderColor: '#b3ffb3',
   },
   emergencyCardIconContainer: {
     marginRight: 15,
@@ -499,35 +571,33 @@ const styles = StyleSheet.create({
   },
   emergencyCardTitle: {
     fontWeight: 'bold',
-    color: '#d9534f', // Color rojo para llamar la atención
+    color: '#d9534f',
     fontSize: 16,
   },
   emergencyCardDate: {
     fontSize: 12,
-    color: '#666', // Un color gris para la fecha
+    color: '#666',
     marginBottom: 5,
   },
   emergencyCardDescription: {
     fontSize: 14,
-    color: '#333', // Un color más oscuro para la descripción
+    color: '#333',
   },
   emergencyCardEstado: {
     fontSize: 14,
-    color: '#333', // Un color más oscuro para la descripción
+    color: '#333',
   },
   emergencyCardCity: {
     fontWeight: 'bold',
-    color: '#d9534f', // Puede ser el color de la alerta o el que mejor se ajuste a tu diseño
+    color: '#d9534f',
     fontSize: 14,
-    marginBottom: 4, // Espacio debajo del nombre de la ciudad
+    marginBottom: 4,
   },
-  // Add other styles as needed
   horizontalCardList: {
-    marginBottom: 20, // Ajusta el margen inferior según sea necesario
+    marginBottom: 20,
   },
   emergencyAlertsContainer: {
-    // Estilos para el contenedor de alertas de emergencia
-    marginBottom: 20, // Ajusta el margen inferior según sea necesario
+    marginBottom: 20,
   },
 });
 

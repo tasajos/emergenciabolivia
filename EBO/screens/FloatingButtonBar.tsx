@@ -1,7 +1,7 @@
-// FloatingButtonBar.tsx
-import React from 'react';
-import { View, TouchableOpacity, Image, StyleSheet, Linking ,Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, Image, Text, StyleSheet, Linking, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import database from '@react-native-firebase/database';
 
 type NavigationType = StackNavigationProp<any>;
 
@@ -9,25 +9,32 @@ type Props = {
   navigation: NavigationType;
 };
 
-const openWhatsApp = () => {
-  // Reemplaza con tu número de teléfono en formato internacional sin '+' ni '00'
-  let phoneNumber = '59170776212';
-
-  let message = 'Hola, me gustaría obtener más información.'; // Mensaje que deseas enviar
-  
-  // Codifica el mensaje para que sea una URL válida
-  let encodedMessage = encodeURIComponent(message);
-  
-  // Abre WhatsApp directamente con el número y el mensaje especificado
-  let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-  
-  Linking.openURL(url).catch((err) => {
-    console.error('An error occurred', err);
-    Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
-  });
-};
-
 const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState(''); // State to store the phone number
+
+  useEffect(() => {
+    // Fetch phone number from Firebase
+    const phoneNumberRef = database().ref('/whatsappnroapp');
+    phoneNumberRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      setPhoneNumber(data);
+    });
+
+    // Cleanup listener on unmount
+    return () => phoneNumberRef.off();
+  }, []);
+
+  const openWhatsApp = () => {
+    let message = 'Hola, me gustaría obtener más información.';
+    let encodedMessage = encodeURIComponent(message);
+    let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+
+    Linking.openURL(url).catch((err) => {
+      console.error('An error occurred', err);
+      Alert.alert('No se puede abrir WhatsApp, asegúrate de que está instalado en tu dispositivo.');
+    });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate('Homev2')}>
@@ -37,29 +44,14 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
         <Image source={require('../imagenes/mapa32.png')} style={styles.icon} />
       </TouchableOpacity>
 
-
-{/* 
-            <View style={styles.whatsAppContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')}>
-          <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
-        </TouchableOpacity>
-
-        */}
-
-<TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')}>
-          <Image source={require('../imagenes/alerta64.png')} style={styles.icon} />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={openWhatsApp}>
-          <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
-        </TouchableOpacity>
-     
-
-{/* 
-      <TouchableOpacity onPress={() => navigation.navigate('Contacto')}>
-        <Image source={require('../imagenes/add32.png')} style={styles.icon} />
+      <TouchableOpacity onPress={() => navigation.navigate('ReporteEmergencia')} style={styles.alertContainer}>
+        <Image source={require('../imagenes/alerta64.png')} style={styles.alertIcon} />
+        <Text style={styles.alertText}>Reportar Emergencia</Text>
       </TouchableOpacity>
-*/}
+
+      <TouchableOpacity onPress={openWhatsApp}>
+        <Image source={require('../imagenes/whatsapp32.png')} style={styles.icon} />
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Image source={require('../imagenes/acceso.png')} style={styles.icon} />
@@ -67,7 +59,6 @@ const FloatingButtonBar: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -84,18 +75,17 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  whatsAppContainer: {
+  alertContainer: {
     alignItems: 'center',
-    
-    //marginBottom: 5,
-    
   },
   alertIcon: {
     width: 30,
     height: 30,
-    marginBottom: 5,  // Espacio entre los botones
-    //backgroundColor: 'darkblue',
-    
+  },
+  alertText: {
+    marginTop: 5,
+    fontSize: 12,
+    color: 'black',
   },
 });
 

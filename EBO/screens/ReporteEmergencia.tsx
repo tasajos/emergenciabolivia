@@ -41,6 +41,7 @@ const ReporteEmergencia: React.FC = () => {
     latitude: null,
     longitude: null
   });
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null); // Estado para almacenar el número de teléfono
 
   useEffect(() => {
     const obtenerFechaHora = () => {
@@ -55,9 +56,24 @@ const ReporteEmergencia: React.FC = () => {
     return () => clearInterval(intervalo);
   }, []);
 
+  useEffect(() => {
+    // Recuperar el número de teléfono de Firebase
+    const phoneRef = database().ref('/whatsappnroapp');
+    phoneRef.once('value')
+      .then(snapshot => {
+        setPhoneNumber(snapshot.val() || null);
+      })
+      .catch(error => {
+        console.error('Error fetching phone number:', error);
+      });
+  }, []);
+
   const sendWhatsAppMessage = async (imageUrl: string, locationLink: string) => {
     try {
-      const phoneNumber = '59170776212';
+      if (!phoneNumber) {
+        throw new Error('Número de teléfono no disponible.');
+      }
+
       let message = `Hola, te envío los detalles de la alerta:\n` +
                     `Descripción: ${descripcion}\n` +
                     `Estado: ${estado}\n` +
@@ -70,7 +86,7 @@ const ReporteEmergencia: React.FC = () => {
       }
 
       let encodedMessage = encodeURIComponent(message);
-      let url = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+      let url = `whatsapp://send?phone=591${phoneNumber}&text=${encodedMessage}`;
 
       await Linking.openURL(url);
     } catch (error) {
@@ -201,6 +217,11 @@ const ReporteEmergencia: React.FC = () => {
     });
   };
 
+  const removeImage = () => {
+    setImagen('');
+    setImageUploadMessage('');
+  };
+
   const resetForm = () => {
     setDescripcion('');
     setEstado('Pendiente');
@@ -288,6 +309,15 @@ const ReporteEmergencia: React.FC = () => {
               <Image source={require('../imagenes/imagen.png')} style={styles.imagePickerIcon} />
             </TouchableOpacity>
           </View>
+
+          {imagen ? (
+            <View style={styles.imagePreviewContainer}>
+              <Image source={{ uri: imagen }} style={styles.imagePreview} />
+              <TouchableOpacity onPress={removeImage} style={styles.removeImageButton}>
+                <Text style={styles.removeImageButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
 
         <TouchableOpacity
@@ -425,7 +455,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
-    marginVertical: 5, // Added to provide space between buttons
+    marginVertical: 5,
   },
   buttonText: {
     color: 'white',
@@ -508,7 +538,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   mapModal: {
-    height: 400, // Adjust height to fit better within the modal
+    height: 400,
     width: '100%',
   },
   modalContainer: {
@@ -522,7 +552,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     alignItems: 'center',
-    padding: 0, // Remove padding so map takes full width
+    padding: 0,
   },
   modalMessage: {
     fontSize: 18,
@@ -532,7 +562,7 @@ const styles = StyleSheet.create({
   },
   modalButtonsContainer: {
     width: '100%',
-    padding: 20, // Add padding to container to space buttons
+    padding: 20,
   },
   modalButton: {
     backgroundColor: '#007bff',
@@ -546,8 +576,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  imagePreviewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  removeImageButton: {
+    backgroundColor: '#ff0000',
+    padding: 10,
+    borderRadius: 5,
+  },
+  removeImageButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
 });
 
 export default ReporteEmergencia;
-
-

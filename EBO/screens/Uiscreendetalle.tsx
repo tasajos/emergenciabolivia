@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button, Alert, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, Button, Alert, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
 import { Picker } from '@react-native-picker/picker';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/database';
+import '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation, RouteProp } from '@react-navigation/native';
 
 type EmergencyDetail = {
@@ -33,6 +35,7 @@ type EmergencyHistory = {
   timestamp: number;
   necesitaAyuda?: string;
   notas?: string;
+  imageUrl?: string;
 };
 
 type UiscreendetalleRouteProp = RouteProp<{ params: { item: EmergencyDetail } }, 'params'>;
@@ -53,6 +56,10 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
   const [notas, setNotas] = useState(item.notas || '');
   const [modalVisible, setModalVisible] = useState(false);
   const [sciActivated, setSciActivated] = useState(false);
+
+  const [existingImage, setExistingImage] = useState<string | null>(item.imageUrl || null);
+  const [newImage, setNewImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const ref = firebase.database().ref(`/ultimasEmergencias/${item.key}/historial`);
@@ -92,7 +99,8 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
         unidad,
         telefonoResponsable,
         necesitaAyuda,
-        notas
+        notas,
+        imageUrl: existingImage, // Keep the existing image URL
       });
       await newHistoryRef.set({
         subestado,
@@ -101,6 +109,7 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
         timestamp: Date.now(),
         necesitaAyuda,
         notas,
+        imageUrl: newImage, // Add the new image URL to history
       });
 
       Alert.alert('Actualización exitosa', 'La información se ha actualizado correctamente.', [
@@ -124,6 +133,50 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
 
   const navigateToSCIForm = () => {
     navigation.navigate('SCIForm', { item });
+  };
+
+  const pickNewImage = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 1,
+    });
+
+    if (result.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (result.errorCode) {
+      console.log('ImagePicker Error: ', result.errorMessage);
+    } else if (result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
+      if (asset.uri) {
+        uploadNewImage(asset.uri);
+      }
+    }
+  };
+
+  const uploadNewImage = async (uri: string) => {
+    setUploading(true);
+    const filename = uri.substring(uri.lastIndexOf('/') + 1);
+    const storageRef = firebase.storage().ref(`emergencias/${filename}`);
+    const task = storageRef.putFile(uri);
+
+    task.on('state_changed', 
+      snapshot => {},
+      error => {
+        console.error('Error uploading image:', error);
+        Alert.alert('Error al subir la imagen');
+        setUploading(false);
+      },
+      async () => {
+        const url = await storageRef.getDownloadURL();
+        setNewImage(url);
+        Alert.alert('Imagen subida', 'La nueva imagen se ha subido correctamente');
+        setUploading(false);
+      }
+    );
+  };
+
+  const removeNewImage = () => {
+    setNewImage(null);
   };
 
   return (
@@ -154,7 +207,13 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
           </View>
         )}
 
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+        {existingImage && (
+          <View style={styles.imageContainer}>
+            <Text style={styles.label}>Imagen existente:</Text>
+            <Image source={{ uri: existingImage }} style={styles.image} />
+          </View>
+        )}
+
         <View style={styles.detailContainer}>
           <Text style={styles.title}>{item.title} - {item.city}</Text>
           <Text style={styles.description}>{item.description}</Text>
@@ -207,6 +266,22 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
             multiline
           />
 
+          <TouchableOpacity onPress={pickNewImage} style={styles.uploadImageButton}>
+            <Text style={styles.uploadImageButtonText}>Cargar Nueva Imagen</Text>
+          </TouchableOpacity>
+
+          {uploading && <ActivityIndicator size="large" color="#0000ff" />}
+
+          {newImage && (
+            <View style={styles.imageContainer}>
+              <Text style={styles.label}>Nueva Imagen:</Text>
+              <Image source={{ uri: newImage }} style={styles.image} />
+              <TouchableOpacity onPress={removeNewImage} style={styles.removeImageButton}>
+                <Text style={styles.removeImageButtonText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <Button title="Actualizar Información" onPress={handleUpdate} />
 
           <TouchableOpacity style={styles.activateButton} onPress={handleActivateSCI}>
@@ -227,6 +302,12 @@ const Uiscreendetalle: React.FC<Props> = ({ route }) => {
               <Text style={styles.historyText}>Teléfono: {entry.telefonoResponsable}</Text>
               <Text style={styles.historyText}>Necesita ayuda: {entry.necesitaAyuda}</Text>
               <Text style={styles.historyText}>Notas: {entry.notas}</Text>
+              {entry.imageUrl && (
+                <View style={styles.imageContainer}>
+                  <Text style={styles.historyText}>Imagen:</Text>
+                  <Image source={{ uri: entry.imageUrl }} style={styles.image} />
+                </View>
+              )}
               <Text style={styles.historyText}>Fecha: {new Date(entry.timestamp).toLocaleString('es-BO', { timeZone: 'America/La_Paz' })}</Text>
             </View>
           ))}
@@ -294,12 +375,27 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   image: {
     width: '100%',
     height: 200,
     resizeMode: 'cover',
     borderRadius: 10,
-    marginVertical: 20,
+  },
+  uploadImageButton: {
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    marginVertical: 10,
+    width: 150,
+  },
+  uploadImageButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   detailContainer: {
     paddingHorizontal: 20,
@@ -393,6 +489,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  removeImageButton: {
+    backgroundColor: '#ff0000',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  removeImageButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
