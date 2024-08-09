@@ -8,16 +8,19 @@ buildscript {
         kotlinVersion = "1.8.0"
         playServicesLocationVersion = "21.0.1"
 
-null
+//null
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        //classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.0.0")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        //classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.3.15'
     }
 }
 
