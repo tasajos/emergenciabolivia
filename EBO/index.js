@@ -9,7 +9,7 @@ import { initializeApp } from '@react-native-firebase/app';
 import App from './App';
 import {name as appName} from './app.json';
 //import bgMessaging from './bgMessaging'; // Importa el manejador de mensajes en segundo plano
-import { initializeFCM } from './FCMService';
+import { initializeFCM,requestUserPermissionForNotifications } from './FCMService';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -31,6 +31,8 @@ const firebaseConfig = {
 
 // Inicializa FCM
 initializeFCM();
+//requestNotificationPermission();
+requestUserPermissionForNotifications();
 
 AppRegistry.registerComponent(appName, () => App);
 //AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging); // Registra el manejador de mensajes en segundo plano
