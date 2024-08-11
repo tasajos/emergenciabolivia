@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotificationPermissionModal = ({ isVisible, onClose }) => {
   const openAppNotificationSettings = () => {
@@ -31,7 +32,7 @@ const NotificationPermissionModal = ({ isVisible, onClose }) => {
         <Icon name="notifications" size={50} color="#FF9500" />
         <Text style={styles.title}>Habilitar Notificaciones</Text>
         <Text style={styles.message}>
-          ¿Deseas habilitar las notificaciones para recibir las últimas alertas y actualizaciones?
+          ¿Deseas habilitar las notificaciones para recibir las últimas alertas y actualizaciones? Estas son necesarias para que estés informado de las emergencias.
         </Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
@@ -43,6 +44,33 @@ const NotificationPermissionModal = ({ isVisible, onClose }) => {
         </View>
       </View>
     </Modal>
+  );
+};
+
+const NotificationPermission = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    const checkNotificationPermission = async () => {
+      const hasSeenModal = await AsyncStorage.getItem('hasSeenNotificationModal');
+      if (!hasSeenModal) {
+        setIsModalVisible(true);
+      }
+    };
+
+    checkNotificationPermission();
+  }, []);
+
+  const handleCloseModal = async () => {
+    setIsModalVisible(false);
+    await AsyncStorage.setItem('hasSeenNotificationModal', 'true');
+  };
+
+  return (
+    <NotificationPermissionModal
+      isVisible={isModalVisible}
+      onClose={handleCloseModal}
+    />
   );
 };
 
@@ -94,4 +122,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationPermissionModal;
+export default NotificationPermission;
