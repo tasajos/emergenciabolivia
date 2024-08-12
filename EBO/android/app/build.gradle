@@ -80,8 +80,8 @@ android {
         applicationId "chakuy.com.vbo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 61
-        versionName "E 2.1.1"
+        versionCode 62
+        versionName "E 2.1.4"
     }
     signingConfigs {
     release {

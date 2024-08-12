@@ -155,6 +155,7 @@ export const initializeFCM = () => {
 
 import { Alert, Platform, Linking } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
+import database from '@react-native-firebase/database';
 
 export const openAppNotificationSettings = () => {
   if (Platform.OS === 'android') {
@@ -206,25 +207,46 @@ export const requestUserPermissionForNotifications = async () => {
 };
 
 export const initializeFCM = () => {
-  messaging().setBackgroundMessageHandler(async remoteMessage => {
-    console.log('Message handled in the background!', remoteMessage);
-  });
-
-  messaging().onMessage(async remoteMessage => {
-    if (remoteMessage.notification) {
-      const { title, body } = remoteMessage.notification;
-      Alert.alert(title, body);
-    } else {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    }
-  });
-
-  messaging()
-    .getToken()
-    .then(token => {
-      console.log('FCM Token:', token);
-    })
-    .catch(error => {
-      console.error('FCM Token Error:', error);
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
     });
-};
+  
+    messaging().onMessage(async remoteMessage => {
+      if (remoteMessage.notification) {
+        const { title, body } = remoteMessage.notification;
+        Alert.alert(title, body);
+      } else {
+        Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      }
+    });
+  
+    messaging()
+      .getToken()
+      .then(token => {
+        console.log('FCM Token:', token);
+        storeTokenInDatabase(token); // Llama a la función para almacenar el token en Firebase
+      })
+      .catch(error => {
+        console.error('FCM Token Error:', error);
+      });
+  
+    // Maneja la actualización del token
+    messaging().onTokenRefresh(token => {
+      console.log('FCM Token actualizado:', token);
+      storeTokenInDatabase(token); // Vuelve a almacenar el token actualizado
+    });
+  };
+  
+  // Función para almacenar el token en Firebase Realtime Database
+  const storeTokenInDatabase = (token) => {
+    const tokenRef = database().ref('/deviceTokens');
+    const newTokenRef = tokenRef.push();
+    newTokenRef.set({
+      token: token,
+      createdAt: new Date().toISOString(),
+    }).then(() => {
+      console.log('Token almacenado exitosamente en Firebase');
+    }).catch(error => {
+      console.error('Error al almacenar el token en Firebase:', error);
+    });
+  };
