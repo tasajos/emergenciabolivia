@@ -22,6 +22,14 @@ type RootStackParamList = {
   AlertaEmergenciaInforme: undefined;
 };
 
+type PreparacionEvento = {
+
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+  id: string | null;
+};
+
 type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
 };
@@ -138,6 +146,8 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
   const [oportunidadesVoluntariado, setOportunidadesVoluntariado] = useState<OportunidadVoluntariado[]>([]);
   const [emergenciasActivas, setEmergenciasActivas] = useState<Emergencia[]>([]);
   const [emergenciasAtendidas, setEmergenciasAtendidas] = useState<EmergenciaControl[]>([]);
+  const [preparacionEventos, setPreparacionEventos] = useState<PreparacionEvento[]>([]);
+
 
   useEffect(() => {
     const ref = database().ref('/informacionutil');
@@ -155,6 +165,28 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       });
       setInformacionUtil(fetchedData);
     });
+
+    const preparacionRef = database().ref('/preparate');
+    const preparacionListener = preparacionRef.on('value', (snapshot) => {
+      const fetchedPreparacionEventos: PreparacionEvento[] = [];
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        
+        if (data.estado === 'Activo') {
+          fetchedPreparacionEventos.push({
+         
+          nombre: data.nombre,
+          descripcion: data.descripcion,
+          imagen: data.imagen,
+          id: childSnapshot.key,
+        });
+      }
+        return undefined;
+      });
+      setPreparacionEventos(fetchedPreparacionEventos);
+    });
+
+
 
     const oportunidadesRef = database().ref('/oportunidadesVoluntariado');
     const oportunidadesListener = oportunidadesRef.on('value', (snapshot) => {
@@ -238,6 +270,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
       ref.off('value', listener);
       oportunidadesRef.off('value', oportunidadesListener);
       emergenciasRef.off('value', emergenciasListener);
+      preparacionRef.off('value', preparacionListener);
     };
   }, []);
 
@@ -345,6 +378,34 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
               }} />
             ))}
           </View>
+
+{/* Sección de Preparate de Eventos */}
+          <Text style={styles.sectionTitle}>PREPÁRATE PARA LOS EVENTOS</Text>
+
+          <View style={styles.preparateContainer}>
+{preparacionEventos.map((evento) => (
+    <TouchableOpacity
+      key={evento.id}
+      onPress={() => {
+        if (evento.nombre === 'Sismo') {
+          navigation.navigate('SismoEmer');
+        } else {
+          // Puedes agregar otra acción o redirección para otros eventos si es necesario
+        }
+      }}
+    >
+      <View style={styles.preparateCard}>
+        <Image source={{ uri: evento.imagen }} style={styles.preparateCardImage} />
+        <View style={styles.preparateCardContent}>
+          <Text style={styles.preparateCardTitle}>{evento.nombre}</Text>
+          <Text style={styles.preparateCardDescription}>{evento.descripcion}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  ))}
+</View>
+
+
 
           {/* Sección de ULTIMAS EMERGENCIAS */}
           <Text style={styles.sectionTitle}>ULTIMAS EMERGENCIAS</Text>
@@ -599,6 +660,49 @@ const styles = StyleSheet.create({
   emergencyAlertsContainer: {
     marginBottom: 20,
   },
+  preparateContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  preparateCard: {
+    backgroundColor: '#f5f8fa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e1e8ed',
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderRadius: 18,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  preparateCardImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 10,
+  },
+  preparateCardContent: {
+    flex: 1,
+  },
+  preparateCardTitle: {
+    fontWeight: 'bold',
+    //color: '#14171a',
+    color: 'black',
+  },
+  preparateCardDescription: {
+    color: '#657786',
+    marginTop: 4,
+    fontSize: 14,
+  },
+
+
 });
 
 export default Homev2;
