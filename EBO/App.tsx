@@ -48,6 +48,7 @@ import firebase from '@react-native-firebase/app';
 import SCIForm from './screens/SCIForm';
 import PlanEvacuacion from './screens/PlanEvacuacion';
 import SismoEmer from './screens/SismoEmer';
+import RutasEvacuacion from './screens/RutasEvacuacion';
 
 
 // Configuración de Firebase
@@ -108,6 +109,7 @@ export type RootStackParamList = {
   SCIForm:undefined;
   PlanEvacuacion:undefined;
   SismoEmer:undefined;
+  RutasEvacuacion:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -184,6 +186,7 @@ const App = () => {
         <Stack.Screen name="SCIForm" component={SCIForm} />
         <Stack.Screen name="PlanEvacuacion" component={PlanEvacuacion} />
         <Stack.Screen name="SismoEmer" component={SismoEmer} />
+        <Stack.Screen name="RutasEvacuacion" component={RutasEvacuacion} />
 
       </Stack.Navigator>
     </NavigationContainer>

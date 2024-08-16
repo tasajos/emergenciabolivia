@@ -24,6 +24,7 @@ const fase1 = StyleSheet.create({
     instrucciones: {
       fontSize: 18,
       marginBottom: 10,
+      color: '#424242',
       textAlign: 'center',
     },
     mensajeRapido: {
