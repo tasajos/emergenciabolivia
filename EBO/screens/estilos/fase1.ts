@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const faseuno = StyleSheet.create({
+const fase1 = StyleSheet.create({
     textoLlamativo: {
       fontSize: 24,
       fontWeight: 'bold',
@@ -26,6 +26,12 @@ const faseuno = StyleSheet.create({
       marginBottom: 10,
       textAlign: 'center',
     },
+    mensajeRapido: {
+      fontSize: 20,
+      color: '#FF0000',
+      textAlign: 'center',
+      marginVertical: 10,
+    },
     itemLista: {
       padding: 15,
       marginVertical: 5,
@@ -38,14 +44,17 @@ const faseuno = StyleSheet.create({
     itemIncorrecto: {
       backgroundColor: '#f8d7da',
     },
+    itemDeshabilitado: {
+      opacity: 0.5,
+    },
     textoItem: {
       fontSize: 16,
       color: '#333',
     },
-    itemDeshabilitado: {
-        opacity: 0.5,
-      },
-      
+    botonSiguienteContainer: {
+      marginTop: 20,
+      alignItems: 'center',
+    },
   });
-
-export default faseuno;
+  
+  export default fase1;

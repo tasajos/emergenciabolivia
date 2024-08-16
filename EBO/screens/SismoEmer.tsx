@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Button, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ScrollView, Button, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
 import styles from './estilos/EstilosIniciales'; // Importa los estilos
-import faseuno from './estilos/fase1'; // Importa los estilos
+import fase1 from './estilos/fase1'; // Importa los estilos
 
 type RootStackParamList = {
   NuevoScreen: undefined;
@@ -19,7 +19,7 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('');
   const [contadorInicial, setContadorInicial] = useState(10);
-  const [contadorSeleccion, setContadorSeleccion] = useState(5);
+  const [contadorSeleccion, setContadorSeleccion] = useState(10);
   const [mostrarLista, setMostrarLista] = useState(false);
   const [mostrarMensajeRapido, setMostrarMensajeRapido] = useState(false);
   const [seleccionados, setSeleccionados] = useState<Array<number>>([]);
@@ -34,27 +34,29 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (contadorInicial > 0) {
-      const timer = setTimeout(() => setContadorInicial(contadorInicial - 1), 1000);
-      return () => clearTimeout(timer);
+      timer = setTimeout(() => setContadorInicial(contadorInicial - 1), 1000);
     } else {
       setMostrarLista(true);
     }
+    return () => clearTimeout(timer);
   }, [contadorInicial]);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (mostrarLista && contadorSeleccion > 0) {
       setMostrarMensajeRapido(true);
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setContadorSeleccion(contadorSeleccion - 1);
         if (contadorSeleccion === 1) {
           setMostrarMensajeRapido(false);
         }
       }, 1000);
-      return () => clearTimeout(timer);
     } else if (contadorSeleccion === 0) {
       setHabilitarBoton(true);
     }
+    return () => clearTimeout(timer);
   }, [contadorSeleccion, mostrarLista]);
 
   const manejarSeleccion = (indice: number, correcto: boolean) => {
@@ -116,7 +118,7 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
             ) : (
               <View>
                 {mostrarMensajeRapido && (
-                  <Text style={fase1.mensajeRapido}>¡Rápido! Tienes 5 segundos para identificar</Text>
+                  <Text style={fase1.mensajeRapido}>¡Rápido! Tienes 10 segundos para identificar</Text>
                 )}
                 <Text style={fase1.instrucciones}>
                   Selecciona las zonas seguras dentro de la vivienda:
@@ -143,69 +145,12 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
           </View>
 
           {/* Mostrar el versionName */}
-          <Text style={styles.versionText}>Versión: {appVersion}</Text>
+          {/*<Text style={styles.versionText}>Versión: {appVersion}</Text>*/}
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />
     </View>
   );
 };
-
-const fase1 = StyleSheet.create({
-  textoLlamativo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FF4500',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  subtitulo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#424242',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  contadorTexto: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginVertical: 20,
-    color: '#333',
-  },
-  instrucciones: {
-    fontSize: 18,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  mensajeRapido: {
-    fontSize: 20,
-    color: '#FF0000',
-    textAlign: 'center',
-    marginVertical: 10,
-  },
-  itemLista: {
-    padding: 15,
-    marginVertical: 5,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-  },
-  itemCorrecto: {
-    backgroundColor: '#d4edda',
-  },
-  itemIncorrecto: {
-    backgroundColor: '#f8d7da',
-  },
-  itemDeshabilitado: {
-    opacity: 0.5,
-  },
-  textoItem: {
-    fontSize: 16,
-    color: '#333',
-  },
-  botonSiguienteContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-});
 
 export default SismoEmer;
