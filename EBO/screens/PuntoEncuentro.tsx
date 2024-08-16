@@ -7,14 +7,15 @@ import styles from './estilos/EstilosIniciales';
 import fase1 from './estilos/fase1';
 
 type RootStackParamList = {
-  RutasEvacuacion: { seleccionadosFase1: number[] };
+  Comunicaciones: { seleccionadosFase1: number[], seleccionadosFase2: number[], seleccionadosFase3: number[] };
 };
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
+  route: { params: { seleccionadosFase1: number[], seleccionadosFase2: number[] } };
 };
 
-const SismoEmer: React.FC<Props> = ({ navigation }) => {
+const PuntoEncuentro: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('');
   const [contadorInicial, setContadorInicial] = useState(10);
@@ -37,6 +38,7 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
       timer = setTimeout(() => setContadorInicial(contadorInicial - 1), 1000);
     } else {
       setMostrarLista(true);
+      setMostrarMensajeRapido(true);
     }
     return () => clearTimeout(timer);
   }, [contadorInicial]);
@@ -44,7 +46,6 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (mostrarLista && contadorSeleccion > 0) {
-      setMostrarMensajeRapido(true);
       timer = setTimeout(() => {
         setContadorSeleccion(contadorSeleccion - 1);
         if (contadorSeleccion === 1) {
@@ -87,7 +88,11 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
   );
 
   const siguienteFase = () => {
-    navigation.navigate('RutasEvacuacion', { seleccionadosFase1: seleccionados });
+    navigation.navigate('Comunicaciones', {
+      seleccionadosFase1: route.params.seleccionadosFase1,
+      seleccionadosFase2: route.params.seleccionadosFase2,
+      seleccionadosFase3: seleccionados
+    });
   };
 
   return (
@@ -104,10 +109,33 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <View style={styles.contentContainer}>
-            <Text style={fase1.textoLlamativo}>¡Te prepararemos para la fase 1!</Text>
+            <Text style={fase1.textoLlamativo}>¡Te prepararemos para la fase 3!</Text>
             <Text style={fase1.subtitulo}>Plan de Evacuación Familiar</Text>
-            <Text style={fase1.subtitulo}>1. Identificación de Zonas Seguras</Text>
-            
+            <Text style={fase1.subtitulo}>3. Punto de Encuentro</Text>
+
+            <Text style={fase1.instrucciones}>Resultados de la Fase 1:</Text>
+            {route.params.seleccionadosFase1.map((indice) => (
+              <View key={indice} style={fase1.itemCorrecto}>
+                <Text style={fase1.textoItem}>
+                  {indice === 1 && 'Debajo de una mesa sólida'}
+                  {indice === 4 && 'En una esquina interna'}
+                  {indice === 7 && 'Debajo de una viga'}
+                  {indice === 10 && 'En el patio'}
+                </Text>
+              </View>
+            ))}
+
+            <Text style={fase1.instrucciones}>Resultados de la Fase 2:</Text>
+            {route.params.seleccionadosFase2.map((indice) => (
+              <View key={indice} style={fase1.itemCorrecto}>
+                <Text style={fase1.textoItem}>
+                  {indice === 1 && 'Salir por la puerta principal'}
+                  {indice === 4 && 'Usar las escaleras de emergencia'}
+                  {indice === 8 && 'Salir por la puerta trasera'}
+                </Text>
+              </View>
+            ))}
+
             {!mostrarLista ? (
               <View>
                 <Text style={fase1.contadorTexto}>El ejercicio comenzará en: {contadorInicial} segundos</Text>
@@ -115,22 +143,18 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
             ) : (
               <View>
                 {mostrarMensajeRapido && (
-                  <Text style={fase1.mensajeRapido}>¡Rápido! Tienes 10 segundos para identificar</Text>
+                  <Text style={fase1.mensajeRapido}>¡Rápido! Tienes 10 segundos para seleccionar</Text>
                 )}
                 <Text style={fase1.instrucciones}>
-                  Selecciona las zonas seguras dentro de la vivienda:
+                  Selecciona los puntos de encuentro óptimos:
                 </Text>
                 <Text style={fase1.contadorTexto}>Tiempo restante: {contadorSeleccion} segundos</Text>
-                {renderizarItem('Debajo de una mesa sólida', 1, true)}
-                {renderizarItem('Cerca de una ventana', 2, false)}
-                {renderizarItem('Debajo de una cama', 3, false)}
-                {renderizarItem('En una esquina interna', 4, true)}
-                {renderizarItem('En el ascensor', 5, false)}
-                {renderizarItem('En la cocina', 6, false)}
-                {renderizarItem('Debajo de una viga', 7, true)}
-                {renderizarItem('En la escalera', 8, false)}
-                {renderizarItem('En el baño', 9, false)}
-                {renderizarItem('En el patio', 10, true)}
+                {renderizarItem('Frente a la casa', 1, true)}
+                {renderizarItem('En el parque del barrio', 2, true)}
+                {renderizarItem('Dentro del coche en el garaje', 3, false)}
+                {renderizarItem('En la esquina de la calle', 4, true)}
+                {renderizarItem('En el sótano de la casa', 5, false)}
+                {renderizarItem('En la azotea del edificio', 6, false)}
               </View>
             )}
 
@@ -147,4 +171,4 @@ const SismoEmer: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-export default SismoEmer;
+export default PuntoEncuentro;

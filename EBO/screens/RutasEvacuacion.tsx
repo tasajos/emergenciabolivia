@@ -3,17 +3,16 @@ import { View, Text, ScrollView, Button, TouchableOpacity, ActivityIndicator, Im
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
-import styles from './estilos/EstilosIniciales'; // Importa los estilos
-import fase1 from './estilos/fase1'; // Importa los estilos
+import styles from './estilos/EstilosIniciales';
+import fase1 from './estilos/fase1';
 
 type RootStackParamList = {
-  RutasEvacuacion: { seleccionados: number[] };
-  ProximaPantalla: undefined;
+  PuntoEncuentro: { seleccionadosFase1: number[], seleccionadosFase2: number[] };
 };
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList>;
-  route: { params: { seleccionados: number[] } };
+  route: { params: { seleccionadosFase1: number[] } };
 };
 
 const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
@@ -28,7 +27,6 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     setAppVersion(DeviceInfo.getReadableVersion());
-
     setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -61,7 +59,7 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
   }, [contadorSeleccion, mostrarLista]);
 
   const manejarSeleccion = (indice: number, correcto: boolean) => {
-    if (contadorSeleccion === 0) return; // Impide la selección si el segundo contador llegó a 0
+    if (contadorSeleccion === 0) return;
 
     if (correcto) {
       setSeleccionados((prevSeleccionados) => [...prevSeleccionados, indice]);
@@ -74,7 +72,7 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
     <TouchableOpacity
       key={indice}
       onPress={() => manejarSeleccion(indice, correcto)}
-      disabled={contadorSeleccion === 0 || seleccionados.includes(indice) || seleccionados.includes(-indice)} // Deshabilita el botón si ya fue seleccionado o si el tiempo terminó
+      disabled={contadorSeleccion === 0 || seleccionados.includes(indice) || seleccionados.includes(-indice)}
       style={[
         fase1.itemLista,
         seleccionados.includes(indice)
@@ -82,7 +80,7 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
           : seleccionados.includes(-indice)
           ? fase1.itemIncorrecto
           : {},
-        contadorSeleccion === 0 && fase1.itemDeshabilitado, // Aplica un estilo deshabilitado cuando el tiempo termina
+        contadorSeleccion === 0 && fase1.itemDeshabilitado,
       ]}
     >
       <Text style={fase1.textoItem}>{texto}</Text>
@@ -90,7 +88,7 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
   );
 
   const siguienteFase = () => {
-    navigation.navigate('ProximaPantalla'); // Reemplaza con la pantalla de la siguiente fase
+    navigation.navigate('PuntoEncuentro', { seleccionadosFase1: route.params.seleccionadosFase1, seleccionadosFase2: seleccionados });
   };
 
   return (
@@ -106,15 +104,13 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
             <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
           </View>
 
-          {/* Contenido principal */}
           <View style={styles.contentContainer}>
             <Text style={fase1.textoLlamativo}>¡Te prepararemos para la fase 2!</Text>
             <Text style={fase1.subtitulo}>Plan de Evacuación Familiar</Text>
             <Text style={fase1.subtitulo}>2. Rutas de Evacuación</Text>
 
-            {/* Mostrar los resultados de la fase 1 en verde */}
             <Text style={fase1.instrucciones}>Resultados de la Fase 1:</Text>
-            {route.params.seleccionados.map((indice) => (
+            {route.params.seleccionadosFase1.map((indice) => (
               <View key={indice} style={fase1.itemCorrecto}>
                 <Text style={fase1.textoItem}>
                   {indice === 1 && 'Debajo de una mesa sólida'}
@@ -125,7 +121,6 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
               </View>
             ))}
 
-            {/* Nueva lista para rutas de evacuación */}
             {!mostrarLista ? (
               <View>
                 <Text style={fase1.contadorTexto}>El ejercicio comenzará en: {contadorInicial} segundos</Text>
@@ -156,9 +151,6 @@ const RutasEvacuacion: React.FC<Props> = ({ navigation, route }) => {
               </View>
             )}
           </View>
-
-          {/* Mostrar el versionName 
-          <Text style={styles.versionText}>Versión: {appVersion}</Text>*/}
         </ScrollView>
       )}
       <FloatingButtonBar navigation={navigation} />

@@ -49,6 +49,8 @@ import SCIForm from './screens/SCIForm';
 import PlanEvacuacion from './screens/PlanEvacuacion';
 import SismoEmer from './screens/SismoEmer';
 import RutasEvacuacion from './screens/RutasEvacuacion';
+import PuntoEncuentro from './screens/PuntoEncuentro';
+import Comunicaciones from './screens/Comunicaciones';
 
 
 // Configuración de Firebase
@@ -110,6 +112,8 @@ export type RootStackParamList = {
   PlanEvacuacion:undefined;
   SismoEmer:undefined;
   RutasEvacuacion:undefined;
+  PuntoEncuentro:undefined;
+  Comunicaciones:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -187,6 +191,8 @@ const App = () => {
         <Stack.Screen name="PlanEvacuacion" component={PlanEvacuacion} />
         <Stack.Screen name="SismoEmer" component={SismoEmer} />
         <Stack.Screen name="RutasEvacuacion" component={RutasEvacuacion} />
+        <Stack.Screen name="PuntoEncuentro" component={PuntoEncuentro} />
+        <Stack.Screen name="Comunicaciones" component={Comunicaciones} />
 
       </Stack.Navigator>
     </NavigationContainer>
