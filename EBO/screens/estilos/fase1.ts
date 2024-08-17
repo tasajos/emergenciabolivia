@@ -63,7 +63,7 @@ const fase1 = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
       },
       modalView: {
-        width: 300,
+        width: '80%',
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,
@@ -83,6 +83,7 @@ const fase1 = StyleSheet.create({
         marginBottom: 15,
         color: '#333',
       },
+      
       whatsappButton: {
         backgroundColor: '#25D366',
         paddingVertical: 10,
@@ -94,7 +95,31 @@ const fase1 = StyleSheet.create({
         color: 'white',
         fontSize: 16,
       },
-
+      botonesContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        width: '100%', // Asegurarse de que los botones ocupen todo el ancho disponible
+      },
+      botonModal: {
+        paddingVertical: 10,  // Reduce el padding vertical para evitar cortar el texto
+        paddingHorizontal: 15,
+        borderRadius: 5,
+        flex: 1, 
+        alignItems: 'center',
+        justifyContent: 'center',  // Asegura que el texto esté centrado
+        backgroundColor: '#FF6347', // Añadir color de fondo para el botón del modal de fallo
+    },
+      textoBoton: {
+        color: '#fff',
+        fontSize: 14,
+        textAlign: 'center',
+      },
+      textoBotonFallo: {
+        color: '#fff', // Asegura que el texto sea blanco
+        fontSize: 16,
+        textAlign: 'center',
+      },
 
 
   });

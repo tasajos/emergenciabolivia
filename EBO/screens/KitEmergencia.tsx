@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Button, TouchableOpacity, ActivityIndicator, Image, Modal, Share } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image, Modal, Share,Button  } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
@@ -34,7 +34,6 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
 
   const validos = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15]; // IDs de elementos válidos
 
-  // Mapeo de índices a nombres descriptivos
   const nombresFase1 = {
     1: 'Debajo de una mesa sólida',
     4: 'En una esquina interna',
@@ -168,13 +167,13 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
 
   const compartirPorWhatsApp = async () => {
     const mensaje = `
-      ¡He completado el ejercicio de preparación!
-      Resultados:
-      Fase 1: ${seleccionadosFase1.map(indice => obtenerNombreElemento(nombresFase1, indice)).filter(Boolean).join(', ')}
-      Fase 2: ${seleccionadosFase2.map(indice => obtenerNombreElemento(nombresFase2, indice)).filter(Boolean).join(', ')}
-      Fase 3: ${seleccionadosFase3.map(indice => obtenerNombreElemento(nombresFase3, indice)).filter(Boolean).join(', ')}
-      Fase 4: ${seleccionadosFase4.map(indice => obtenerNombreElemento(nombresFase4, indice)).filter(Boolean).join(', ')}
-      Fase 5: ${seleccionados.map(indice => obtenerNombreElemento(nombresFase5, indice)).filter(Boolean).join(', ')}
+      ¡Has completado el ejercicio de preparación!
+      Aqui tienes tu Plan Familiar:
+      *Fase 1: Identificacion Zonas Seguras* ${seleccionadosFase1.map(indice => obtenerNombreElemento(nombresFase1, indice)).filter(Boolean).join(', ')}
+      *Fase 2: Rutas de Evacuacion* ${seleccionadosFase2.map(indice => obtenerNombreElemento(nombresFase2, indice)).filter(Boolean).join(', ')}
+      *Fase 3: Punto de Encuentro* ${seleccionadosFase3.map(indice => obtenerNombreElemento(nombresFase3, indice)).filter(Boolean).join(', ')}
+      *Fase 4: Comunicaciones* ${seleccionadosFase4.map(indice => obtenerNombreElemento(nombresFase4, indice)).filter(Boolean).join(', ')}
+      *Fase 5: Kit de Emergencia* ${seleccionados.map(indice => obtenerNombreElemento(nombresFase5, indice)).filter(Boolean).join(', ')}
     `;
     try {
       await Share.share({
@@ -275,34 +274,50 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
 
             {/* Modal de éxito */}
             <Modal
-              animationType="slide"
-              transparent={true}
-              visible={mostrarModalExito}
-              onRequestClose={() => setMostrarModalExito(false)}
-            >
-              <View style={fase1.modalContainer}>
-                <View style={fase1.modalView}>
-                  <Text style={fase1.modalText}>¡Felicidades! Seleccionaste el número mínimo de elementos válidos.</Text>
-                  <Button title="Compartir por WhatsApp" onPress={compartirPorWhatsApp} style={{ marginBottom: 10 }} />
-                  <Button title="Finalizar" onPress={finalizar} />
-                </View>
-              </View>
-            </Modal>
+  animationType="slide"
+  transparent={true}
+  visible={mostrarModalExito}
+  onRequestClose={() => setMostrarModalExito(false)}
+>
+  <View style={fase1.modalContainer}>
+    <View style={fase1.modalView}>
+      <Text style={fase1.modalText}>¡Felicidades! Seleccionaste el número mínimo de elementos válidos.</Text>
+      <View style={fase1.botonesContainer}>
+        <TouchableOpacity
+          style={[fase1.botonModal, { backgroundColor: '#25D366', marginRight: 10 }]}
+          onPress={compartirPorWhatsApp}
+        >
+          <Text style={fase1.textoBoton}>Compartir por WhatsApp</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[fase1.botonModal, { backgroundColor: '#007BFF', marginLeft: 10 }]}
+          onPress={finalizar}
+        >
+          <Text style={fase1.textoBoton}>Finalizar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
 
             {/* Modal de fallo */}
             <Modal
-              animationType="slide"
-              transparent={true}
-              visible={mostrarModalFallo}
-              onRequestClose={() => setMostrarModalFallo(false)}
-            >
-              <View style={fase1.modalContainer}>
-                <View style={fase1.modalView}>
-                  <Text style={fase1.modalText}>¡No alcanzaste el límite necesario de elementos válidos!</Text>
-                  <Button title="Inténtalo de nuevo" onPress={intentarDeNuevo} />
-                </View>
-              </View>
-            </Modal>
+  animationType="slide"
+  transparent={true}
+  visible={mostrarModalFallo}
+  onRequestClose={() => setMostrarModalFallo(false)}
+>
+  <View style={fase1.modalContainer}>
+    <View style={fase1.modalView}>
+      <Text style={fase1.modalText}>¡No alcanzaste el límite necesario de elementos válidos!</Text>
+      <Button
+        title="Inténtalo de nuevo"
+        color="#FF6347"
+        onPress={intentarDeNuevo}
+      />
+    </View>
+  </View>
+</Modal>
           </View>
         </ScrollView>
       )}
