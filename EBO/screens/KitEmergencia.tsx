@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Button, TouchableOpacity, ActivityIndicator, Image, Modal } from 'react-native';
+import { View, Text, ScrollView, Button, TouchableOpacity, ActivityIndicator, Image, Modal, Share } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import FloatingButtonBar from './FloatingButtonBar';
 import DeviceInfo from 'react-native-device-info';
@@ -33,6 +33,48 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
   const seleccionadosFase4 = route.params.seleccionadosFase4;
 
   const validos = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 14, 15]; // IDs de elementos válidos
+
+  // Mapeo de índices a nombres descriptivos
+  const nombresFase1 = {
+    1: 'Debajo de una mesa sólida',
+    4: 'En una esquina interna',
+    7: 'Debajo de una viga',
+    10: 'En el patio'
+  };
+
+  const nombresFase2 = {
+    1: 'Salir por la puerta principal',
+    4: 'Usar las escaleras de emergencia',
+    8: 'Salir por la puerta trasera'
+  };
+
+  const nombresFase3 = {
+    1: 'Frente a la casa',
+    2: 'En el parque del barrio',
+    4: 'En la esquina de la calle'
+  };
+
+  const nombresFase4 = {
+    1: 'Informar a todos los miembros de la familia sobre el plan de emergencia',
+    3: 'Contactar a las autoridades locales antes del sismo',
+    5: 'Enviar mensajes de texto para confirmar la seguridad después del sismo'
+  };
+
+  const nombresFase5 = {
+    1: 'Agua embotellada',
+    2: 'Comida no perecedera',
+    3: 'Ropa de abrigo',
+    4: 'Juguetes para niños',
+    5: 'Dinero en efectivo',
+    7: 'Medicamentos',
+    8: 'Suministros de higiene',
+    9: 'Pasaporte',
+    10: 'Linterna',
+    11: 'Documentos importantes',
+    12: 'Zapatos cómodos',
+    14: 'Mantita',
+    15: 'Papel higiénico',
+  };
 
   useEffect(() => {
     setAppVersion(DeviceInfo.getReadableVersion());
@@ -120,6 +162,29 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
     });
   };
 
+  const obtenerNombreElemento = (fase: any, indice: number) => {
+    return indice > 0 ? fase[indice] || `Elemento ${indice}` : null;
+  };
+
+  const compartirPorWhatsApp = async () => {
+    const mensaje = `
+      ¡He completado el ejercicio de preparación!
+      Resultados:
+      Fase 1: ${seleccionadosFase1.map(indice => obtenerNombreElemento(nombresFase1, indice)).filter(Boolean).join(', ')}
+      Fase 2: ${seleccionadosFase2.map(indice => obtenerNombreElemento(nombresFase2, indice)).filter(Boolean).join(', ')}
+      Fase 3: ${seleccionadosFase3.map(indice => obtenerNombreElemento(nombresFase3, indice)).filter(Boolean).join(', ')}
+      Fase 4: ${seleccionadosFase4.map(indice => obtenerNombreElemento(nombresFase4, indice)).filter(Boolean).join(', ')}
+      Fase 5: ${seleccionados.map(indice => obtenerNombreElemento(nombresFase5, indice)).filter(Boolean).join(', ')}
+    `;
+    try {
+      await Share.share({
+        message: mensaje,
+      });
+    } catch (error) {
+      console.error("Error al compartir:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -144,10 +209,7 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
             {seleccionadosFase1.map((indice, i) => (
               <View key={i} style={fase1.itemCorrecto}>
                 <Text style={fase1.textoItem}>
-                  {indice === 1 && 'Debajo de una mesa sólida'}
-                  {indice === 4 && 'En una esquina interna'}
-                  {indice === 7 && 'Debajo de una viga'}
-                  {indice === 10 && 'En el patio'}
+                  {obtenerNombreElemento(nombresFase1, indice)}
                 </Text>
               </View>
             ))}
@@ -155,9 +217,7 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
             {seleccionadosFase2.map((indice, i) => (
               <View key={i} style={fase1.itemCorrecto}>
                 <Text style={fase1.textoItem}>
-                  {indice === 1 && 'Salir por la puerta principal'}
-                  {indice === 4 && 'Usar las escaleras de emergencia'}
-                  {indice === 8 && 'Salir por la puerta trasera'}
+                  {obtenerNombreElemento(nombresFase2, indice)}
                 </Text>
               </View>
             ))}
@@ -165,9 +225,7 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
             {seleccionadosFase3.map((indice, i) => (
               <View key={i} style={fase1.itemCorrecto}>
                 <Text style={fase1.textoItem}>
-                  {indice === 1 && 'Frente a la casa'}
-                  {indice === 2 && 'En el parque del barrio'}
-                  {indice === 4 && 'En la esquina de la calle'}
+                  {obtenerNombreElemento(nombresFase3, indice)}
                 </Text>
               </View>
             ))}
@@ -175,9 +233,7 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
             {seleccionadosFase4.map((indice, i) => (
               <View key={i} style={fase1.itemCorrecto}>
                 <Text style={fase1.textoItem}>
-                  {indice === 1 && 'Informar a todos los miembros de la familia sobre el plan de emergencia'}
-                  {indice === 3 && 'Contactar a las autoridades locales antes del sismo'}
-                  {indice === 5 && 'Enviar mensajes de texto para confirmar la seguridad después del sismo'}
+                  {obtenerNombreElemento(nombresFase4, indice)}
                 </Text>
               </View>
             ))}
@@ -227,6 +283,7 @@ const KitEmergencia: React.FC<Props> = ({ navigation, route }) => {
               <View style={fase1.modalContainer}>
                 <View style={fase1.modalView}>
                   <Text style={fase1.modalText}>¡Felicidades! Seleccionaste el número mínimo de elementos válidos.</Text>
+                  <Button title="Compartir por WhatsApp" onPress={compartirPorWhatsApp} style={{ marginBottom: 10 }} />
                   <Button title="Finalizar" onPress={finalizar} />
                 </View>
               </View>

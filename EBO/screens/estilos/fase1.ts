@@ -83,6 +83,18 @@ const fase1 = StyleSheet.create({
         marginBottom: 15,
         color: '#333',
       },
+      whatsappButton: {
+        backgroundColor: '#25D366',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginTop: 10,
+      },
+      whatsappButtonText: {
+        color: 'white',
+        fontSize: 16,
+      },
+
 
 
   });
