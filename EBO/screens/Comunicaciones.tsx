@@ -7,7 +7,7 @@ import styles from './estilos/EstilosIniciales';
 import fase1 from './estilos/fase1';
 
 type RootStackParamList = {
-  FinalPantalla: undefined;
+    KitEmergencia: undefined;
 };
 
 type Props = {
@@ -88,7 +88,7 @@ const Comunicaciones: React.FC<Props> = ({ navigation, route }) => {
   );
 
   const siguienteFase = () => {
-    navigation.navigate('FinalPantalla', {
+    navigation.navigate('KitEmergencia', {
       seleccionadosFase1: route.params.seleccionadosFase1,
       seleccionadosFase2: route.params.seleccionadosFase2,
       seleccionadosFase3: route.params.seleccionadosFase3,
@@ -172,7 +172,7 @@ const Comunicaciones: React.FC<Props> = ({ navigation, route }) => {
 
             {habilitarBoton && (
               <View style={fase1.botonSiguienteContainer}>
-                <Button title="Finalizar" onPress={siguienteFase} />
+                <Button title="Siguiente Fase" onPress={siguienteFase} />
               </View>
             )}
           </View>

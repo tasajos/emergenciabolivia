@@ -51,6 +51,7 @@ import SismoEmer from './screens/SismoEmer';
 import RutasEvacuacion from './screens/RutasEvacuacion';
 import PuntoEncuentro from './screens/PuntoEncuentro';
 import Comunicaciones from './screens/Comunicaciones';
+import KitEmergencia from './screens/KitEmergencia';
 
 
 // Configuración de Firebase
@@ -114,6 +115,7 @@ export type RootStackParamList = {
   RutasEvacuacion:undefined;
   PuntoEncuentro:undefined;
   Comunicaciones:undefined;
+  KitEmergencia:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -193,6 +195,7 @@ const App = () => {
         <Stack.Screen name="RutasEvacuacion" component={RutasEvacuacion} />
         <Stack.Screen name="PuntoEncuentro" component={PuntoEncuentro} />
         <Stack.Screen name="Comunicaciones" component={Comunicaciones} />
+        <Stack.Screen name="KitEmergencia" component={KitEmergencia} />
 
       </Stack.Navigator>
     </NavigationContainer>
