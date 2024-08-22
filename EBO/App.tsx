@@ -46,6 +46,12 @@ import OporVoluntarios from './screens/OporVoluntarios';
 import AlertaEmergenciaInforme from './screens/AlertaEmergenciaInforme';
 import firebase from '@react-native-firebase/app';
 import SCIForm from './screens/SCIForm';
+import PlanEvacuacion from './screens/PlanEvacuacion';
+import SismoEmer from './screens/SismoEmer';
+import RutasEvacuacion from './screens/RutasEvacuacion';
+import PuntoEncuentro from './screens/PuntoEncuentro';
+import Comunicaciones from './screens/Comunicaciones';
+import KitEmergencia from './screens/KitEmergencia';
 
 
 // Configuración de Firebase
@@ -104,6 +110,12 @@ export type RootStackParamList = {
   AlertaEmergenciaInforme:undefined;
   ReporteEmergencia:undefined;
   SCIForm:undefined;
+  PlanEvacuacion:undefined;
+  SismoEmer:undefined;
+  RutasEvacuacion:undefined;
+  PuntoEncuentro:undefined;
+  Comunicaciones:undefined;
+  KitEmergencia:undefined;
   Ambulanciasepr: {
     unidad: Unidad;
   } | undefined;
@@ -178,6 +190,12 @@ const App = () => {
         <Stack.Screen name="OporVoluntarios" component={OporVoluntarios} />
         <Stack.Screen name="AlertaEmergenciaInforme" component={AlertaEmergenciaInforme} />
         <Stack.Screen name="SCIForm" component={SCIForm} />
+        <Stack.Screen name="PlanEvacuacion" component={PlanEvacuacion} />
+        <Stack.Screen name="SismoEmer" component={SismoEmer} />
+        <Stack.Screen name="RutasEvacuacion" component={RutasEvacuacion} />
+        <Stack.Screen name="PuntoEncuentro" component={PuntoEncuentro} />
+        <Stack.Screen name="Comunicaciones" component={Comunicaciones} />
+        <Stack.Screen name="KitEmergencia" component={KitEmergencia} />
 
       </Stack.Navigator>
     </NavigationContainer>
