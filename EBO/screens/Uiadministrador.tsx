@@ -8,12 +8,15 @@ import {
     TouchableOpacity, 
     SafeAreaView,
     StyleSheet,
-    ActivityIndicator,
-    ScrollView // Necesitamos ScrollView para el contenedor general
+    ActivityIndicator 
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
+// Necesitaremos un ícono. Asegúrate de tener react-native-vector-icons instalado
+import Icon from 'react-native-vector-icons/Ionicons';
+
+const LIST_FIXED_HEIGHT = 500; // MEJORA: Definimos la altura en una constante para reutilizarla
 
 const Uiadministrador = () => {
   const [emergencias, setEmergencias] = useState([]);
@@ -21,8 +24,13 @@ const Uiadministrador = () => {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
+  // --- MEJORA: Estados para el indicador de scroll ---
+  const [isListScrollable, setIsListScrollable] = useState(false);
+  const [hasUserScrolled, setHasUserScrolled] = useState(false);
+
   // Tu lógica de carga de datos no cambia
   useEffect(() => {
+    //... (tu useEffect para emergencias, sin cambios)
     const emergenciasRef = database().ref('ultimasEmergencias').orderByChild('estado').equalTo('Activo');
     const onValueChange = emergenciasRef.on('value', (snapshot) => {
       const data = [];
@@ -49,6 +57,7 @@ const Uiadministrador = () => {
   }, []);
 
   useEffect(() => {
+    //... (tu useEffect para botones, sin cambios)
     const botonesRef = database().ref('/BotonesEmergencia');
     const onValueChange = botonesRef.on('value', (snapshot) => {
       const data = [];
@@ -66,6 +75,20 @@ const Uiadministrador = () => {
     });
     return () => botonesRef.off('value', onValueChange);
   }, []);
+  
+  // --- MEJORA: Funciones para manejar el scroll ---
+  const handleContentSizeChange = (contentWidth, contentHeight) => {
+    // Si la altura del contenido es mayor que la altura fija de la caja, la lista es desplazable
+    setIsListScrollable(contentHeight > LIST_FIXED_HEIGHT);
+  };
+  
+  const handleScroll = (event) => {
+    // Si el usuario se ha desplazado un poco desde la parte superior, ocultamos el indicador
+    if (event.nativeEvent.contentOffset.y > 10) {
+      setHasUserScrolled(true);
+    }
+  };
+
 
   const renderItemEmergencia = ({ item }) => (
     <TouchableOpacity 
@@ -100,56 +123,56 @@ const Uiadministrador = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 1. Header Fijo */}
       <View style={styles.topHeaderContainer}>
         <Text style={styles.supportText}>Con el Apoyo de</Text>
         <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
       </View>
       
-      {/* 2. ScrollView principal que envuelve el contenido que puede cambiar de tamaño */}
-      <ScrollView>
+      {/* MEJORA: Envolvemos la lista en un View para poder posicionar el ícono sobre ella */}
+      <View style={styles.listWrapper}>
         {loading ? (
-          <ActivityIndicator size="large" color="#007BFF" style={{ marginVertical: 40 }}/>
+          <ActivityIndicator size="large" color="#007BFF" style={{ height: LIST_FIXED_HEIGHT }}/>
         ) : (
-          <>
-            {/* Este View contiene la lista de emergencias */}
-            <View>
-              <SectionList
-                // LA CLAVE: Le damos una altura fija a la lista.
-                // Si su contenido es mayor, tendrá su propio scroll interno.
-                style={styles.emergencyListBox}
-                sections={emergencias}
-                renderItem={renderItemEmergencia}
-                renderSectionHeader={renderSectionHeader}
-                keyExtractor={(item) => item.key}
-                ListEmptyComponent={<Text style={styles.emptyListText}>No hay emergencias activas.</Text>}
-                // El `nestedScrollEnabled` ayuda a que el scroll funcione correctamente dentro de un ScrollView
-                nestedScrollEnabled={true}
-              />
-            </View>
-  
-            {/* La sección de botones aparece justo debajo, como un bloque normal */}
-            <View style={styles.buttonSectionContainer}>
-              <Text style={styles.sectionHeaderText}>Sección de Emergencia</Text>
-              <FlatList 
-                data={botones}
-                renderItem={renderItemBoton}
-                keyExtractor={(item) => item.key}
-                numColumns={2}
-                scrollEnabled={false} // Esta lista no necesita scroll
-              />
-            </View>
-          </>
+          <SectionList
+            style={styles.emergencyList}
+            sections={emergencias}
+            renderItem={renderItemEmergencia}
+            renderSectionHeader={renderSectionHeader}
+            keyExtractor={(item) => item.key}
+            ListEmptyComponent={<Text style={styles.emptyListText}>No hay emergencias activas.</Text>}
+            // --- MEJORA: Propiedades para detectar el scroll ---
+            onContentSizeChange={handleContentSizeChange}
+            onScroll={handleScroll}
+            scrollEventThrottle={16} // Para que el evento onScroll no se dispare con demasiada frecuencia
+          />
         )}
-      </ScrollView>
+        
+        {/* MEJORA: Renderizado condicional del ícono indicador */}
+        {isListScrollable && !hasUserScrolled && (
+            <View style={styles.scrollIndicator}>
+        <Image
+            source={require('../imagenes/flecha-hacia-abajo.png')}
+            style={styles.scrollIndicatorIcon}
+        />
+    </View>
+        )}
+      </View>
+  
+      <View style={styles.buttonSectionContainer}>
+        <Text style={styles.sectionHeaderText}>Sección de Emergencia</Text>
+        <FlatList 
+          data={botones}
+          renderItem={renderItemBoton}
+          keyExtractor={(item) => item.key}
+          numColumns={2}
+        />
+      </View>
 
-      {/* 3. El footer con la barra de navegación queda al final */}
       <FloatingButtonAdmin />
     </SafeAreaView>
   );
 };
 
-// --- Estilos Finales ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -165,12 +188,23 @@ const styles = StyleSheet.create({
   },
   supportText: { fontSize: 14, color: '#666' },
   logo: { height: 40, resizeMode: 'contain', marginVertical: 4 },
-
-  // ¡LA SOLUCIÓN ESTÁ AQUÍ!
-  emergencyListBox: {
-    // Le damos una altura fija. Si hay más de 4-5 tarjetas, esta caja tendrá scroll.
-    // ¡Puedes cambiar este número para ajustar el tamaño de la caja!
-    height: 500, 
+  
+  // MEJORA: Contenedor para la lista y el ícono
+  listWrapper: {
+    height: LIST_FIXED_HEIGHT, // Usamos la constante aquí
+  },
+  emergencyList: {
+    // La lista ocupa todo el espacio de su contenedor
+    flex: 1,
+  },
+  // MEJORA: Estilo para el ícono indicador de scroll
+  scrollIndicator: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    opacity: 0.7,
   },
 
   buttonSectionContainer: {
@@ -191,6 +225,10 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 16,
   },
+  scrollIndicatorIcon: {
+    width: 24, // Puedes ajustar el ancho
+    height: 24, // Puedes ajustar el alto
+},
   card: {
     backgroundColor: 'white',
     borderRadius: 12,
@@ -199,7 +237,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     elevation: 3,
   },
-  cardImage: { width: 100, height: 100, backgroundColor: '#E0E0E0' },
+  cardImage: { width: 100, height: 100, backgroundColor: '#E0E0E0', borderTopLeftRadius: 12, borderBottomLeftRadius: 12 },
   cardContent: { padding: 12, flex: 1, justifyContent: 'center' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   statusIndicator: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },

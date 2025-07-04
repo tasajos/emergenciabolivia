@@ -17,4 +17,5 @@ versionName "E 2.1.7"
 
 - Uiadministrador
 
-
+## Commit 003/2025
+- Uiadministrador flecha abajo
