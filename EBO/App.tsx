@@ -7,7 +7,7 @@ import RecInfo from './screens/RecInfo'; // Asegúrate de importar tu nueva pant
 import unidadesepr from './screens/unidadesepr';
 import { Unidad } from './screens/types';
 import kitset from './screens/kitset';
-import Eventoscreen from './screens/Eventoscreen';
+import Eventoscreen from './screens/eventoscreen';
 import Eventosv2 from './screens/Eventosv2';
 import Amscreen from './screens/Amscreen';
 import Ifscreen from './screens/Ifscreen';
@@ -15,7 +15,7 @@ import Iescreen from './screens/Iescreen';
 import Rascreen from './screens/Rascreen';
 import Rscreen from './screens/Rscreen';
 import Dscreen from './screens/Dscreen';
-import Ubicacionesbom from './screens/Ubicacionesbom';
+import Ubicacionesbom from './screens/ubicacionesbom';
 import Contacto from './screens/Contacto';
 import Kitterremoto from './screens/Kitterremoto';
 import Kitinundacion from './screens/Kitinundacion';

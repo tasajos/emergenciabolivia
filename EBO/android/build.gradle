@@ -16,7 +16,9 @@ buildscript {
     }
     dependencies {
         //classpath("com.android.tools.build:gradle")
-        classpath("com.android.tools.build:gradle:8.0.0")
+        //classpath("com.android.tools.build:gradle:8.0.0")
+        // Asegúrate de que la línea se vea así:
+        classpath ('com.android.tools.build:gradle:8.2.1')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
         //classpath 'com.google.gms:google-services:4.3.10'
