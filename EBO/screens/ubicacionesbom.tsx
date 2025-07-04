@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview';
 import FloatingButtonBar from './FloatingButtonBar';
 import { StackNavigationProp } from '@react-navigation/stack';
 
-
+//sd
 type RootStackParamList = {
     Ubicacionesboms: undefined;
   };
