@@ -16,7 +16,7 @@ import FloatingButtonAdmin from './FloatingButtonAdmin';
 // Necesitaremos un ícono. Asegúrate de tener react-native-vector-icons instalado
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const LIST_FIXED_HEIGHT = 500; // MEJORA: Definimos la altura en una constante para reutilizarla
+const LIST_FIXED_HEIGHT = 400; // MEJORA: Definimos la altura en una constante para reutilizarla
 
 const Uiadministrador = () => {
   const [emergencias, setEmergencias] = useState([]);
@@ -110,7 +110,15 @@ const Uiadministrador = () => {
   const renderItemBoton = ({ item }) => (
     <TouchableOpacity 
       style={styles.actionButton}
-      onPress={() => navigation.navigate('DetalleOperacion', { item: { ...item, key: item.key } })}
+      onPress={() => {
+        // MEJORA: Lógica condicional para el botón de emergencia
+        if (item.nombre.toLowerCase() === 'emergencia') {
+          navigation.navigate('AlertaWhatsApp'); // Navega a la nueva pantalla
+        } else {
+          // Mantenemos la navegación original para los otros botones
+          navigation.navigate('DetalleOperacion', { item: { ...item, key: item.key } });
+        }
+      }}
     >
       <Image source={{ uri: item.imagen }} style={styles.actionButtonImage} />
       <Text style={styles.actionButtonText}>{item.nombre}</Text>
@@ -180,7 +188,7 @@ const styles = StyleSheet.create({
   },
   topHeaderContainer: {
     paddingTop: 10,
-    paddingBottom: 4,
+    paddingBottom: 5,
     alignItems: 'center',
     backgroundColor: 'white',
     borderBottomWidth: 1,
@@ -200,7 +208,7 @@ const styles = StyleSheet.create({
   // MEJORA: Estilo para el ícono indicador de scroll
   scrollIndicator: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 8,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -208,7 +216,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSectionContainer: {
-    paddingBottom: 10,
+    paddingBottom: 15,
     backgroundColor: '#F4F6F8',
   },
   sectionHeaderText: {
@@ -216,8 +224,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111',
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingTop: 6,
+    paddingBottom: 10,
   },
   emptyListText: {
     textAlign: 'center',
@@ -233,12 +241,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     marginHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 10,
     flexDirection: 'row',
     elevation: 3,
   },
   cardImage: { width: 100, height: 100, backgroundColor: '#E0E0E0', borderTopLeftRadius: 12, borderBottomLeftRadius: 12 },
-  cardContent: { padding: 12, flex: 1, justifyContent: 'center' },
+  cardContent: { padding: 5, flex: 1, justifyContent: 'center' },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   statusIndicator: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
   cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', flex: 1 },
@@ -250,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     marginHorizontal: 16,
-    marginVertical: 8,
+    marginVertical: 4,
     height: 100,
     borderRadius: 12,
     padding: 10,

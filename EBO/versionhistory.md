@@ -7,6 +7,8 @@ versionName "E 2.1.7"
 - Mejora en el login 
 - Optimizacion del Modal de Inicio de Sesion
 - Cambios en el Texto de Voluntarios --> Descubre
+- Optimizacion Uiadministrador
+- Boton Emergencia Envia Ubicacion
 
 ## Commit 001/2025
 
@@ -19,3 +21,6 @@ versionName "E 2.1.7"
 
 ## Commit 003/2025
 - Uiadministrador flecha abajo
+
+## Commit 004/2025
+- Boton Emergencia envia ubicacion

@@ -52,6 +52,7 @@ import RutasEvacuacion from './screens/RutasEvacuacion';
 import PuntoEncuentro from './screens/PuntoEncuentro';
 import Comunicaciones from './screens/Comunicaciones';
 import KitEmergencia from './screens/KitEmergencia';
+import AlertaWhatsAppScreen from './screens/AlertaWhatsAppScreen'; // Importa la nueva pantalla
 
 
 // Configuración de Firebase
@@ -196,6 +197,9 @@ const App = () => {
         <Stack.Screen name="PuntoEncuentro" component={PuntoEncuentro} />
         <Stack.Screen name="Comunicaciones" component={Comunicaciones} />
         <Stack.Screen name="KitEmergencia" component={KitEmergencia} />
+        <Stack.Screen name="AlertaWhatsApp" component={AlertaWhatsAppScreen} 
+        options={{ title: 'Enviando Alerta de Emergencia' }} // Título para la barra superior
+        />
 
       </Stack.Navigator>
     </NavigationContainer>
