@@ -12,3 +12,9 @@ versionName "E 2.1.7"
 
 - Uiadministrador
 - FloatingButtonAdmin
+
+## Commit 002/2025
+
+- Uiadministrador
+
+

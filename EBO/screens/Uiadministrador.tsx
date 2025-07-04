@@ -9,7 +9,7 @@ import {
     SafeAreaView,
     StyleSheet,
     ActivityIndicator,
-    ScrollView // Importamos ScrollView
+    ScrollView // Necesitamos ScrollView para el contenedor general
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
@@ -21,7 +21,7 @@ const Uiadministrador = () => {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
-  // USAMOS TU LÓGICA ORIGINAL PARA CARGAR DATOS (¡ES LA CORRECTA!)
+  // Tu lógica de carga de datos no cambia
   useEffect(() => {
     const emergenciasRef = database().ref('ultimasEmergencias').orderByChild('estado').equalTo('Activo');
     const onValueChange = emergenciasRef.on('value', (snapshot) => {
@@ -33,7 +33,7 @@ const Uiadministrador = () => {
           title: val.Titulo || '',
           city: val.ciudad || '',
           description: val.descripcion || '',
-          ubicacion: val.ubicacion || '', // <-- LA LÍNEA IMPORTANTE, AHORA ESTÁ AQUÍ
+          ubicacion: val.ubicacion || '',
           type: val.tipo || '',
           state: val.estado || '',
           date: val.fecha || '',
@@ -42,7 +42,6 @@ const Uiadministrador = () => {
         });
         return false;
       });
-      // La data para SectionList debe tener un formato específico
       setEmergencias([{ title: "Emergencias Activas", data: data.reverse() }]);
       setLoading(false);
     });
@@ -68,11 +67,9 @@ const Uiadministrador = () => {
     return () => botonesRef.off('value', onValueChange);
   }, []);
 
-  // Render para la tarjeta de emergencia con el nuevo diseño
   const renderItemEmergencia = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
-      // USAMOS TU NAVEGACIÓN ORIGINAL (¡ES LA CORRECTA!)
       onPress={() => navigation.navigate('Uiscreendetalle', { item: { ...item, key: item.key } })}
     >
       <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
@@ -87,7 +84,6 @@ const Uiadministrador = () => {
     </TouchableOpacity>
   );
 
-  // Render para los botones con el nuevo diseño
   const renderItemBoton = ({ item }) => (
     <TouchableOpacity 
       style={styles.actionButton}
@@ -109,50 +105,55 @@ const Uiadministrador = () => {
         <Text style={styles.supportText}>Con el Apoyo de</Text>
         <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
       </View>
-
-      {/* 2. Un único ScrollView para todo el contenido */}
-      <ScrollView style={styles.mainContent}>
+      
+      {/* 2. ScrollView principal que envuelve el contenido que puede cambiar de tamaño */}
+      <ScrollView>
         {loading ? (
-            <ActivityIndicator size="large" color="#007BFF" style={{ marginTop: 40 }}/>
+          <ActivityIndicator size="large" color="#007BFF" style={{ marginVertical: 40 }}/>
         ) : (
           <>
-            <SectionList 
-              sections={emergencias}
-              renderItem={renderItemEmergencia}
-              renderSectionHeader={renderSectionHeader}
-              keyExtractor={(item) => item.key}
-              ListEmptyComponent={<Text style={styles.emptyListText}>No hay emergencias activas.</Text>}
-              scrollEnabled={false} // El scroll lo maneja el ScrollView padre
-            />
-
-            <View style={styles.fixedSectionContainer}>
+            {/* Este View contiene la lista de emergencias */}
+            <View>
+              <SectionList
+                // LA CLAVE: Le damos una altura fija a la lista.
+                // Si su contenido es mayor, tendrá su propio scroll interno.
+                style={styles.emergencyListBox}
+                sections={emergencias}
+                renderItem={renderItemEmergencia}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item) => item.key}
+                ListEmptyComponent={<Text style={styles.emptyListText}>No hay emergencias activas.</Text>}
+                // El `nestedScrollEnabled` ayuda a que el scroll funcione correctamente dentro de un ScrollView
+                nestedScrollEnabled={true}
+              />
+            </View>
+  
+            {/* La sección de botones aparece justo debajo, como un bloque normal */}
+            <View style={styles.buttonSectionContainer}>
               <Text style={styles.sectionHeaderText}>Sección de Emergencia</Text>
               <FlatList 
                 data={botones}
                 renderItem={renderItemBoton}
                 keyExtractor={(item) => item.key}
                 numColumns={2}
-                scrollEnabled={false} // El scroll lo maneja el ScrollView padre
+                scrollEnabled={false} // Esta lista no necesita scroll
               />
             </View>
           </>
         )}
       </ScrollView>
 
-      {/* 3. Footer Fijo con la barra de navegación */}
+      {/* 3. El footer con la barra de navegación queda al final */}
       <FloatingButtonAdmin />
     </SafeAreaView>
   );
 };
 
-// --- Estilos para la UI Corregida ---
+// --- Estilos Finales ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F6F8',
-  },
-  mainContent: {
-    flex: 1,
   },
   topHeaderContainer: {
     paddingTop: 10,
@@ -164,7 +165,15 @@ const styles = StyleSheet.create({
   },
   supportText: { fontSize: 14, color: '#666' },
   logo: { height: 40, resizeMode: 'contain', marginVertical: 4 },
-  fixedSectionContainer: {
+
+  // ¡LA SOLUCIÓN ESTÁ AQUÍ!
+  emergencyListBox: {
+    // Le damos una altura fija. Si hay más de 4-5 tarjetas, esta caja tendrá scroll.
+    // ¡Puedes cambiar este número para ajustar el tamaño de la caja!
+    height: 500, 
+  },
+
+  buttonSectionContainer: {
     paddingBottom: 10,
     backgroundColor: '#F4F6F8',
   },
@@ -173,13 +182,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111',
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 16,
     paddingBottom: 8,
   },
   emptyListText: {
     textAlign: 'center',
-    marginTop: 20,
-    padding: 20,
+    padding: 40,
     color: '#666',
     fontSize: 16,
   },
@@ -187,9 +195,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     marginHorizontal: 16,
-    marginTop: 16,
+    marginBottom: 16,
     flexDirection: 'row',
-    overflow: 'hidden',
     elevation: 3,
   },
   cardImage: { width: 100, height: 100, backgroundColor: '#E0E0E0' },
