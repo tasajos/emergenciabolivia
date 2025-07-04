@@ -1,0 +1,4 @@
+1.-
+.\gradlew bundleRelease
+
+2.- Asegurate de tener la llave keystore
