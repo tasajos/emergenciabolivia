@@ -39,6 +39,9 @@ type EmergencyHistory = {
 };
 
 type UiscreendetalleRouteProp = RouteProp<{ params: { item: EmergencyDetail } }, 'params'>;
+
+
+
 type Props = {
   route: UiscreendetalleRouteProp;
 };

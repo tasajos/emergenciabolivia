@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import { 
+    StyleSheet, 
+    ScrollView, 
+    View, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    Image, 
+    Alert,
+    Modal,
+    ActivityIndicator
+} from 'react-native';
 import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
-import { Modal } from 'react-native';
 import database from '@react-native-firebase/database';
+// MEJORA: Importamos un ícono para el campo de la contraseña.
+// Asegúrate de tener instalada la librería: npm install react-native-vector-icons
+// O si usas Expo, ya viene incluida.
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Tipos de navegación, sin cambios.
 type RootStackParamList = {
   Login: undefined;
   Uiadministrador: undefined;
@@ -17,61 +32,67 @@ type Props = {
 };
 
 const Login: React.FC<Props> = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
-const [modalMessage, setModalMessage] = useState('');
-const [modalIcon, setModalIcon] = useState(null); // Para almacenar la imagen del ícono
-
-
-const handleLogin = async () => {
-  if (email.trim() === '' || password.trim() === '') {
-    setModalMessage("Por favor, ingrese un correo electrónico y una contraseña.");
-    setModalIcon(require('../imagenes/error-icon.png')); // Cambia a la ruta de tu ícono de error
-    setModalVisible(true);
-    return;
-  }
   
-  try {
-    let response = await auth().signInWithEmailAndPassword(email, password);
-    if (response && response.user) {
-      const userId = response.user.uid;
-      const userRef = database().ref(`/UsuariosVbo/${userId}`);
-      userRef.on('value', (snapshot) => {
-        const userData = snapshot.val();
+  // --- MEJORA: Nuevos estados para una mejor UX ---
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalIcon, setModalIcon] = useState<number | null>(null); // Tipo explícito para la imagen
+  const [isLoading, setIsLoading] = useState(false); // Para el spinner del botón
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Para mostrar/ocultar contraseña
+
+  // MEJORA: Función centralizada para mostrar el modal de feedback.
+  const showModal = (message: string, isError: boolean) => {
+    setModalMessage(message);
+    setModalIcon(isError ? require('../imagenes/error-icon.png') : require('../imagenes/autenticacion.png'));
+    setModalVisible(true);
+  };
+
+  const handleLogin = async () => {
+    if (email.trim() === '' || password.trim() === '') {
+      showModal("Por favor, ingrese un correo y una contraseña.", true);
+      return;
+    }
+    
+    setIsLoading(true); // MEJORA: Inicia la carga
+    
+    try {
+      const response = await auth().signInWithEmailAndPassword(email.trim(), password);
+      if (response.user) {
+        const userId = response.user.uid;
+        // ¡FIX CRÍTICO! Usamos .once() para leer los datos una sola vez y evitar fugas de memoria.
+        const userSnapshot = await database().ref(`/UsuariosVbo/${userId}`).once('value');
+        const userData = userSnapshot.val();
+        
         if (userData && userData.rol === 'Voluntario') {
-          setModalMessage("Login Exitoso");
-          setModalIcon(require('../imagenes/autenticacion.png')); // Cambia a la ruta de tu ícono de éxito
-          setModalVisible(true);
+          showModal("Login Exitoso", false);
           setTimeout(() => {
             setModalVisible(false);
-            navigation.navigate('Uiadministrador' as never);
-          }, 2000); // Cerrar modal después de 2 segundos
+            navigation.navigate('Uiadministrador'); // No más 'as never'
+          }, 2000);
         } else {
-          setModalMessage("No tienes el rol de voluntario necesario para acceder a esta sección.");
-          setModalIcon(require('../imagenes/error-icon.png'));
-          setModalVisible(true);
-          auth().signOut();
+          showModal("No tienes el rol de voluntario necesario.", true);
+          await auth().signOut();
         }
-      });
+      }
+    } catch (error: any) {
+      let message;
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+        message = "El correo electrónico ingresado no existe.";
+      } else if (error.code === 'auth/wrong-password') {
+        message = "La contraseña es incorrecta.";
+      } else {
+        message = "Ocurrió un error inesperado. Inténtelo de nuevo.";
+      }
+      showModal(message, true);
+    } finally {
+        setIsLoading(false); // MEJORA: Termina la carga, tanto en éxito como en error.
     }
-  } catch (error: any) {
-    let message;
-    if (error.code === 'auth/user-not-found') {
-      message = "No existe una cuenta para el correo electrónico ingresado.";
-    } else if (error.code === 'auth/wrong-password') {
-      message = "La contraseña ingresada es incorrecta.";
-    } else {
-      message = "Ha ocurrido un error inesperado. Por favor intente de nuevo.";
-    }
+  };
 
-    setModalMessage(message);
-    setModalIcon(require('../imagenes/error-icon.png'));
-    setModalVisible(true);
-  }
-};
-
+  // Función original de recuperación, se podría mejorar para que use el Modal en lugar de Alert.
   const handlePasswordRecovery = () => {
     if (email.trim() === '') {
       Alert.alert('Ingrese email', 'Por favor ingrese su email para resetear su password.');
@@ -91,69 +112,90 @@ const handleLogin = async () => {
         } else {
           message = error.message;
         }
-      
         Alert.alert("Error", message);
       });
   };
 
   return (
     <View style={styles.mainContainer}>
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(false)}
-    >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <Image source={modalIcon} style={styles.modalIcon} />
-          <Text style={styles.modalText}>{modalMessage}</Text>
-          <TouchableOpacity
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={styles.textStyle}>Cerrar</Text>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            {modalIcon && <Image source={modalIcon} style={styles.modalIcon} />}
+            <Text style={styles.modalText}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.textStyle}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.version}>Login</Text>
+          <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
+          
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              onChangeText={setEmail}
+              value={email}
+              placeholder="Email"
+              placeholderTextColor="#999"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+          
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              onChangeText={setPassword}
+              value={password}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              secureTextEntry={!isPasswordVisible}
+            />
+            <TouchableOpacity 
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={styles.eyeIcon}
+            >
+              <Ionicons name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} size={24} color="grey" />
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text style={styles.buttonText}>INICIAR SESION</Text>
+            )}
+          </TouchableOpacity>
+          
+          <TouchableOpacity onPress={handlePasswordRecovery}>
+            <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
-
-    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.version}>Login</Text>
-        <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
-        <TextInput
-          style={styles.input}
-          onChangeText={setEmail}
-          value={email}
-          placeholder="Email"
-          placeholderTextColor="#999"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
-          placeholderTextColor="#999"
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handlePasswordRecovery}>
-          <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-    <View style={styles.floatingButtonBarContainer}>
-      <FloatingButtonBar navigation={navigation} />
+      </ScrollView>
+      
+      {/* MEJORA: Se recomienda quitar la barra de navegación de la pantalla de Login para una mejor UX */}
+      {/* <View style={styles.floatingButtonBarContainer}>
+        <FloatingButtonBar navigation={navigation} />
+      </View> 
+      */}
     </View>
-  </View>
-);
+  );
 };
 
+// Se combinan los estilos originales con los nuevos
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -161,7 +203,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContentContainer: {
     flexGrow: 1,
@@ -173,6 +214,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
+    width: '100%',
   },
   version: {
     alignSelf: 'flex-start',
@@ -185,15 +227,24 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 40,
   },
-  input: {
-    width: 250,
-    height: 40,
-    marginBottom: 10,
+  inputContainer: { // NUEVO estilo para el contenedor del input
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    height: 50,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 10,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+  },
+  input: { // Modificado para ser flexible dentro del contenedor
+    flex: 1,
+    height: '100%',
     color: '#424242',
-    borderRadius: 5,
+  },
+  eyeIcon: { // NUEVO estilo para el ícono del ojo
+    padding: 5,
   },
   forgotPassword: {
     alignSelf: 'flex-end',
@@ -201,16 +252,17 @@ const styles = StyleSheet.create({
     color: 'blue',
   },
   button: {
-    width: 80,
-    height: 40,
+    width: '90%',
+    height: 50,
     backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
+    borderRadius: 8,
     marginVertical: 10,
   },
   buttonText: {
     color: '#ffffff',
+    fontWeight: 'bold',
   },
   floatingButtonBarContainer: {
     position: 'absolute',
@@ -219,8 +271,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 60,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -246,23 +296,26 @@ const styles = StyleSheet.create({
   modalIcon: {
     width: 50,
     height: 50,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
     color: 'black',
+    fontSize: 16,
   },
   buttonClose: {
-    backgroundColor: 'blue',
+    backgroundColor: '#2196F3',
+    padding: 10,
+    elevation: 2,
+    borderRadius: 8,
+    width: 100,
   },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   },
-
-
 });
 
 export default Login;

@@ -324,7 +324,7 @@ const Homev2: React.FC<Props> = ({ navigation }) => {
             <Image source={require('../imagenes/logov5.png')} style={styles.logo} />
           </View>
 
-          <Text style={styles.infoTitle2}>VOLUNTARIOS</Text>
+          <Text style={styles.infoTitle2}>DESCUBRE</Text>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             <View style={styles.buttonContainer}>
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#424242',
     paddingHorizontal: 20,
-    marginBottom: 5,
+    marginBottom: 1,
   },
   horizontalScroll: {
     height: 120,
