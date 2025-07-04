@@ -1,32 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, SectionList, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
-import firebase from '@react-native-firebase/app';
+import { View, Text, Image, SectionList, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
-
-interface Emergencia {
-  key: string;
-  title: string;
-  city: string;
-  description: string;
-  ubicacion: string;
-  type: string;
-  state: string;
-  date: string;
-  time: string;
-  imageUrl: string;
-}
+import EstilosAdmin from './estilos/EstilosAdmin'; // Importar los estilos
 
 const Uiadministrador = () => {
-  const [emergencias, setEmergencias] = useState<{ title: string, data: Emergencia[] }[]>([]);
+  const [emergencias, setEmergencias] = useState([]);
+  const [botones, setBotones] = useState([]);
   const navigation = useNavigation();
 
+  // Efecto para cargar las emergencias activas
   useEffect(() => {
     const db = database();
     const emergenciasRef = db.ref('ultimasEmergencias').orderByChild('estado').equalTo('Activo');
     const onValueChange = emergenciasRef.on('value', (snapshot) => {
-      const data: Emergencia[] = [];
+      const data = [];
       snapshot.forEach((childSnapshot) => {
         const val = childSnapshot.val();
         data.push({
@@ -41,7 +30,7 @@ const Uiadministrador = () => {
           time: val.hora || '',
           imageUrl: val.imagen || ''
         });
-        return false; // Retorna false para continuar con el siguiente childSnapshot
+        return false; 
       });
       setEmergencias([{ title: "Emergencias Activas", data }]);
     });
@@ -49,112 +38,92 @@ const Uiadministrador = () => {
     return () => emergenciasRef.off('value', onValueChange);
   }, []);
 
-  const renderItem = ({ item }: { item: Emergencia }) => (
+  // Efecto para cargar los botones de emergencia
+  useEffect(() => {
+    const db = database();
+    const botonesRef = db.ref('/BotonesEmergencia');
+    const onValueChange = botonesRef.on('value', (snapshot) => {
+      const data = [];
+      snapshot.forEach((childSnapshot) => {
+        const val = childSnapshot.val();
+        data.push({
+          key: childSnapshot.key || '',
+          nombre: val.nombre || '',
+          estado: val.estado || '',
+          imagen: val.imagen || ''
+        });
+        return false; 
+      });
+      setBotones(data);
+    });
+
+    return () => botonesRef.off('value', onValueChange);
+  }, []);
+
+  const renderItemEmergencia = ({ item }) => (
     <TouchableOpacity 
-      style={styles.card}
+      style={EstilosAdmin.card}
       onPress={() => navigation.navigate('Uiscreendetalle', { item: { ...item, key: item.key } })}
     >
-      <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.title} - {item.city}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
-        <Text style={styles.cardInfo}>{item.type} - {item.state}</Text>
-        <Text style={styles.cardInfo}>{item.date} - {item.time}</Text>
+      <Image source={{ uri: item.imageUrl }} style={EstilosAdmin.cardImage} />
+      <View style={EstilosAdmin.cardContent}>
+        <Text style={EstilosAdmin.cardTitle}>{item.title} - {item.city}</Text>
+        <Text style={EstilosAdmin.cardDescription}>{item.description}</Text>
+        <Text style={EstilosAdmin.cardInfo}>{item.type} - {item.state}</Text>
+        <Text style={EstilosAdmin.cardInfo}>{item.date} - {item.time}</Text>
       </View>
     </TouchableOpacity>
   );
 
-  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
-    <View style={styles.header}>
-      <Text style={styles.headerText}>{title}</Text>
+  const renderItemBoton = ({ item }) => (
+    <TouchableOpacity 
+      style={EstilosAdmin.botonEmergencia}
+      onPress={() => navigation.navigate('DetalleOperacion', { item: { ...item, key: item.key } })}
+    >
+      <Image source={{ uri: item.imagen }} style={EstilosAdmin.botonImagen} />
+      <Text style={EstilosAdmin.botonTexto}>{item.nombre}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderSectionHeader = ({ section: { title } }) => (
+    <View style={EstilosAdmin.header}>
+      <Text style={EstilosAdmin.headerText}>{title}</Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.listContainer}>
+    <SafeAreaView style={EstilosAdmin.container}>
+      <View style={EstilosAdmin.headerContainer}>
+        <Text style={EstilosAdmin.supportText}>Con el Apoyo de</Text>
+        <Image source={require('../imagenes/logov5.png')} style={EstilosAdmin.logo} />
+      </View>
+
+      <View style={EstilosAdmin.listContainer}>
         <SectionList 
           sections={emergencias}
-          renderItem={renderItem}
+          renderItem={renderItemEmergencia}
           renderSectionHeader={renderSectionHeader}
           keyExtractor={item => item.key}
-          contentContainerStyle={styles.sectionListContainer}
+          contentContainerStyle={EstilosAdmin.sectionListContainer}
         />
       </View>
-      <View style={styles.floatingButtonContainer}>
+
+      <View style={EstilosAdmin.listContainer}>
+        <Text style={EstilosAdmin.headerText}>Sección de Emergencia</Text>
+        <FlatList 
+          data={botones}
+          renderItem={renderItemBoton}
+          keyExtractor={item => item.key}
+          contentContainerStyle={EstilosAdmin.flatListContainer}
+          numColumns={2} // Para mostrar dos botones por fila
+        />
+      </View>
+
+      <View style={EstilosAdmin.floatingButtonContainer}>
         <FloatingButtonAdmin />
       </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-  },
-  listContainer: {
-    flex: 0.9, // 90% del espacio
-  },
-  sectionListContainer: {
-    paddingHorizontal: 10,
-    paddingBottom: 90,
-  },
-  floatingButtonContainer: {
-    flex: 0.1, // 10% del espacio
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: '#f8f8f8',
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#424242',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    flexDirection: 'row',
-    overflow: 'hidden',
-  },
-  cardImage: {
-    width: 100,
-    height: 100,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-  },
-  cardContent: {
-    flex: 1,
-    padding: 10,
-  },
-  cardTitle: {
-    fontSize: 16,
-    color: '#666',
-    fontWeight: 'bold',
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 5,
-  },
-  cardInfo: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 5,
-  },
-});
 
 export default Uiadministrador;

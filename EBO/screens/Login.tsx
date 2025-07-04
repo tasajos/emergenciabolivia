@@ -4,6 +4,7 @@ import FloatingButtonBar from './FloatingButtonBar';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
+import { Modal } from 'react-native';
 import database from '@react-native-firebase/database';
 
 type RootStackParamList = {
@@ -19,42 +20,57 @@ const Login: React.FC<Props> = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+const [modalMessage, setModalMessage] = useState('');
+const [modalIcon, setModalIcon] = useState(null); // Para almacenar la imagen del ícono
 
-  const handleLogin = async () => {
-    if (email.trim() === '' || password.trim() === '') {
-      Alert.alert("Error", "Por favor, ingrese un correo electrónico y una contraseña.");
-      return;
-    }
+
+const handleLogin = async () => {
+  if (email.trim() === '' || password.trim() === '') {
+    setModalMessage("Por favor, ingrese un correo electrónico y una contraseña.");
+    setModalIcon(require('../imagenes/error-icon.png')); // Cambia a la ruta de tu ícono de error
+    setModalVisible(true);
+    return;
+  }
   
-    try {
-      let response = await auth().signInWithEmailAndPassword(email, password);
-      if (response && response.user) {
-        const userId = response.user.uid;
-        const userRef = database().ref(`/UsuariosVbo/${userId}`);
-        userRef.on('value', (snapshot) => {
-          const userData = snapshot.val();
-          if (userData && userData.rol === 'Voluntario') {
-            Alert.alert("Éxito", "Login Exitoso");
+  try {
+    let response = await auth().signInWithEmailAndPassword(email, password);
+    if (response && response.user) {
+      const userId = response.user.uid;
+      const userRef = database().ref(`/UsuariosVbo/${userId}`);
+      userRef.on('value', (snapshot) => {
+        const userData = snapshot.val();
+        if (userData && userData.rol === 'Voluntario') {
+          setModalMessage("Login Exitoso");
+          setModalIcon(require('../imagenes/autenticacion.png')); // Cambia a la ruta de tu ícono de éxito
+          setModalVisible(true);
+          setTimeout(() => {
+            setModalVisible(false);
             navigation.navigate('Uiadministrador' as never);
-          } else {
-            Alert.alert("Acceso denegado", "No tienes el rol de voluntario necesario para acceder a esta sección.");
-            auth().signOut();
-          }
-        });
-      }
-    } catch (error: any) {
-      let message;
-      if (error.code === 'auth/user-not-found') {
-        message = "No existe una cuenta para el correo electrónico ingresado.";
-      } else if (error.code === 'auth/wrong-password') {
-        message = "La contraseña ingresada es incorrecta.";
-      } else {
-        message = "Ha ocurrido un error inesperado. Por favor intente de nuevo.";
-      }
-  
-      Alert.alert("Fallo de inicio de sesión", message);
+          }, 2000); // Cerrar modal después de 2 segundos
+        } else {
+          setModalMessage("No tienes el rol de voluntario necesario para acceder a esta sección.");
+          setModalIcon(require('../imagenes/error-icon.png'));
+          setModalVisible(true);
+          auth().signOut();
+        }
+      });
     }
-  };
+  } catch (error: any) {
+    let message;
+    if (error.code === 'auth/user-not-found') {
+      message = "No existe una cuenta para el correo electrónico ingresado.";
+    } else if (error.code === 'auth/wrong-password') {
+      message = "La contraseña ingresada es incorrecta.";
+    } else {
+      message = "Ha ocurrido un error inesperado. Por favor intente de nuevo.";
+    }
+
+    setModalMessage(message);
+    setModalIcon(require('../imagenes/error-icon.png'));
+    setModalVisible(true);
+  }
+};
 
   const handlePasswordRecovery = () => {
     if (email.trim() === '') {
@@ -82,40 +98,60 @@ const Login: React.FC<Props> = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.version}>Login</Text>
-          <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
-          <TextInput
-            style={styles.input}
-            onChangeText={setEmail}
-            value={email}
-            placeholder="Email"
-            placeholderTextColor="#999"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={setPassword}
-            value={password}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry
-          />
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handlePasswordRecovery}>
-            <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalView}>
+          <Image source={modalIcon} style={styles.modalIcon} />
+          <Text style={styles.modalText}>{modalMessage}</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.textStyle}>Cerrar</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-      <View style={styles.floatingButtonBarContainer}>
-        <FloatingButtonBar navigation={navigation} />
       </View>
+    </Modal>
+
+    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContentContainer}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.version}>Login</Text>
+        <Image style={styles.logo} source={require('../imagenes/logocha.png')} />
+        <TextInput
+          style={styles.input}
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Email"
+          placeholderTextColor="#999"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={setPassword}
+          value={password}
+          placeholder="Password"
+          placeholderTextColor="#999"
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handlePasswordRecovery}>
+          <Text style={styles.forgotPassword}>Recuperar Contraseña</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+    <View style={styles.floatingButtonBarContainer}>
+      <FloatingButtonBar navigation={navigation} />
     </View>
-  );
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
@@ -186,6 +222,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    width: 300,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalIcon: {
+    width: 50,
+    height: 50,
+    marginBottom: 10,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    color: 'black',
+  },
+  buttonClose: {
+    backgroundColor: 'blue',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
+
 });
 
 export default Login;

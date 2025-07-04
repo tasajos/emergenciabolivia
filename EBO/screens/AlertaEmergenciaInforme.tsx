@@ -92,6 +92,7 @@ const AlertaEmergenciaInforme = () => {
                   <Text style={styles.unidadText}>Necesita Ayuda: {unidad.necesitaAyuda}</Text>
                   <Text style={styles.unidadText}>Teléfono Responsable: {unidad.telefonoResponsable}</Text>
                   <Text style={styles.unidadText}>Sub Estado: {unidad.subestado}</Text>
+                  <Text style={styles.unidadText}>Notas: {unidad.notas}</Text>
                   {unidad.imageUrl ? (
                     <Image source={{ uri: unidad.imageUrl }} style={styles.historialImage} />
                   ) : (
