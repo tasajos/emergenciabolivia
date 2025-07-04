@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    View, 
-    Text, 
-    Image, 
-    SectionList, 
-    FlatList, 
-    TouchableOpacity, 
-    SafeAreaView,
-    StyleSheet,
-    ActivityIndicator 
-} from 'react-native';
+import { View, Text, Image, SectionList, FlatList, TouchableOpacity, SafeAreaView,
+    StyleSheet,ActivityIndicator ,Modal, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 import FloatingButtonAdmin from './FloatingButtonAdmin';
 // Necesitaremos un ícono. Asegúrate de tener react-native-vector-icons instalado
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,6 +19,22 @@ const Uiadministrador = () => {
   // --- MEJORA: Estados para el indicador de scroll ---
   const [isListScrollable, setIsListScrollable] = useState(false);
   const [hasUserScrolled, setHasUserScrolled] = useState(false);
+ const [isGuardiaModalVisible, setGuardiaModalVisible] = useState(false);
+  const [unidad, setUnidad] = useState('');
+  const [personal, setPersonal] = useState('');
+  const [vehiculos, setVehiculos] = useState({
+    camioneta: false,
+    ambulancia: false,
+    carroBomba: false,
+    otro: false,
+  });
+
+
+  // --- MEJORA: Estados para el nuevo modal de feedback ---
+  const [isFeedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+
+
 
   // Tu lógica de carga de datos no cambia
   useEffect(() => {
@@ -90,6 +98,47 @@ const Uiadministrador = () => {
   };
 
 
+ const handleGuardiaSubmit = async () => {
+    if (!unidad || !personal) {
+      Alert.alert('Campos vacíos', 'Por favor, completa la unidad y el personal.');
+      return;
+    }
+    const currentUser = auth().currentUser;
+    if (!currentUser) {
+      Alert.alert('Error', 'Debes estar autenticado.');
+      return;
+    }
+
+    const guardiaData = {
+      userId: currentUser.uid,
+      email: currentUser.email,
+      unidad: unidad,
+      personal: personal,
+      vehiculos: vehiculos,
+      timestamp: database.ServerValue.TIMESTAMP,
+    };
+
+    try {
+      const newGuardiaRef = database().ref('/guardiasActivas').push();
+      await newGuardiaRef.set(guardiaData);
+
+      // MEJORA: Usamos el nuevo modal en lugar de Alert
+      setGuardiaModalVisible(false); // Primero cerramos el modal del formulario
+      setFeedbackMessage('¡Guardia Registrada con Éxito!');
+      setFeedbackModalVisible(true); // Luego abrimos el modal de éxito
+
+      // Limpiar el formulario para la próxima vez
+      setUnidad('');
+      setPersonal('');
+      setVehiculos({ camioneta: false, ambulancia: false, carroBomba: false, otro: false });
+
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo registrar la guardia.');
+    }
+  };
+
+
   const renderItemEmergencia = ({ item }) => (
     <TouchableOpacity 
       style={styles.card}
@@ -115,8 +164,13 @@ const Uiadministrador = () => {
         if (item.nombre.toLowerCase() === 'emergencia') {
           navigation.navigate('AlertaWhatsApp'); // Navega a la nueva pantalla
         } else {
-          // Mantenemos la navegación original para los otros botones
-          navigation.navigate('DetalleOperacion', { item: { ...item, key: item.key } });
+
+          if (item.nombre.toLowerCase().includes('guardia')) {
+        setGuardiaModalVisible(true); // Abre el nuevo modal
+      } else {
+        navigation.navigate('DetalleOperacion', { item: { ...item, key: item.key } });
+      }
+          
         }
       }}
     >
@@ -177,6 +231,80 @@ const Uiadministrador = () => {
       </View>
 
       <FloatingButtonAdmin />
+
+
+{/* --- MEJORA: Modal para registrar la guardia --- */}
+ {/* --- CÓDIGO DEL MODAL DE GUARDIA (CON CHECKBOX MEJORADO) --- */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isGuardiaModalVisible}
+        onRequestClose={() => setGuardiaModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Registrar Guardia</Text>
+            
+            <Text style={styles.label}>Unidad / Estación:</Text>
+            <TextInput style={styles.input} placeholder="Ej: Estación Central, UGR" value={unidad} onChangeText={setUnidad}/>
+            
+            <Text style={styles.label}>Personal Disponible:</Text>
+            <TextInput style={styles.input} placeholder="Ej: 5" value={personal} onChangeText={setPersonal} keyboardType="numeric"/>
+            
+            <Text style={styles.label}>Vehículos Disponibles:</Text>
+            {Object.keys(vehiculos).map((key) => (
+              <TouchableOpacity 
+                key={key} 
+                style={styles.checkboxContainer} 
+                onPress={() => setVehiculos(prev => ({ ...prev, [key]: !prev[key] }))}
+              >
+                {/* MEJORA: Checkbox con mejor estilo */}
+                <View style={[styles.checkbox, vehiculos[key] && styles.checkboxChecked]}>
+                  {vehiculos[key] && <Icon name="checkmark" size={18} color="white" />}
+                </View>
+                <Text style={styles.checkboxLabel}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
+              </TouchableOpacity>
+            ))}
+            
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity style={[styles.modalButton, { backgroundColor: '#6c757d' }]} onPress={() => setGuardiaModalVisible(false)}>
+                <Text style={styles.modalButtonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalButton, { backgroundColor: '#007BFF' }]} onPress={handleGuardiaSubmit}>
+                <Text style={styles.modalButtonText}>Guardar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* --- MEJORA: NUEVO MODAL PARA FEEDBACK DE ÉXITO --- */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isFeedbackModalVisible}
+        onRequestClose={() => setFeedbackModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+            <View style={styles.feedbackModalContainer}>
+                <View style={styles.feedbackIconContainer}>
+                <Image
+                source={require('../imagenes/exito.png')}
+                style={styles.feedbackIcon}
+                />
+                </View>
+                <Text style={styles.feedbackModalTitle}>¡Listo!</Text>
+                <Text style={styles.feedbackModalMessage}>{feedbackMessage}</Text>
+                <TouchableOpacity
+                    style={styles.feedbackModalButton}
+                    onPress={() => setFeedbackModalVisible(false)}
+                >
+                    <Text style={styles.modalButtonText}>Cerrar</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -186,6 +314,70 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F4F6F8',
   },
+
+  // --- Estilos para el Modal de Guardia ---
+modalOverlay: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+},
+modalContainer: {
+  width: '90%',
+  backgroundColor: 'white',
+  borderRadius: 10,
+  padding: 20,
+  elevation: 5,
+},
+modalTitle: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 20,
+  textAlign: 'center',
+},
+label: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#333',
+  alignSelf: 'flex-start',
+  marginBottom: 8,
+},
+input: {
+  width: '100%',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  padding: 10,
+  marginBottom: 16,
+  fontSize: 16,
+},
+checkboxContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+checkboxLabel: {
+  marginLeft: 10,
+  fontSize: 16,
+},
+modalButtonContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 20,
+  width: '100%',
+},
+modalButton: {
+  borderRadius: 8,
+  padding: 12,
+  flex: 1,
+  marginHorizontal: 5,
+  alignItems: 'center',
+},
+modalButtonText: {
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: 16,
+},
   topHeaderContainer: {
     paddingTop: 10,
     paddingBottom: 5,
@@ -237,6 +429,67 @@ const styles = StyleSheet.create({
     width: 24, // Puedes ajustar el ancho
     height: 24, // Puedes ajustar el alto
 },
+
+ // --- MEJORA: Nuevos estilos para los Checkboxes ---
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    alignSelf: 'flex-start',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: '#007BFF',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  checkboxChecked: {
+    backgroundColor: '#007BFF',
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: '#333',
+  },
+  
+  // --- MEJORA: Nuevos estilos para el Modal de Feedback ---
+  feedbackModalContainer: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingTop: 0,
+    alignItems: 'center',
+    overflow: 'hidden', // para que el fondo del ícono no se salga de los bordes redondeados
+  },
+  feedbackIconContainer: {
+    backgroundColor: '#28a745', // Color de éxito
+    width: '100%',
+    padding: 20,
+    alignItems: 'center',
+  },
+  feedbackModalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginVertical: 15,
+  },
+  feedbackModalMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  feedbackModalButton: {
+    backgroundColor: '#007BFF',
+    borderRadius: 8,
+    padding: 12,
+    width: '80%',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   card: {
     backgroundColor: 'white',
     borderRadius: 12,

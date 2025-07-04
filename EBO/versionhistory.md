@@ -9,6 +9,7 @@ versionName "E 2.1.7"
 - Cambios en el Texto de Voluntarios --> Descubre
 - Optimizacion Uiadministrador
 - Boton Emergencia Envia Ubicacion
+- Boton Guardia Habilitado
 
 ## Commit 001/2025
 
@@ -24,3 +25,6 @@ versionName "E 2.1.7"
 
 ## Commit 004/2025
 - Boton Emergencia envia ubicacion
+
+## Commit 005/2025
+- Boton Guardias Habilitado
