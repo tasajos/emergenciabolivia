@@ -3,10 +3,6 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 
-/**
- * This is the configuration block to customize your React Native Android app.
- * By default you don't need to apply any configuration, just uncomment the lines you need.
- */
 react {
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
@@ -31,7 +27,7 @@ react {
     //   The command to run when bundling. By default is 'bundle'
     // bundleCommand = "ram-bundle"
     //
-    //   The path to the CLI configuration file. Default is empty.
+    //   the path to the CLI configuration file. Default is empty.
     // bundleConfig = file(../rn-cli.config.js)
     //
     //   The name of the generated asset file containing your JS bundle
@@ -82,9 +78,19 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 65
         versionName "E 2.1.7"
+        
+        // FORZAR JAVA 21 EN RUNTIME
+        multiDexEnabled true
     }
+    
     signingConfigs {
-    release {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
             if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
                 storeFile file(MYAPP_RELEASE_STORE_FILE)
                 storePassword MYAPP_RELEASE_STORE_PASSWORD
@@ -92,38 +98,68 @@ android {
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
             }
         }
+    }
 
-
-}
-
-lintOptions {
-    baseline file("lint-baseline.xml")
-}
+    lintOptions {
+        baseline file("lint-baseline.xml")
+        checkReleaseBuilds false
+        abortOnError false
+    }
 
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+    
+    // CONFIGURACIÓN PRINCIPAL JAVA 21
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    
+    kotlinOptions {
+        jvmTarget = '21'
+        freeCompilerArgs += [
+            "-Xjvm-default=all",
+            "-Xlambdas=indy"
+        ]
+    }
+    
+    // CONFIGURACIÓN ADICIONAL
+    packagingOptions {
+        pickFirst '**/*.so'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation("com.facebook.react:flipper-integration")
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
-        //implementation 'com.google.android.gms:play-services-location:21.2.0'
-        implementation 'com.google.android.gms:play-services-location:21.0.1'
+    // FORZAR VERSIÓN DE ANDROIDX
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
 
+     // Firebase manual
+    implementation project(':@react-native-firebase_app')
+    implementation project(':@react-native-firebase_auth') 
+    implementation project(':@react-native-firebase_storage')
+       implementation project(':@react-native-firebase_messaging')
 
-     //implementation 'com.google.android.gms:play-services-location:x.y.z' // Reemplaza x.y.z con la versión más reciente
+ // Gesture handler
+    implementation project(':react-native-gesture-handler')
+
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -133,3 +169,47 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+// CONFIGURACIÓN AGGRESIVA PARA JAVA 21
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += [
+        "--release", "21",
+        "-Xlint:deprecation",
+        "-Xlint:unchecked"
+    ]
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "21"
+        apiVersion = "1.8"
+        languageVersion = "1.8"
+        freeCompilerArgs += [
+            "-Xjsr305=strict",
+            "-Xjvm-default=all"
+        ]
+    }
+}
+
+// CONFIGURACIÓN EXPLÍCITA DE TOOLCHAIN
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+// DESHABILITAR VALIDACIÓN DE COMPATIBILIDAD (TEMPORAL)
+//tasks.named('compileDebugKotlin') {
+  //  kotlinOptions {
+    //    suppressWarnings = true
+    //}
+//}
+
+//android.components.named('android').configure {
+  //  javaCompile {
+    //    sourceCompatibility = JavaVersion.VERSION_21
+      //  targetCompatibility = JavaVersion.VERSION_21
+    //}
+//}

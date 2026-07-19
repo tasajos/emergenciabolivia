@@ -28,3 +28,6 @@ versionName "E 2.1.7"
 
 ## Commit 005/2025
 - Boton Guardias Habilitado
+
+## Commit 006/2025
+- Actualizacion requerimientos android
