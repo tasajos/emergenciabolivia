@@ -79,7 +79,6 @@ android {
         versionCode 65
         versionName "E 2.1.7"
         
-        // FORZAR JAVA 21 EN RUNTIME
         multiDexEnabled true
     }
     
@@ -117,18 +116,13 @@ android {
         }
     }
     
-    // CONFIGURACIÓN PRINCIPAL JAVA 21
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     
     kotlinOptions {
-        jvmTarget = '21'
-        freeCompilerArgs += [
-            "-Xjvm-default=all",
-            "-Xlambdas=indy"
-        ]
+        jvmTarget = '17'
     }
     
     // CONFIGURACIÓN ADICIONAL
@@ -151,16 +145,6 @@ dependencies {
     implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.appcompat:appcompat:1.6.1"
 
-     // Firebase manual
-    implementation project(':@react-native-firebase_app')
-    implementation project(':@react-native-firebase_auth') 
-    implementation project(':@react-native-firebase_storage')
-       implementation project(':@react-native-firebase_messaging')
-
- // Gesture handler
-    implementation project(':react-native-gesture-handler')
-
-
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
@@ -170,46 +154,3 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
-// CONFIGURACIÓN AGGRESIVA PARA JAVA 21
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs += [
-        "--release", "21",
-        "-Xlint:deprecation",
-        "-Xlint:unchecked"
-    ]
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "21"
-        apiVersion = "1.8"
-        languageVersion = "1.8"
-        freeCompilerArgs += [
-            "-Xjsr305=strict",
-            "-Xjvm-default=all"
-        ]
-    }
-}
-
-// CONFIGURACIÓN EXPLÍCITA DE TOOLCHAIN
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
-// DESHABILITAR VALIDACIÓN DE COMPATIBILIDAD (TEMPORAL)
-//tasks.named('compileDebugKotlin') {
-  //  kotlinOptions {
-    //    suppressWarnings = true
-    //}
-//}
-
-//android.components.named('android').configure {
-  //  javaCompile {
-    //    sourceCompatibility = JavaVersion.VERSION_21
-      //  targetCompatibility = JavaVersion.VERSION_21
-    //}
-//}

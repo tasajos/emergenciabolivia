@@ -5,7 +5,7 @@ buildscript {
         compileSdkVersion = 35
         targetSdkVersion = 35
         ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.9.22"
+        kotlinVersion = "1.8.0"
         playServicesLocationVersion = "21.0.1"
     }
     repositories {
@@ -16,7 +16,7 @@ buildscript {
 
 
 
-        classpath("com.android.tools.build:gradle:8.5.0")
+        classpath("com.android.tools.build:gradle:8.6.1")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath('com.google.gms:google-services:4.4.0')
@@ -41,17 +41,4 @@ allprojects {
     }
 }
 
-// CONFIGURACIÓN GLOBAL PARA JAVA 21
-subprojects { subproject ->
-    afterEvaluate{
-        if((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library'))) {
-            android {
-                compileSdkVersion rootProject.ext.compileSdkVersion
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_21
-                    targetCompatibility JavaVersion.VERSION_21
-                }
-            }
-        }
-    }
-}
+apply plugin: "com.facebook.react.rootproject"
